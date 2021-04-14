@@ -1,5 +1,5 @@
 .. ...........................................................................
-.. Copyright (c) IBM Corporation 2021                                        .
+.. © Copyright IBM Corporation 2021                                          .
 .. ...........................................................................
 
 Requirements - Provision and Manage z/OS Software Instances
@@ -9,15 +9,18 @@ Requirements - Provision and Manage z/OS Software Instances
 * role: `zmf_cpm_manage_software_instance`_
 * role: `zmf_cpm_remove_software_instance`_
 
-To use above modules and roles, it needs to ensure **Cloud Provisioning & Management (CP&M)** is configured in z/OSMF. 
+To use above modules and roles, it needs to ensure
+**Cloud Provisioning & Management (CP&M)** is configured in z/OSMF.
 
-Besides the `Overall Requirements`_, the following nodes require specific versions of software:
+Besides the `Overall Requirements`_, the following nodes require specific
+versions of software:
 
 **Managed Node**:
 
 * `z/OS Management Facility`_: V2R3 or later
 
-   The z/OSMF server must be installed and active on **each** managed z/OS system.
+   The z/OSMF server must be installed and active on **each** managed z/OS
+   system.
 
 * `Cloud Provisioning & Management`_
 

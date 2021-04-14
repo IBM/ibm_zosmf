@@ -12,8 +12,8 @@ Version 1.0.0
 Notes
 -----
 
-* Initial beta release of IBM zOS Management Facility collection, referred to as ibm_zosmf
-  which is part of the broader offering
+* Initial release of IBM zOS Management Facility collection, referred to as
+  ibm_zosmf, which is part of the broader offering
   Red Hat® Ansible Certified Content for IBM Z.
 
 * New modules
@@ -77,12 +77,3 @@ Reference
 
 .. _z/OS Management Facility:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3.izua300/abstract.html
-
-.. _playbook repository:
-   https://github.com/IBM/z_ansible_collections_samples/blob/master/README.md
-
-.. _FAQs:
-   https://ibm.github.io/z_ansible_collections_doc/faqs/faqs.html
-
-.. _playbook configuration:
-   https://github.com/IBM/z_ansible_collections_samples/blob/master/docs/share/configuration_guide.md

@@ -1,5 +1,5 @@
 .. ...........................................................................
-.. Copyright (c) IBM Corporation 2021                                        .
+.. © Copyright IBM Corporation 2021                                          .
 .. ...........................................................................
 
 Managed node
@@ -8,16 +8,31 @@ Managed node
 The managed z/OS node is the host that is managed by Ansible, as identified in
 the Ansible inventory.
 The managed node has dependencies that are specific to each release of the
-**IBM z/OS Management Facility Collection**. Review the details of the dependencies before you
-proceed to install the IBM z/OS Management Facility Collection.
+**IBM z/OSMF collection**.
+Review the details of the dependencies before you proceed to install the
+**IBM z/OSMF collection**.
 
 * `z/OS`_: V2R3 or later
 
-   The target z/OS systems should be configured as the target hosts (managed nodes) in your playbook. It is not necessary to set up an SSH connection and install Python on the target z/OS systems. Instead, the modules and roles in this collection will create HTTPS connections with the z/OSMF server. Therefore ``delegate_to: localhost`` statement is required for using the modules in your playbook task. This statement is hard-coded within the roles.
+   The target z/OS systems should be configured as the target hosts
+   (managed nodes) in your playbook.
+   It is not necessary to set up an SSH connection and install Python on the
+   target z/OS systems.
+   Instead, the modules and roles in this collection will create HTTPS
+   connections with the z/OSMF server.
+   Therefore ``delegate_to: localhost`` statement is required for using the
+   modules in your playbook task.
+   This statement is hard-coded within the roles.
 
 * `z/OS Management Facility`_: V2R3 or later
 
-   The z/OSMF server must be installed and active on **at least one** z/OS system in the same sysplex. Information about the z/OSMF server must be configured in the inventory ``hosts`` file or in the ``vars`` file, such as the hostname, port number, and authentication info. The authentication info to connect to the z/OSMF server is provided when running playbook or it will be prompted during playbook run.
+   The z/OSMF server must be installed and active on **at least one** z/OS
+   system in the same sysplex.
+   Information about the z/OSMF server must be configured in the inventory
+   file or in the ``vars`` file, such as the hostname, port number, and
+   authentication info.
+   The authentication info to connect to the z/OSMF server is provided when
+   running playbook or it will be prompted during playbook run.
 
 Specific Requirements
 ---------------------
@@ -30,10 +45,6 @@ Specific Requirements
    requirements_cpm
 
 
-.. _Ansible:
-   https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
-.. _Python:
-   https://www.python.org
 .. _z/OS:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3/en/homepage.html
 .. _z/OS Management Facility:

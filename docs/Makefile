@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) IBM Corporation 2021                                         #
+# © Copyright IBM Corporation 2021                                           #
 ##############################################################################
 
 # You can set these variables from the command line, and also

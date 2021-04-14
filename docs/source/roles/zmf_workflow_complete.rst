@@ -381,15 +381,3 @@ See Also
 
 
 
-
-Return Values
--------------
-
-   
-
-      changed
-        Indicates if any change is made during the role operation.
-
-        | **returned**: always
-        | **type**: bool
-
