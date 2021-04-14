@@ -7,7 +7,7 @@
     final_result: {'workflow_name': "{{ workflow_name }}"}
 
 - name: Check whether a workflow instance with the given name already exists
-  ibm.ibm_zos_zosmf.zmf_workflow:
+  ibm.ibm_zosmf.zmf_workflow:
     state: "existed"
     zmf_host: "{{ zmf_host }}"
     zmf_port: "{{ zmf_port | default(-1) }}"
@@ -34,7 +34,7 @@
   when: not force_complete
 
 - name: Delete the existing workflow instance if force complete or it has different definition file, variables or properties
-  ibm.ibm_zos_zosmf.zmf_workflow:
+  ibm.ibm_zosmf.zmf_workflow:
     state: "deleted"
     zmf_host: "{{ zmf_host }}"
     zmf_port: "{{ zmf_port | default(-1) }}"
@@ -54,7 +54,7 @@
   when: ('skipped' not in delete_result) and (delete_result.deleted)
 
 - name: Create the workflow instance if not exist and start it
-  ibm.ibm_zos_zosmf.zmf_workflow:
+  ibm.ibm_zosmf.zmf_workflow:
     state: "started"
     zmf_host: "{{ zmf_host }}"
     zmf_port: "{{ zmf_port | default(-1) }}"
@@ -86,7 +86,7 @@
   when: (force_complete) or ('completed' not in compare_result) or (not compare_result.completed)
 
 - name: Periodically check status of the workflow instance and return final result
-  ibm.ibm_zos_zosmf.zmf_workflow:
+  ibm.ibm_zosmf.zmf_workflow:
     state: "check"
     zmf_host: "{{ zmf_host }}"
     zmf_port: "{{ zmf_port | default(-1) }}"
