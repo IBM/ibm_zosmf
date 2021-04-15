@@ -18,9 +18,13 @@ DOCUMENTATION = r"""
 module: zmf_authenticate
 short_description: Authenticate with z/OSMF server
 description:
-    - Authenticate with z/OSMF server by either username/password or HTTPS client authenticate.
+    - >
+      Authenticate with z/OSMF server by either username/password or HTTPS 
+      client authenticate.
     - Return the authentication credentials for successful authentication.
-    - The credential can be then used for succeeding Ansible tasks which call z/OSMF Ansible module or role.
+    - >
+      The credential can be then used for succeeding Ansible tasks which call
+      z/OSMF Ansible module or role.
 version_added: "2.9"
 author:
     - Yang Cao (@zosmf-Young)
@@ -41,7 +45,9 @@ options:
         description:
             - User name to be used for authenticating with z/OSMF server.
             - Required when I(zmf_crt) and I(zmf_key) are not supplied.
-            - If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and I(zmf_password) are ignored.
+            - >
+              If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and
+              I(zmf_password) are ignored.
         required: false
         type: str
         default: null
@@ -49,20 +55,26 @@ options:
         description:
             - Password to be used for authenticating with z/OSMF server.
             - Required when I(zmf_crt) and I(zmf_key) are not supplied.
-            - If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and I(zmf_password) are ignored.
+            - > 
+              If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and
+              I(zmf_password) are ignored.
         required: false
         type: str
         default: null
     zmf_crt:
         description:
-            - Location of the PEM-formatted certificate chain file to be used for HTTPS client authentication.
+            - > 
+              Location of the PEM-formatted certificate chain file to be used
+              for HTTPS client authentication.
             - Required when I(zmf_user) and I(zmf_password) are not supplied.
         required: false
         type: str
         default: null
     zmf_key:
         description:
-            - Location of the PEM-formatted file with your private key to be used for HTTPS client authentication.
+            - >
+              Location of the PEM-formatted file with your private key to be
+              used for HTTPS client authentication.
             - Required when I(zmf_user) and I(zmf_password) are not supplied.
         required: false
         type: str
@@ -84,7 +96,7 @@ EXAMPLES = r"""
     zmf_crt: "/file_with_your_certificate_chain.crt"
     zmf_key: "/file_with_your_private_key.key"
 
-- name: Authenticate with z/OSMF server by prompting to input the sensitive username/password when running the playbook
+- name: Authenticate with z/OSMF server by prompting to input username/password
   vars_prompt:
     - name: zmf_user
       prompt: "Enter your zOSMF username"
@@ -106,15 +118,18 @@ changed:
     returned: always
     type: bool
 LtpaToken2:
-    description: The value of Lightweight Third Party Access (LTPA) token, which supports strong encryption.
+    description: 
+        - >
+          The value of Lightweight Third Party Access (LTPA) token, which
+          supports strong encryption.
     returned: on success
     type: str
-    sample: "yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCudvhxM+JWpC9TzhM4SEHRe/Vb3dC......"
+    sample: "yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCa......"
 jwtToken:
     description: The value of JSON Web token, which supports strong encryption.
     returned: on success
     type: str
-    sample: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiQmVhcmVyIiwic3ViIjoiem9zbWZhZ....."
+    sample: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlmVhcmVyIiwicie......"
 zmf_host:
     description: Hostname of the z/OSMF server.
     returned: on success
@@ -126,11 +141,12 @@ zmf_port:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.ibm.ibm_zos_zosmf.plugins.module_utils.zmf_util import (
+from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_util import (
     get_auth_argument_spec,
     get_connect_session
 )
-from ansible_collections.ibm.ibm_zos_zosmf.plugins.module_utils.zmf_auth_api import (
+from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_auth_api \
+import (
     call_auth_api
 )
 import re
@@ -148,19 +164,26 @@ def authenticate(module):
     response_getAuth = call_auth_api(module, session, 'getAuth')
     if isinstance(response_getAuth, dict):
         if ('Set-Cookie' in response_getAuth
-                and ('LtpaToken2' in response_getAuth['Set-Cookie'] or 'jwtToken' in response_getAuth['Set-Cookie'])):
+                and ('LtpaToken2' in response_getAuth['Set-Cookie'] 
+                    or 'jwtToken' in response_getAuth['Set-Cookie'])):
             auth = dict()
             if 'LtpaToken2' in response_getAuth['Set-Cookie']:
-                auth['LtpaToken2'] = re.findall('LtpaToken2=(.+?);', response_getAuth['Set-Cookie'])[0]
+                auth['LtpaToken2'] = \
+                    re.findall('LtpaToken2=(.+?);', 
+                               response_getAuth['Set-Cookie'])[0]
             if 'jwtToken' in response_getAuth['Set-Cookie']:
-                auth['jwtToken'] = re.findall('jwtToken=(.+?);', response_getAuth['Set-Cookie'])[0]
+                auth['jwtToken'] = \
+                    re.findall('jwtToken=(.+?);', 
+                               response_getAuth['Set-Cookie'])[0]
             auth['zmf_host'] = module.params['zmf_host']
             auth['zmf_port'] = module.params['zmf_port']
             module.exit_json(**auth)
         else:
-            module.fail_json(msg='Failed to authenticate with z/OSMF server ---- Cannot obtain the authentication token.')
+            module.fail_json(msg='Failed to authenticate with z/OSMF server ' \
+                + '---- Cannot obtain the authentication token.')
     else:
-        module.fail_json(msg='Failed to authenticate with z/OSMF server ---- ' + response_getAuth)
+        module.fail_json(msg='Failed to authenticate with z/OSMF server ---- '\
+            + response_getAuth)
 
 
 def main():

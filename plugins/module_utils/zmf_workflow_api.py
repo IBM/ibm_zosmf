@@ -4,7 +4,8 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-from ansible_collections.ibm.ibm_zos_zosmf.plugins.module_utils.zmf_util import handle_request
+from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_util import \
+    handle_request
 import json
 import re
 
@@ -27,87 +28,159 @@ def __get_workflow_apis():
         # list the z/OSMF workflow instances for a system or sysplex
         list=dict(
             method='get',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' + version + '/workflows',
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+                + version + '/workflows',
             args=dict(
-                workflowName=dict(required=False, type='str', nickname='workflow_name'),
+                workflowName=dict(
+                    required=False, type='str', nickname='workflow_name'
+                ),
                 category=dict(
                     required=False, type='str', nickname='workflow_category',
                     choices=['general', 'configuration']
                 ),
-                system=dict(required=False, type='str', nickname='workflow_host'),
+                system=dict(
+                    required=False, type='str', nickname='workflow_host'
+                ),
                 statusName=dict(required=False, type='str', nickname=''),
-                owner=dict(required=False, type='str', nickname='workflow_owner'),
-                vendor=dict(required=False, type='str', nickname='workflow_vendor')
+                owner=dict(
+                    required=False, type='str', nickname='workflow_owner'
+                ),
+                vendor=dict(
+                    required=False, type='str', nickname='workflow_vendor'
+                )
             ),
             ok_rcode=200
         ),
-        # retrieve the contents of a z/OSMF workflow definition from a z/OS system
+        # retrieve the contents of a z/OSMF workflow definition from a z/OS
+        # system
         retrieveDefinition=dict(
             method='get',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' + version + '/workflowDefinition',
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+                + version + '/workflowDefinition',
             args=dict(
-                definitionFilePath=dict(required=True, type='str', nickname='workflow_file'),
-                workflowDefinitionFileSystem=dict(required=False, type='str', nickname='workflow_file_system'),
-                returnData=dict(required=False, type='str', default='variables', nickname='')
+                definitionFilePath=dict(
+                    required=True, type='str', nickname='workflow_file'
+                ),
+                workflowDefinitionFileSystem=dict(
+                    required=False, type='str', 
+                    nickname='workflow_file_system'
+                ),
+                returnData=dict(
+                    required=False, type='str', default='variables', 
+                    nickname=''
+                )
             ),
             ok_rcode=200
         ),
         # retrieve the properties of a z/OSMF workflow instance
         retrieveProperties=dict(
             method='get',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' + version + '/workflows/{workflowKey}',
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+                + version + '/workflows/{workflowKey}',
             args=dict(
-                returnData=dict(required=False, type='str', default='steps,variables', nickname='')
+                returnData=dict(
+                    required=False, type='str', 
+                    default='steps,variables', nickname=''
+                )
             ),
             ok_rcode=200
         ),
         # create a z/OSMF workflow instance on a z/OS system
         create=dict(
             method='post',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' + version + '/workflows',
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+                + version + '/workflows',
             args=dict(
-                workflowName=dict(required=True, type='str', nickname='workflow_name'),
-                workflowDefinitionFile=dict(required=True, type='str', nickname='workflow_file'),
-                workflowDefinitionFileSystem=dict(required=False, type='str', nickname='workflow_file_system'),
-                variableInputFile=dict(required=False, type='str', nickname='workflow_vars_file'),
-                variables=dict(required=False, type='dict', nickname='workflow_vars'),
+                workflowName=dict(
+                    required=True, type='str', nickname='workflow_name'
+                ),
+                workflowDefinitionFile=dict(
+                    required=True, type='str', nickname='workflow_file'
+                ),
+                workflowDefinitionFileSystem=dict(
+                    required=False, type='str', 
+                    nickname='workflow_file_system'
+                ),
+                variableInputFile=dict(
+                    required=False, type='str', 
+                    nickname='workflow_vars_file'
+                ),
+                variables=dict(
+                    required=False, type='dict', nickname='workflow_vars'
+                ),
                 resolveGlobalConflictByUsing=dict(
-                    required=False, type='str', default='global', nickname='workflow_resolve_global_conflict_by_using',
+                    required=False, type='str', default='global', 
+                    nickname='workflow_resolve_global_conflict_by_using',
                     choices=['global', 'input']
                 ),
-                system=dict(required=True, type='str', nickname='workflow_host'),
-                owner=dict(required=True, type='str', nickname='workflow_owner'),
-                comments=dict(required=False, type='str', nickname='workflow_comments'),
-                assignToOwner=dict(required=False, type='bool', default=True, nickname='workflow_assign_to_owner'),
+                system=dict(
+                    required=True, type='str', nickname='workflow_host'
+                ),
+                owner=dict(
+                    required=True, type='str', nickname='workflow_owner'
+                ),
+                comments=dict(
+                    required=False, type='str', nickname='workflow_comments'
+                ),
+                assignToOwner=dict(
+                    required=False, type='bool', default=True, 
+                    nickname='workflow_assign_to_owner'
+                ),
                 accessType=dict(
-                    required=False, type='str', default='Public', nickname='workflow_access_type',
+                    required=False, type='str', default='Public', 
+                    nickname='workflow_access_type',
                     choices=['Public', 'Restricted', 'Private']
                 ),
-                accountInfo=dict(required=False, type='str', nickname='workflow_account_info'),
-                jobStatement=dict(required=False, type='str', nickname='workflow_job_statement'),
-                deleteCompletedJobs=dict(required=False, type='bool', default=False, nickname='workflow_delete_completed_jobs')
+                accountInfo=dict(
+                    required=False, type='str', 
+                    nickname='workflow_account_info'
+                ),
+                jobStatement=dict(
+                    required=False, type='str', 
+                    nickname='workflow_job_statement'
+                ),
+                deleteCompletedJobs=dict(
+                    required=False, type='bool', default=False, 
+                    nickname='workflow_delete_completed_jobs'
+                )
             ),
             ok_rcode=201
         ),
         # start a z/OSMF workflow instance on a z/OS system
         start=dict(
             method='put',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' + version + '/workflows/{workflowKey}/operations/start',
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+                + version + '/workflows/{workflowKey}/operations/start',
             args=dict(
                 resolveConflictByUsing=dict(
-                    required=False, type='str', default='outputFileValue', nickname='workflow_resolve_conflict_by_using',
-                    choices=['outputFileValue', 'existingValue', 'leaveConflict']
+                    required=False, type='str', default='outputFileValue', 
+                    nickname='workflow_resolve_conflict_by_using',
+                    choices=[
+                        'outputFileValue', 
+                        'existingValue', 
+                        'leaveConflict'
+                    ]
                 ),
-                stepName=dict(required=False, type='str', nickname='workflow_step_name'),
-                performSubsequent=dict(required=False, type='bool', default=True, nickname='workflow_perform_subsequent'),
-                notificationUrl=dict(required=False, type='str', nickname='workflow_notification_url')
+                stepName=dict(
+                    required=False, type='str', 
+                    nickname='workflow_step_name'
+                ),
+                performSubsequent=dict(
+                    required=False, type='bool', default=True, 
+                    nickname='workflow_perform_subsequent'
+                ),
+                notificationUrl=dict(
+                    required=False, type='str', 
+                    nickname='workflow_notification_url'
+                )
             ),
             ok_rcode=202
         ),
         # remove a z/OSMF workflow instance from a z/OS system
         delete=dict(
             method='delete',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' + version + '/workflows/{workflowKey}',
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+                + version + '/workflows/{workflowKey}',
             args=dict(),
             ok_rcode=204
         )
@@ -144,7 +217,8 @@ def __get_workflow_api_url(module, url, workflow_key):
     for x in matchObj:
         if x == 'workflowKey':
             if workflow_key is None or workflow_key.strip() == '':
-                module.fail_json(msg='Missing required argument or invalid argument: workflow_key.')
+                module.fail_json(msg='Missing required argument or invalid' \
+                    + ' argument: workflow_key.')
             else:
                 url = re.sub('{' + x + '}', workflow_key.strip(), url)
         elif x == 'zmf_port' and module.params[x] == '':
@@ -166,31 +240,41 @@ def __get_workflow_api_params(module, args):
         if k == 'returnData':
             params[k] = v['default']
         elif k == 'owner':
-            if module.params[v['nickname']] is not None and module.params[v['nickname']].strip() != '':
+            if (module.params[v['nickname']] is not None 
+                    and module.params[v['nickname']].strip() != ''):
                 params[k] = module.params[v['nickname']].strip()
-            elif module.params['zmf_user'] is not None and module.params['zmf_user'].strip() != '':
+            elif (module.params['zmf_user'] is not None 
+                    and module.params['zmf_user'].strip() != ''):
                 params[k] = module.params['zmf_user'].strip()
             elif v['required'] is True:
-                module.fail_json(msg='Missing required argument or invalid argument: ' + v['nickname'] + '.')
-        elif v['nickname'] != '' and module.params[v['nickname']] is not None and str(module.params[v['nickname']]).strip() != '':
+                module.fail_json(msg='Missing required argument or invalid' \
+                    + ' argument: ' + v['nickname'] + '.')
+        elif (v['nickname'] != '' 
+                and module.params[v['nickname']] is not None 
+                and str(module.params[v['nickname']]).strip() != ''):
             # format the input for params with choices
             if 'choices' in v:
                 found = False
                 for vv in v['choices']:
-                    if module.params[v['nickname']].strip().lower() == vv.lower():
+                    if (module.params[v['nickname']].strip().lower() 
+                            == vv.lower()):
                         found = True
                         params[k] = vv
                         break
                 if found is False:
                     module.fail_json(
-                        msg='Missing required argument or invalid argument: ' + v['nickname'] + '. The following values are valid: ' + str(v['choices']) + '.'
+                        msg='Missing required argument or invalid argument: ' \
+                            + v['nickname'] \
+                            + '. The following values are valid: ' \
+                            + str(v['choices']) + '.'
                     )
             elif v['type'] == 'str':
                 params[k] = module.params[v['nickname']].strip()
             else:
                 params[k] = module.params[v['nickname']]
         elif v['nickname'] != '' and v['required'] is True:
-            module.fail_json(msg='Missing required argument or invalid argument: ' + v['nickname'] + '.')
+            module.fail_json(msg='Missing required argument or invalid' \
+                + ' argument: ' + v['nickname'] + '.')
     if 'variables' in params:
         params['variables'] = __parse_dict_vars(module, params['variables'])
         if params['variables'] == []:
@@ -208,7 +292,8 @@ def __parse_dict_vars(module, dict_vars):
     list_vars = []
     for k, v in dict_vars.items():
         if isinstance(v, dict):
-            module.fail_json(msg='Invalid argument: workflow_vars. Only string type or array type is accepted for each variable.')
+            module.fail_json(msg='Invalid argument: workflow_vars. Only ' \
+                + 'string type or array type is accepted for each variable.')
         elif isinstance(v, list):
             v = json.dumps(v)
         list_vars.append({'name': k, 'value': v})
@@ -227,16 +312,19 @@ def call_workflow_api(module, session, api, workflow_key):
     zmf_api = __get_workflow_api_argument_spec(api)
     zmf_api_url = __get_workflow_api_url(module, zmf_api['url'], workflow_key)
     zmf_api_params = __get_workflow_api_params(module, zmf_api['args'])
-    if (module.params['state'] == 'existed' or module.params['state'] == 'deleted') and api == 'list':
+    if ((module.params['state'] == 'existed' 
+            or module.params['state'] == 'deleted') and api == 'list'):
         v = zmf_api_params['workflowName']
         zmf_api_params.clear()
         zmf_api_params['workflowName'] = v
-    return handle_request(module, session, zmf_api['method'], zmf_api_url, zmf_api_params, zmf_api['ok_rcode'])
+    return handle_request(module, session, zmf_api['method'], 
+                          zmf_api_url, zmf_api_params, zmf_api['ok_rcode'])
 
 
 def get_request_argument_spec():
     """
-    Return the mapping between arguments of ansible module and params of all workflow APIs.
+    Return the mapping between arguments of ansible module and params of all
+    workflow APIs.
     Return the arguments of ansible module used for workflow APIs.
     :rtype: (dict[str, dict], dict[str, dict])
     """
@@ -246,12 +334,16 @@ def get_request_argument_spec():
     for k, v in workflow_apis.items():
         for kk, vv in v['args'].items():
             if vv['nickname'] != '':
-                argument_spec[vv['nickname']] = dict(required=False, type=vv['type'])
+                argument_spec[vv['nickname']] = dict(
+                    required=False, type=vv['type']
+                )
                 if 'choices' in vv:
                     argument_spec[vv['nickname']].update(choices=vv['choices'])
                 if 'default' in vv:
                     argument_spec[vv['nickname']].update(default=vv['default'])
-                    mapping[vv['nickname']] = dict(name=kk, default=vv['default'])
+                    mapping[vv['nickname']] = dict(
+                        name=kk, default=vv['default']
+                    )
                 else:
                     mapping[vv['nickname']] = dict(name=kk)
     return mapping, argument_spec
