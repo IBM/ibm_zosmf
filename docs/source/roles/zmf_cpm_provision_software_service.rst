@@ -154,6 +154,14 @@ Examples
      collections:
        - ibm.ibm_zosmf
      vars:
+       - name: zmf_user
+         prompt: "Enter your zOSMF username"
+         private: no
+
+       - name: zmf_password
+         prompt: "Enter your zOSMF password"
+         private: yes
+         
        - name: instance_info_json_path  
     tasks:
       - include_role:

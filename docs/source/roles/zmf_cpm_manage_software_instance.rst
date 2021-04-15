@@ -97,7 +97,7 @@ Examples
 .. code-block:: yaml+jinja
 
    
-   - name: test role for zmf_cpm_remove_software_instance
+   - name: test role for zmf_cpm_manage_software_instance
      hosts: cpmHost1 # need to match host nick name specified in hosts inventory file
      gather_facts: no
      collections:
@@ -109,11 +109,12 @@ Examples
 
        - name: zmf_password
          prompt: "Enter your zOSMF password"
-         private: yes
+         private: yes  
      tasks:
        - include_role:
-           name: zmf_cpm_remove_software_instance
+           name: zmf_cpm_manage_software_instance
          vars:
+           instance_action_name: "<action-name>"
            instance_info_json_path: "<full-instance-json-file-path>"
 
            
