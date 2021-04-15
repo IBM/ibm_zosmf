@@ -1,11 +1,11 @@
-# Copyright (c) IBM Corporation 2021
 
 :github_url: https://github.com/IBM/ibm_zosmf/tree/master/plugins/roles/zmf_cpm_provision_software_service
 
-.. _zmf_cpm_provision_software_service:
+.. _zmf_cpm_provision_software_service_module:
 
-zmf_cpm_provision_software_service
-==================================
+
+zmf_cpm_provision_software_service -- provision a z/OS software service
+=======================================================================
 
 
 .. contents::
@@ -15,132 +15,195 @@ zmf_cpm_provision_software_service
 
 Synopsis
 --------
-- Provision a z/OS middleware or software service using Cloud Provisioning & Management (CP&M) template.
+- Provision a z/OS middleware or software service by using an IBM Cloud Provisioning and Management (CP&M) template.
+
 - Template referenced by playbook must be published in z/OSMF Software Services Catalog.
+
+
+
+
 
 
 
 Variables
 ---------
 
+
+ 
+
 zmf_host
-  z/OSMF host name, specified via inventory file.
+  Hostname of the z/OSMF server, specified in the inventory file or vars file.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 zmf_port
-  z/OSMF port number, specified via inventory file.
+  Port number of the z/OSMF server, specified in the inventory file or vars file.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 zmf_user
-  z/OSMF username. Value for this variable can be specified in host specific variables file in *host_vars* directory or 
-  playbook can prompt user to provide value.
+  User name to be used for authenticating with the z/OSMF server.
+
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 zmf_password
-  z/OSMF user password  Value for this variable can be specified in host specific variables file in *host_vars* directory or 
-  playbook can prompt user to provide value.
+  Password to be used for authenticating with z/OSMF server.
+
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 instance_record_dir
-  Path of the directory that provision role will use to capture various information about provisioned instance in json format. 
-  
-  Value for this variable is specified in host specific variables file in *host_vars* directory.
+  Directory path that the provisioning role uses to capture various information (in JSON format) about the provisioned instance.
+
+
+  This variable can be specified in the inventory file or vars file.
+
 
   | **required**: True
   | **type**: str
-  | **default**: default value set in host_vars file is /tmp
+
+
+ 
 
 instance_info_json_path
-  Path to the file that holds provisioned instance information, `zmf_cpm_provision_software_service`_ role  
-  will automatically generate this variable in the format of ``<instance_record_dir>/<template_name>-<instance external_name>.json``
+  Directory path for the JSON file that holds provisioned instance information.
+
+
+  This role will automatically generate this variable in following format, ``<instance_record_dir>/<template_name>-<instance external_name>.json``
+
 
   | **required**: False
   | **type**: str
+
+
+ 
 
 cpm_template_name
-  Template name, i.e. software service to be provisioned.
+  Template name for the software service to be provisioned.
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 domain_name
-  Cloud domain name associated with the template.
+  Cloud domain name that is associated with the template.
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 tenant_name
-  Identifies the CP&M Tenant name associated with the user that is driving this role. 
-  
+  CP&M Tenant name that is associated with the user who is performing this role.
+
+
   This variable is required if *zmf_user* is associated with multiple CP&M tenants.
 
+
   | **required**: True
   | **type**: str
+
+
+ 
 
 systems_nicknames
-  System nick name as identified in z/OSMF. 
-  
-  If this variable is not specified, provisioning will take place on a system where z/OSMF is currently running.
+  System nickname as specified in the z/OSMF Systems table.
+
+  If this variable is not specified, provisioning is performed on the system where z/OSMF is currently running.
+
 
   | **required**: False
   | **type**: str
 
-input_vars
-  Input variable names and values for the software service to be provisioned 
-  
-  This variable is required if software service expects specific inputs from user. This is a dictionary variable and needs to be in following format.
 
-  [{ "name":"VAR1","value":"VAR1_VALUE"},{..},...]
+ 
+
+input_vars
+  Input variable names and values for the software service to be provisioned.
+
+
+  This variable is required if software service expects specific inputs from user. This is a dictionary variable and needs to be in following format, ``[{ "name":"VAR1","value":"VAR1_VALUE"},{..},...]``
+
 
   | **required**: False
   | **type**: dict
+
+
+ 
 
 zmf_body
-  Instead of specifying **domain-name**, **tenant-name**, **system-nicknames** and **input-variable**
-  individually, this parameter can be used to pass them as a dictionary variable. This variable needs to
-  be in following format.
+  Instead of specifying *domain-name*, *tenant-name*, *system-nicknames* and *input-variable* individually, this parameter can be used to pass them as a dictionary variable. This variable needs to be in following format,
 
-  {"domain-name":"{{ domain_name }}","tenant-name":"{{ tenant_name }}",
-      "systems-nicknames":["{{ systems_nicknames }}"],"input-variables":{{ input_vars }}}
+
+  ``{``
+
+  ``"domain-name":"{{ domain_name }}",``
+
+  ``"domain-name":"{{ domain_name }}",``
+
+  ``"systems-nicknames":["{{ systems_nicknames }}"],``
+
+  ``"input-variables":"{{ input_vars }}"``
+
+  ``}``
 
   | **required**: False
   | **type**: dict
 
+
+ 
+
 api_polling_retry_count
-  Total retries number before role exit with failure waiting on instance action to complete. 
-  
-  This variable is specified in host specific variables file in *host_vars* directory.
+  Total retry attempts allowed before the role exits with failure, waiting on the instance action to complete.
+
+
+  This variable can be specified in the inventory file or vars file.
+
 
   | **required**: True
   | **type**: int
-  | **default**: default value set in host_vars file is 50
+
+
+ 
 
 api_polling_interval_seconds
-  Interval time for each polling request in seconds. 
-  
-  This variable is specified in host specific variables file in *host_vars* directory.
+  Interval time (in seconds) for each polling request.
+
+
+  This variable can be specified in the inventory file or vars file.
+
 
   | **required**: True
   | **type**: int
-  | **default**: default value set in host_vars file is 10
 
-Dependencies
-------------
 
-None
 
-Requirements
-------------
-
-See the section `Requirements`_.
 
 Examples
 --------
@@ -149,29 +212,14 @@ Examples
 
    
    - name: test role for zmf_cpm_provision_software_service
-     hosts: cpmHost1 # need to match host nick name specified in hosts inventory file
-     gather_facts: no
-     collections:
-       - ibm.ibm_zosmf
+     include_role :
+       name: zmf_cpm_provision_software_service
      vars:
-       - name: zmf_user
-         prompt: "Enter your zOSMF username"
-         private: no
-
-       - name: zmf_password
-         prompt: "Enter your zOSMF password"
-         private: yes
-         
-       - name: instance_info_json_path  
-    tasks:
-      - include_role:
-          name: zmf_cpm_provision_software_service
-          vars:
-            cpm_template_name: "<fill-me-template-name>"    
-            domain_name: "<domain-name>" 
-            tenant_name: "<tenant-name>" 
-            systems_nicknames: "<system-name>"
-            input_vars: "<input-vars>"
+       cpm_template_name: "<fill-me-template-name>"
+       domain_name: "<domain-name>"
+       tenant_name: "<tenant-name>"
+       systems_nicknames: "<system-name>"
+       input_vars: "<input-vars>"
 
 
 
@@ -179,20 +227,12 @@ Notes
 -----
 
 .. note::
-   - When playbooks completes, a message shown in following example is displayed. This message includes  
-     a file path and file name where instance specific information is returned. This file is required for
-     `zmf_cpm_manage_software_service`_ and `zmf_cpm_remove_software_service`_ roles.
+   - When playbooks completes, a message shown in following example is displayed. This message includes a file path and file name where instance specific information is returned. This file is required for :ref:`zmf_cpm_manage_software_instance <zmf_cpm_manage_software_instance_module>` and :ref:`zmf_cpm_remove_software_instance <zmf_cpm_remove_software_instance_module>` roles.
 
-      TASK [ibm.ibm_zos_zosmf.zmf_cpm_provision_software_service : Display instance record file path] ********************************************************************
-        ok: [xxx] => {
-            "msg": "Instance record saved at: /tmp/xxx.json"
-            }
 
-Return
-------
-None
 
-# Roles don't return anything, this RETURN block must be defined and remain
-# empty for doc extraction tooling to avoid an error.
-RETURN = r"""
- """
+
+
+
+
+

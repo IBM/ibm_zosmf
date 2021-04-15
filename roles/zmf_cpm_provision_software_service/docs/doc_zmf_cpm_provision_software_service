@@ -1,0 +1,173 @@
+# Copyright (c) IBM Corporation 2021
+
+
+DOCUMENTATION = r"""
+role: zmf_cpm_provision_software_service
+short_description: provision a z/OS software service
+description:
+    - >
+      Provision a z/OS middleware or software service by using an IBM Cloud
+      Provisioning and Management (CP&M) template.
+    - >
+      Template referenced by playbook must be published in z/OSMF Software
+      Services Catalog.
+author:
+    - Hiren Shah (@shreeji818)
+options:
+    zmf_host:
+        description:
+            - >
+              Hostname of the z/OSMF server, specified in the inventory file
+              or vars file.
+        required: true
+        type: str
+    zmf_port:
+        description:
+            - >
+              Port number of the z/OSMF server, specified in the inventory
+              file or vars file.
+        required: true
+        type: str
+    zmf_user:
+        description:
+            - User name to be used for authenticating with the z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or vars
+              file, or prompted when playbook is run.
+        required: true
+        type: str
+    zmf_password:
+        description:
+            - Password to be used for authenticating with z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or vars
+              file, or prompted when playbook is run.
+        required: true
+        type: str
+    instance_record_dir:
+        description:
+            - >
+              Directory path that the provisioning role uses to capture
+              various information (in JSON format) about the provisioned
+              instance.
+            - >
+              This variable can be specified in the inventory file or vars
+              file.
+        required: true
+        type: str
+    instance_info_json_path:
+        description:
+            - >
+              Directory path for the JSON file that holds provisioned instance
+              information.
+            - >
+              This role will automatically generate this variable in following
+              format,
+              C(<instance_record_dir>/<template_name>-<instance external_name>.json)
+        required: false
+        type: str
+    cpm_template_name:
+        description:
+            - Template name for the software service to be provisioned.
+        required: true
+        type: str
+    domain_name:
+        description:
+            - Cloud domain name that is associated with the template.
+        required: true
+        type: str
+    tenant_name:
+        description:
+            - >
+              CP&M Tenant name that is associated with the user who is performing
+              this role.
+            - >
+              This variable is required if I(zmf_user) is associated with
+              multiple CP&M tenants.
+        required: true
+        type: str
+    systems_nicknames:
+        description:
+            - System nickname as specified in the z/OSMF Systems table.
+            - >
+              If this variable is not specified, provisioning is performed on
+              the system where z/OSMF is currently running.
+        required: false
+        type: str
+    input_vars:
+        description:
+            - >
+              Input variable names and values for the software service to be
+              provisioned.
+            - >
+              This variable is required if software service expects specific
+              inputs from user.
+              This is a dictionary variable and needs to be in following
+              format, C([{ "name":"VAR1","value":"VAR1_VALUE"},{..},...])
+        required: false
+        type: dict
+    zmf_body:
+        description:
+            - >
+              Instead of specifying I(domain-name), I(tenant-name),
+              I(system-nicknames) and I(input-variable) individually, this
+              parameter can be used to pass them as a dictionary variable.
+              This variable needs to be in following format,
+            - C({)
+            - C("domain-name":"{{ domain_name }}",)
+            - C("domain-name":"{{ domain_name }}",)
+            - C("systems-nicknames":["{{ systems_nicknames }}"],)
+            - C("input-variables":"{{ input_vars }}")
+            - C(})
+        required: false
+        type: dict
+    api_polling_retry_count:
+        description:
+            - >
+              Total retry attempts allowed before the role exits with failure,
+              waiting on the instance action to complete.
+            - >
+              This variable can be specified in the inventory file or vars
+              file.
+        required: true
+        type: int
+    api_polling_interval_seconds:
+        description:
+            - >
+              Interval time (in seconds) for each polling request.
+            - >
+              This variable can be specified in the inventory file or vars
+              file.
+        required: true
+        type: int
+notes:
+    - >
+      When playbooks completes, a message shown in following example is
+      displayed.
+      This message includes a file path and file name where instance specific
+      information is returned.
+      This file is required for M(zmf_cpm_manage_software_instance) and
+      M(zmf_cpm_remove_software_instance) roles.
+"""
+
+EXAMPLES = r"""
+- name: test role for zmf_cpm_provision_software_service
+  include_role :
+    name: zmf_cpm_provision_software_service
+  vars:
+    cpm_template_name: "<fill-me-template-name>"
+    domain_name: "<domain-name>"
+    tenant_name: "<tenant-name>"
+    systems_nicknames: "<system-name>"
+    input_vars: "<input-vars>"
+"""
+
+# Roles don't return anything.
+# But RETURN block must be defined for doc extraction tooling to avoid error.
+# The content in RETURN block will not be display in doc-site.
+RETURN = r"""
+changed:
+    description: Indicates if any change is made during the role operation.
+    returned: always
+    type: bool
+"""

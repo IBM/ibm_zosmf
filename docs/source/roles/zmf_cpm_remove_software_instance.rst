@@ -1,11 +1,12 @@
-# Copyright (c) IBM Corporation 2021
 
 :github_url: https://github.com/IBM/ibm_zosmf/tree/master/plugins/roles/zmf_cpm_remove_software_instance
 
-.. _zmf_cpm_remove_software_instance:
+.. _zmf_cpm_remove_software_instance_module:
 
-zmf_cpm_remove_software_instance
-================================
+
+zmf_cpm_remove_software_instance -- remove a z/OS software instance
+===================================================================
+
 
 .. contents::
    :local:
@@ -14,54 +15,75 @@ zmf_cpm_remove_software_instance
 
 Synopsis
 --------
-Remove a deprovisioned instance of z/OS middleware or software service
+- Remove a deprovisioned instance of z/OS middleware or software service.
+
+
+
+
+
 
 Variables
 ---------
 
+
+ 
+
 zmf_host
-  z/OSMF host name, specified via inventory file.
+  Hostname of the z/OSMF server, specified in the inventory file or vars file.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 zmf_port
-  z/OSMF port number, specified via inventory file.
+  Port number of the z/OSMF server, specified in the inventory file or vars file.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 zmf_user
-  z/OSMF username. Value for this variable can be specified in host specific variables file in *host_vars* directory or 
-  playbook can prompt user to provide value.
+  User name to be used for authenticating with the z/OSMF server.
+
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 zmf_password
-  z/OSMF user password  Value for this variable can be specified in host specific variables file in *host_vars* directory or 
-  playbook can prompt user to provide value.
+  Password to be used for authenticating with z/OSMF server.
+
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
+
 
   | **required**: True
   | **type**: str
+
+
+ 
 
 instance_info_json_path
-  Path to the json file that holds provisioned instance information. 
-  
-  Specify the file name that is generated when `zmf_cpm_provision_software_service`_ role was performed.
+  Directory path for the JSON file that holds provisioned instance information.
+
+
+  Specify the file name that was generated when the :ref:`zmf_cpm_provision_software_service <zmf_cpm_provision_software_service_module>` role was performed.
+
 
   | **required**: True
   | **type**: str
 
-Dependencies
-------------
 
-None
 
-Requirements
-------------
-
-See the section `Requirements`_.
 
 Examples
 --------
@@ -70,29 +92,15 @@ Examples
 
    
    - name: test role for zmf_cpm_remove_software_instance
-     hosts: cpmHost1 # need to match host nick name specified in hosts inventory file
-     gather_facts: no
-     collections:
-       - ibm.ibm_zosmf
-     vars_prompt:
-       - name: zmf_user
-         prompt: "Enter your zOSMF username"
-         private: no
+     include_role :
+       name: zmf_cpm_remove_software_instance
+     vars:
+       instance_info_json_path: "<full-instance-json-file-path>"
 
-       - name: zmf_password
-         prompt: "Enter your zOSMF password"
-         private: yes
-     tasks:
-       - include_role:
-           name: zmf_cpm_remove_software_instance
-         vars:
-           instance_info_json_path: "<full-instance-json-file-path>"
 
-Return
-------
-None
 
-# Roles don't return anything, this RETURN block must be defined and remain
-# empty for doc extraction tooling to avoid an error.
-RETURN = r"""
- """
+
+
+
+
+

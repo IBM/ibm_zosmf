@@ -15,9 +15,11 @@ zmf_authenticate -- Authenticate with z/OSMF server
 
 Synopsis
 --------
-- Authenticate with z/OSMF server by either username/password or HTTPS client authenticate.
+- Authenticate with z/OSMF server by either username/password or HTTPS  client authenticate.
+
 - Return the authentication credentials for successful authentication.
 - The credential can be then used for succeeding Ansible tasks which call z/OSMF Ansible module or role.
+
 
 
 
@@ -53,6 +55,7 @@ zmf_user
 
   If *zmf_crt* and *zmf_key* are supplied, *zmf_user* and *zmf_password* are ignored.
 
+
   | **required**: False
   | **type**: str
 
@@ -66,6 +69,7 @@ zmf_password
 
   If *zmf_crt* and *zmf_key* are supplied, *zmf_user* and *zmf_password* are ignored.
 
+
   | **required**: False
   | **type**: str
 
@@ -74,6 +78,7 @@ zmf_password
 
 zmf_crt
   Location of the PEM-formatted certificate chain file to be used for HTTPS client authentication.
+
 
   Required when *zmf_user* and *zmf_password* are not supplied.
 
@@ -85,6 +90,7 @@ zmf_crt
 
 zmf_key
   Location of the PEM-formatted file with your private key to be used for HTTPS client authentication.
+
 
   Required when *zmf_user* and *zmf_password* are not supplied.
 
@@ -112,7 +118,7 @@ Examples
        zmf_crt: "/file_with_your_certificate_chain.crt"
        zmf_key: "/file_with_your_private_key.key"
 
-   - name: Authenticate with z/OSMF server by prompting to input the sensitive username/password when running the playbook
+   - name: Authenticate with z/OSMF server by prompting to input username/password
      vars_prompt:
        - name: zmf_user
          prompt: "Enter your zOSMF username"
@@ -148,9 +154,10 @@ Return Values
       LtpaToken2
         The value of Lightweight Third Party Access (LTPA) token, which supports strong encryption.
 
+
         | **returned**: on success
         | **type**: str
-        | **sample**: yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCudvhxM+JWpC9TzhM4SEHRe/Vb3dC......
+        | **sample**: yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCa......
 
 
       jwtToken
@@ -158,7 +165,7 @@ Return Values
 
         | **returned**: on success
         | **type**: str
-        | **sample**: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiQmVhcmVyIiwic3ViIjoiem9zbWZhZ.....
+        | **sample**: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlmVhcmVyIiwicie......
 
 
       zmf_host

@@ -1,7 +1,7 @@
 
 :github_url: https://github.com/IBM/ibm_zosmf/tree/master/plugins/roles/zmf_workflow_complete
 
-.. _zmf_workflow_complete_role:
+.. _zmf_workflow_complete_module:
 
 
 zmf_workflow_complete -- complete a z/OS workflow
@@ -15,11 +15,17 @@ zmf_workflow_complete -- complete a z/OS workflow
 
 Synopsis
 --------
-- Complete a z/OS workflow, either forcibly or idempotently, by executing z/OSMF workflows that are located on z/OS system.
+- Complete a z/OS workflow, either forcibly or idempotently.
+- This role runs z/OSMF workflows that are located on the target z/OS managed node. The workflows must be z/OSMF XML workflows and be located in a z/OS UNIX System Services (z/OS UNIX) filesystem.
 
-- The workflows must be z/OSMF XML workflows and located on UNIX System Services (USS).
 
 
+Dependencies
+------------
+
+The below requirements are needed on the host that executes this role.
+
+- Module :ref:`zmf_workflow <zmf_workflow_module>`
 
 
 
@@ -32,22 +38,18 @@ Variables
  
 
 zmf_host
-  Hostname of the z/OSMF server.
+  Hostname of the z/OSMF server, specified in the inventory file or vars file.
 
-  If *zmf_credential* is supplied, *zmf_host* is ignored.
 
-  If *zmf_credential* is not supplied, *zmf_host* is required.
-
-  | **required**: False
+  | **required**: True
   | **type**: str
 
 
  
 
 zmf_port
-  Port number of the z/OSMF server.
+  Port number of the z/OSMF server, specified in the inventory file or vars file.
 
-  If *zmf_credential* is supplied, *zmf_port* is ignored.
 
   | **required**: False
   | **type**: int
@@ -56,15 +58,14 @@ zmf_port
  
 
 zmf_user
-  User name to be used for authenticating with z/OSMF server.
+  User name to be used for authenticating with the z/OSMF server.
 
-  If *zmf_credential* is supplied, *zmf_user* is ignored.
-
-
-  If *zmf_credential* is not supplied, *zmf_user* is required when *zmf_crt* and *zmf_key* are not supplied.
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
 
 
-  If *zmf_credential* is not supplied and *zmf_crt* and *zmf_key* are supplied, *zmf_user* and *zmf_password* are ignored.
+  Required when *zmf_crt* and *zmf_key* are not supplied.
+
+  If *zmf_crt* and *zmf_key* are supplied, *zmf_user* and *zmf_password* are ignored.
 
 
   | **required**: False
@@ -76,13 +77,12 @@ zmf_user
 zmf_password
   Password to be used for authenticating with z/OSMF server.
 
-  If *zmf_credential* is supplied, *zmf_password* is ignored.
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
 
 
-  If *zmf_credential* is not supplied, *zmf_password* is required when *zmf_crt* and *zmf_key* are not supplied.
+  Required when *zmf_crt* and *zmf_key* are not supplied.
 
-
-  If *zmf_credential* is not supplied and *zmf_crt* and *zmf_key* are supplied, *zmf_user* and *zmf_password* are ignored.
+  If *zmf_crt* and *zmf_key* are supplied, *zmf_user* and *zmf_password* are ignored.
 
 
   | **required**: False
@@ -95,11 +95,10 @@ zmf_crt
   Location of the PEM-formatted certificate chain file to be used for HTTPS client authentication.
 
 
-  If *zmf_credential* is supplied, *zmf_crt* is ignored.
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
 
 
-  If *zmf_credential* is not supplied, *zmf_crt* is required when *zmf_user* and *zmf_password* are not supplied.
-
+  Required when *zmf_user* and *zmf_password* are not supplied.
 
   | **required**: False
   | **type**: str
@@ -111,11 +110,10 @@ zmf_key
   Location of the PEM-formatted file with your private key to be used for HTTPS client authentication.
 
 
-  If *zmf_credential* is supplied, *zmf_key* is ignored.
+  This variable can be specified in the inventory file or vars file, or prompted when playbook is run.
 
 
-  If *zmf_credential* is not supplied, *zmf_key* is required when *zmf_user* and *zmf_password* are not supplied.
-
+  Required when *zmf_user* and *zmf_password* are not supplied.
 
   | **required**: False
   | **type**: str
@@ -153,7 +151,7 @@ workflow_owner
  
 
 workflow_file_system
-  Nickname of the system on which the specified workflow definition file and any related files reside.
+  Nickname of the system on which the specified workflow definition file resides, along with any related files.
 
 
   | **required**: False
@@ -163,7 +161,7 @@ workflow_file_system
  
 
 workflow_vars_file
-  Location of the optional properties file to be used to pre-specify the values of one or more variables that are defined in workflow definition file.
+  Location of the optional properties file to be used to pre-specify the values of one or more variables in the workflow definition file.
 
 
   | **required**: False
@@ -260,10 +258,10 @@ workflow_delete_completed_jobs
  
 
 workflow_resolve_conflict_by_using
-  Specifies how to handle variable conflicts if any are detected at workflow creation time.
+  Specifies how to handle variable conflicts, if any are detected at workflow creation time.
 
 
-  Such conflicts can be found when z/OSMF Workflows task reads the output file from a step that runs a REXX exec or UNIX shell script.
+  Such conflicts can be found when the z/OSMF Workflows task reads the output file from a step that runs a REXX exec or UNIX shell script.
 
 
   | **required**: False
@@ -296,7 +294,8 @@ workflow_perform_subsequent
  
 
 workflow_notification_url
-  URL to be used for notification when the workflow is started.
+  URL to be used for receiving notifications when the workflow is started.
+
 
   | **required**: False
   | **type**: str
@@ -308,10 +307,10 @@ force_complete
   Specify whether to complete the workflow instance forcibly or idempotently.
 
 
-  If *force_complete=true* (Forcibly), the role will delete the workflow instance if it exists in the z/OSMF server, then create a new workflow instance and start it on z/OS systems, periodically check the workflow status and return the final result when the workflow stops running.
+  If *force_complete=true* (Forcibly), this role will delete the workflow instance if it exists in the z/OSMF server, create a new workflow instance and start it on each target z/OS system, and periodically check the workflow status and return the final result when the workflow completes.
 
 
-  If *force_complete=false* (Idempotently), the role will create the workflow instance if it does not exist in the z/OSMF server, start the workflow on z/OS systems, and periodically check the workflow status and return the final result when the workflow stops running.
+  If *force_complete=false* (Idempotently), this role will create the workflow instance if it does not exist in the z/OSMF server, start the workflow on each target z/OS system, and periodically check the workflow status and return the final result when the workflow completes.
 
 
   | **required**: False
@@ -322,7 +321,7 @@ force_complete
  
 
 complete_check_times
-  The maximum number of time that is used for periodic checks of the workflow status.
+  The maximum number of checks that can be made of the workflow status.
 
 
   | **required**: False
@@ -333,7 +332,7 @@ complete_check_times
  
 
 complete_check_delay
-  The interval time (seconds) between periodic checks of the workflow status.
+  The interval time (in seconds) between periodic checks of the workflow status.
 
 
   | **required**: False
@@ -350,7 +349,7 @@ Examples
 
    
    - name: sample of completing a z/OS workflow
-     include_module:
+     include_role :
        name: zmf_workflow_complete
      vars:
        workflow_name: "ansible_sample_workflow_{{ inventory_hostname }}"
@@ -365,7 +364,7 @@ Notes
 -----
 
 .. note::
-   - Completing a z/OS workflow found on Ansible control node is currently not supported.
+   - Submitting z/OSMF workflows found on Ansible control node is currently not supported.
 
 
 

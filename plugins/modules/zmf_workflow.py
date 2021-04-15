@@ -18,8 +18,10 @@ DOCUMENTATION = r"""
 module: zmf_workflow
 short_description: Operate z/OS workflows
 description:
-    - Operate z/OS workflows by issuing z/OSMF workflow RESTful services.
-    - This module supports to compare, start, delete and check a workflow.
+    - Operate z/OS workflows through the use of z/OSMF workflow REST services.
+    - >
+      This module supports to compare, start, delete, and check the status of
+      a workflow.
 version_added: "2.9"
 author:
     - Yang Cao (@zosmf-Young)
@@ -29,7 +31,7 @@ options:
         description:
             - >
               Authentication credentials, returned by module
-              C(zmf_authenticate), for the successful authentication with
+              M(zmf_authenticate), for successful authentication with the
               z/OSMF server.
             - >
               If I(zmf_credential) is supplied, I(zmf_host), I(zmf_port),
@@ -42,8 +44,8 @@ options:
             LtpaToken2:
                 description:
                     - >
-                      The value of Lightweight Third Party Access (LTPA) token,
-                       which supports strong encryption.
+                      The value of the Lightweight Third Party Access (LTPA)
+                      token, which supports strong encryption.
                     - >
                       If I(jwtToken) is not supplied, I(LtpaToken2) is
                       required.
@@ -53,7 +55,7 @@ options:
             jwtToken:
                 description:
                     - >
-                      The value of JSON Web token, which supports strong
+                      The value of the JSON web token, which supports strong
                       encryption.
                     - >
                       If I(LtpaToken2) is not supplied, I(jwtToken) is
@@ -140,14 +142,14 @@ options:
         default: null
     state:
         description:
-            - Final state desired for the specified workflow.
+            - The desired final state for the specified workflow.
             - >
               If I(state=existed), indicate whether a workflow with the given
               name does not exist, or exists with same or different definition
-              file, variables and properties.
+              file, variables, and properties.
             - >
-              If I(state=started), create a workflow if it does not exist, and
-              start it.
+              If I(state=started), create a workflow if it does not exist,
+              then start it.
             - If I(state=deleted), delete a workflow if it exists.
             - If I(state=check), check the status of a workflow.
         required: true
@@ -183,9 +185,9 @@ options:
               Nickname of the target z/OS system on which the workflow is to be
               performed.
             - >
-              This variable should be specified as C({{ inventory_hostname }}),
-              and its value should be specified in the inventory file as a
-              managed node.
+              This variable should be specified as C({{ inventory_hostname }}).
+              Its value should be specified in the inventory file as a managed
+              node.
         required: false
         type: str
         default: null
@@ -252,7 +254,10 @@ options:
         default: true
     workflow_access_type:
         description:
-            - Access type for the workflow when the workflow is created.
+            - Access type for the workflow when the workflow is created. 
+            - >
+              The access type determines which users can view the workflow
+              steps and edit the step notes.
         required: false
         type: str
         default: Public
@@ -263,8 +268,8 @@ options:
     workflow_account_info:
         description:
             - >
-              For a workflow that submits a batch job, this variable specifies
-              the account information for the JCL JOB statement.
+              For a workflow step that submits a batch job, this variable
+              specifies the account information for the JCL JOB statement.
         required: false
         type: str
         default: null
@@ -318,13 +323,15 @@ options:
         default: true
     workflow_notification_url:
         description:
-            - URL to be used for notification when the workflow is started.
+            - >
+              URL to be used for receiving notifications when the workflow is
+              started.
         required: false
         type: str
         default: null
     workflow_category:
         description:
-            - Category for the workflow.
+            - Category of the workflow, which is general or configuration.
         required: false
         type: str
         default: null
@@ -339,7 +346,9 @@ options:
         default: null
     workflow_key:
         description:
-            - Generated key to uniquely identify the workflow instance.
+            - >
+              A string value, generated by z/OSMF to uniquely identify the
+              workflow instance.
             - >
               Either I(workflow_name) or I(workflow_key) is required when
               I(state=started/deleted/check).
@@ -929,8 +938,8 @@ def action_check(module):
                             + ' is not completed: No step is started.'
                     else:
                         check_result['message'] = 'Workflow instance named: ' \
-                            + module.params['workflow_name'] \ 
-                            ' is not completed: No step is started.'
+                            + module.params['workflow_name'] \
+                            + ' is not completed: No step is started.'
                 else:
                     current_step_message = ''
                     next_step_message = ''
