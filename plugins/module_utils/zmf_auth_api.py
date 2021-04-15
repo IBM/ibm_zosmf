@@ -68,6 +68,6 @@ def call_auth_api(module, session, api):
     """
     zmf_api = __get_auth_api_argument_spec(api)
     zmf_api_url = __get_auth_api_url(module, zmf_api['url'])
-    return handle_request(module, session, zmf_api['method'], zmf_api_url, 
-                          zmf_api['args'], zmf_api['ok_rcode'], 
+    return handle_request(module, session, zmf_api['method'], zmf_api_url,
+                          zmf_api['args'], zmf_api['ok_rcode'],
                           zmf_api['header'])

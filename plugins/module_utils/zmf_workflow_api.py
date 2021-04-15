@@ -62,11 +62,11 @@ def __get_workflow_apis():
                     required=True, type='str', nickname='workflow_file'
                 ),
                 workflowDefinitionFileSystem=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     nickname='workflow_file_system'
                 ),
                 returnData=dict(
-                    required=False, type='str', default='variables', 
+                    required=False, type='str', default='variables',
                     nickname=''
                 )
             ),
@@ -79,7 +79,7 @@ def __get_workflow_apis():
                 + version + '/workflows/{workflowKey}',
             args=dict(
                 returnData=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     default='steps,variables', nickname=''
                 )
             ),
@@ -98,18 +98,18 @@ def __get_workflow_apis():
                     required=True, type='str', nickname='workflow_file'
                 ),
                 workflowDefinitionFileSystem=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     nickname='workflow_file_system'
                 ),
                 variableInputFile=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     nickname='workflow_vars_file'
                 ),
                 variables=dict(
                     required=False, type='dict', nickname='workflow_vars'
                 ),
                 resolveGlobalConflictByUsing=dict(
-                    required=False, type='str', default='global', 
+                    required=False, type='str', default='global',
                     nickname='workflow_resolve_global_conflict_by_using',
                     choices=['global', 'input']
                 ),
@@ -123,24 +123,24 @@ def __get_workflow_apis():
                     required=False, type='str', nickname='workflow_comments'
                 ),
                 assignToOwner=dict(
-                    required=False, type='bool', default=True, 
+                    required=False, type='bool', default=True,
                     nickname='workflow_assign_to_owner'
                 ),
                 accessType=dict(
-                    required=False, type='str', default='Public', 
+                    required=False, type='str', default='Public',
                     nickname='workflow_access_type',
                     choices=['Public', 'Restricted', 'Private']
                 ),
                 accountInfo=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     nickname='workflow_account_info'
                 ),
                 jobStatement=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     nickname='workflow_job_statement'
                 ),
                 deleteCompletedJobs=dict(
-                    required=False, type='bool', default=False, 
+                    required=False, type='bool', default=False,
                     nickname='workflow_delete_completed_jobs'
                 )
             ),
@@ -153,24 +153,24 @@ def __get_workflow_apis():
                 + version + '/workflows/{workflowKey}/operations/start',
             args=dict(
                 resolveConflictByUsing=dict(
-                    required=False, type='str', default='outputFileValue', 
+                    required=False, type='str', default='outputFileValue',
                     nickname='workflow_resolve_conflict_by_using',
                     choices=[
-                        'outputFileValue', 
-                        'existingValue', 
+                        'outputFileValue',
+                        'existingValue',
                         'leaveConflict'
                     ]
                 ),
                 stepName=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     nickname='workflow_step_name'
                 ),
                 performSubsequent=dict(
-                    required=False, type='bool', default=True, 
+                    required=False, type='bool', default=True,
                     nickname='workflow_perform_subsequent'
                 ),
                 notificationUrl=dict(
-                    required=False, type='str', 
+                    required=False, type='str',
                     nickname='workflow_notification_url'
                 )
             ),
@@ -217,8 +217,8 @@ def __get_workflow_api_url(module, url, workflow_key):
     for x in matchObj:
         if x == 'workflowKey':
             if workflow_key is None or workflow_key.strip() == '':
-                module.fail_json(msg='Missing required argument or invalid' \
-                    + ' argument: workflow_key.')
+                module.fail_json(msg='Missing required argument or invalid'
+                                 + ' argument: workflow_key.')
             else:
                 url = re.sub('{' + x + '}', workflow_key.strip(), url)
         elif x == 'zmf_port' and module.params[x] == '':
@@ -240,32 +240,32 @@ def __get_workflow_api_params(module, args):
         if k == 'returnData':
             params[k] = v['default']
         elif k == 'owner':
-            if (module.params[v['nickname']] is not None 
+            if (module.params[v['nickname']] is not None
                     and module.params[v['nickname']].strip() != ''):
                 params[k] = module.params[v['nickname']].strip()
-            elif (module.params['zmf_user'] is not None 
+            elif (module.params['zmf_user'] is not None
                     and module.params['zmf_user'].strip() != ''):
                 params[k] = module.params['zmf_user'].strip()
             elif v['required'] is True:
-                module.fail_json(msg='Missing required argument or invalid' \
-                    + ' argument: ' + v['nickname'] + '.')
-        elif (v['nickname'] != '' 
-                and module.params[v['nickname']] is not None 
+                module.fail_json(msg='Missing required argument or invalid'
+                                 + ' argument: ' + v['nickname'] + '.')
+        elif (v['nickname'] != ''
+                and module.params[v['nickname']] is not None
                 and str(module.params[v['nickname']]).strip() != ''):
             # format the input for params with choices
             if 'choices' in v:
                 found = False
                 for vv in v['choices']:
-                    if (module.params[v['nickname']].strip().lower() 
+                    if (module.params[v['nickname']].strip().lower()
                             == vv.lower()):
                         found = True
                         params[k] = vv
                         break
                 if found is False:
                     module.fail_json(
-                        msg='Missing required argument or invalid argument: ' \
-                            + v['nickname'] \
-                            + '. The following values are valid: ' \
+                        msg='Missing required argument or invalid argument: '
+                            + v['nickname']
+                            + '. The following values are valid: '
                             + str(v['choices']) + '.'
                     )
             elif v['type'] == 'str':
@@ -273,8 +273,8 @@ def __get_workflow_api_params(module, args):
             else:
                 params[k] = module.params[v['nickname']]
         elif v['nickname'] != '' and v['required'] is True:
-            module.fail_json(msg='Missing required argument or invalid' \
-                + ' argument: ' + v['nickname'] + '.')
+            module.fail_json(msg='Missing required argument or invalid'
+                             + ' argument: ' + v['nickname'] + '.')
     if 'variables' in params:
         params['variables'] = __parse_dict_vars(module, params['variables'])
         if params['variables'] == []:
@@ -292,7 +292,8 @@ def __parse_dict_vars(module, dict_vars):
     list_vars = []
     for k, v in dict_vars.items():
         if isinstance(v, dict):
-            module.fail_json(msg='Invalid argument: workflow_vars. Only ' \
+            module.fail_json(
+                msg='Invalid argument: workflow_vars. Only '
                 + 'string type or array type is accepted for each variable.')
         elif isinstance(v, list):
             v = json.dumps(v)
@@ -312,12 +313,12 @@ def call_workflow_api(module, session, api, workflow_key):
     zmf_api = __get_workflow_api_argument_spec(api)
     zmf_api_url = __get_workflow_api_url(module, zmf_api['url'], workflow_key)
     zmf_api_params = __get_workflow_api_params(module, zmf_api['args'])
-    if ((module.params['state'] == 'existed' 
+    if ((module.params['state'] == 'existed'
             or module.params['state'] == 'deleted') and api == 'list'):
         v = zmf_api_params['workflowName']
         zmf_api_params.clear()
         zmf_api_params['workflowName'] = v
-    return handle_request(module, session, zmf_api['method'], 
+    return handle_request(module, session, zmf_api['method'],
                           zmf_api_url, zmf_api_params, zmf_api['ok_rcode'])
 
 

@@ -19,13 +19,13 @@ module: zmf_authenticate
 short_description: Authenticate with z/OSMF server
 description:
     - >
-      Authenticate with z/OSMF server by either username/password or HTTPS 
+      Authenticate with z/OSMF server by either username/password or HTTPS
       client authenticate.
     - Return the authentication credentials for successful authentication.
     - >
       The credential can be then used for succeeding Ansible tasks which call
       z/OSMF Ansible module or role.
-version_added: "2.9"
+version_added: "1.0.0"
 author:
     - Yang Cao (@zosmf-Young)
     - Yun Juan Yang (@zosmf-Robyn)
@@ -55,7 +55,7 @@ options:
         description:
             - Password to be used for authenticating with z/OSMF server.
             - Required when I(zmf_crt) and I(zmf_key) are not supplied.
-            - > 
+            - >
               If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and
               I(zmf_password) are ignored.
         required: false
@@ -63,7 +63,7 @@ options:
         default: null
     zmf_crt:
         description:
-            - > 
+            - >
               Location of the PEM-formatted certificate chain file to be used
               for HTTPS client authentication.
             - Required when I(zmf_user) and I(zmf_password) are not supplied.
@@ -118,7 +118,7 @@ changed:
     returned: always
     type: bool
 LtpaToken2:
-    description: 
+    description:
         - >
           The value of Lightweight Third Party Access (LTPA) token, which
           supports strong encryption.
@@ -146,9 +146,7 @@ from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_util import (
     get_connect_session
 )
 from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_auth_api \
-import (
-    call_auth_api
-)
+    import call_auth_api
 import re
 
 
@@ -164,26 +162,27 @@ def authenticate(module):
     response_getAuth = call_auth_api(module, session, 'getAuth')
     if isinstance(response_getAuth, dict):
         if ('Set-Cookie' in response_getAuth
-                and ('LtpaToken2' in response_getAuth['Set-Cookie'] 
-                    or 'jwtToken' in response_getAuth['Set-Cookie'])):
+                and ('LtpaToken2' in response_getAuth['Set-Cookie']
+                     or 'jwtToken' in response_getAuth['Set-Cookie'])):
             auth = dict()
             if 'LtpaToken2' in response_getAuth['Set-Cookie']:
                 auth['LtpaToken2'] = \
-                    re.findall('LtpaToken2=(.+?);', 
+                    re.findall('LtpaToken2=(.+?);',
                                response_getAuth['Set-Cookie'])[0]
             if 'jwtToken' in response_getAuth['Set-Cookie']:
                 auth['jwtToken'] = \
-                    re.findall('jwtToken=(.+?);', 
+                    re.findall('jwtToken=(.+?);',
                                response_getAuth['Set-Cookie'])[0]
             auth['zmf_host'] = module.params['zmf_host']
             auth['zmf_port'] = module.params['zmf_port']
             module.exit_json(**auth)
         else:
-            module.fail_json(msg='Failed to authenticate with z/OSMF server ' \
+            module.fail_json(
+                msg='Failed to authenticate with z/OSMF server '
                 + '---- Cannot obtain the authentication token.')
     else:
-        module.fail_json(msg='Failed to authenticate with z/OSMF server ---- '\
-            + response_getAuth)
+        module.fail_json(msg='Failed to authenticate with z/OSMF server ---- '
+                         + response_getAuth)
 
 
 def main():

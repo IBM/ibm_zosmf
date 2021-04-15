@@ -1,11 +1,7 @@
 # Copyright (c) IBM Corporation 2020
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
-from __future__ import (
-    absolute_import, 
-    division, 
-    print_function
-)
+from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import json
@@ -56,7 +52,7 @@ def get_connect_session(module):
     :rtype: Session
     """
     if requests is None:
-        module.fail_json(msg='Missing required lib: requests.', 
+        module.fail_json(msg='Missing required lib: requests.',
                          exception=LIB_IMP_ERR)
     session = requests.Session()
     crt = module.params['zmf_crt']
@@ -76,18 +72,18 @@ def get_connect_session(module):
         module.params['zmf_host'] = auth['zmf_host']
         module.params['zmf_port'] = auth['zmf_port']
         return session
-    elif ((crt is not None and crt.strip() != '') 
+    elif ((crt is not None and crt.strip() != '')
             and (key is not None and key.strip() != '')):
         session.cert = (crt.strip(), key.strip())
         return session
-    elif ((user is not None and user.strip() != '') 
+    elif ((user is not None and user.strip() != '')
             and (pw is not None and pw.strip() != '')):
         session.auth = (user.strip(), pw.strip())
         return session
     else:
         # fail the module since auth is must for zosmf connection
-        module.fail_json(msg='HTTP setup error: either zmf_user/zmf_password' \
-            + ' or zmf_crt/zmf_key are required.')
+        module.fail_json(msg='HTTP setup error: either zmf_user/zmf_password'
+                         + ' or zmf_crt/zmf_key are required.')
 
 
 def __get_request_headers():
@@ -98,7 +94,7 @@ def __get_request_headers():
     return {'X-CSRF-ZOSMF-HEADER': 'ZOSMF'}
 
 
-def handle_request(module, session, method, url, params=None, rcode=200, 
+def handle_request(module, session, method, url, params=None, rcode=200,
                    header=None, timeout=30):
     """
     Return the response or error message of HTTP request.
@@ -117,18 +113,18 @@ def handle_request(module, session, method, url, params=None, rcode=200,
         headers.update(header)
     try:
         if method == 'get':
-            response = session.get(url, params=params, headers=headers, 
+            response = session.get(url, params=params, headers=headers,
                                    verify=False, timeout=timeout)
         elif method == 'put':
-            response = session.put(url, data=json.dumps(params), 
-                                   headers=headers, verify=False, 
+            response = session.put(url, data=json.dumps(params),
+                                   headers=headers, verify=False,
                                    timeout=timeout)
         elif method == 'post':
-            response = session.post(url, data=json.dumps(params), 
-                                    headers=headers, verify=False, 
+            response = session.post(url, data=json.dumps(params),
+                                    headers=headers, verify=False,
                                     timeout=timeout)
         elif method == 'delete':
-            response = session.delete(url, headers=headers, verify=False, 
+            response = session.delete(url, headers=headers, verify=False,
                                       timeout=timeout)
     except Exception as ex:
         module.fail_json(msg='HTTP request error: ' + repr(ex))
@@ -167,26 +163,26 @@ def handle_request_raw(module, session, method, url, params=None, header=None,
         headers.update(header)
     try:
         if method == 'get':
-            response = session.get(url, params=params, headers=headers, 
+            response = session.get(url, params=params, headers=headers,
                                    verify=False, timeout=timeout)
         elif method == 'put':
             if body is not None:
-                response = session.put(url, data=body, headers=headers, 
+                response = session.put(url, data=body, headers=headers,
                                        verify=False, timeout=timeout)
             else:
-                response = session.put(url, data=json.dumps(params), 
-                                       headers=headers, verify=False, 
+                response = session.put(url, data=json.dumps(params),
+                                       headers=headers, verify=False,
                                        timeout=timeout)
         elif method == 'post':
             if body is not None:
-                response = session.post(url, data=body, headers=headers, 
+                response = session.post(url, data=body, headers=headers,
                                         verify=False, timeout=timeout)
             else:
-                response = session.post(url, data=json.dumps(params), 
-                                        headers=headers, verify=False, 
+                response = session.post(url, data=json.dumps(params),
+                                        headers=headers, verify=False,
                                         timeout=timeout)
         elif method == 'delete':
-            response = session.delete(url, headers=headers, verify=False, 
+            response = session.delete(url, headers=headers, verify=False,
                                       timeout=timeout)
     except Exception as ex:
         module.fail_json(msg='HTTP request error: ' + repr(ex))
@@ -208,7 +204,7 @@ def cmp_list(list1, list2):
         for v in list1:
             found = False
             for vv in list2:
-                if ((isinstance(v, str) or isinstance(v, bool)) 
+                if ((isinstance(v, str) or isinstance(v, bool))
                         and (isinstance(vv, str) or isinstance(vv, bool))):
                     if str(v).strip().upper() == str(vv).strip().upper():
                         found = True
