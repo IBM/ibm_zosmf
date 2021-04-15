@@ -117,7 +117,9 @@ Examples
            instance_action_name: "<action-name>"
            instance_info_json_path: "<full-instance-json-file-path>"
 
-           
+Return
+------
+None          
 
 # Roles don't return anything, this RETURN block must be defined and remain
 # empty for doc extraction tooling to avoid an error.

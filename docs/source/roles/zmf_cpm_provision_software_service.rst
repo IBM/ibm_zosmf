@@ -188,6 +188,10 @@ Notes
             "msg": "Instance record saved at: /tmp/xxx.json"
             }
 
+Return
+------
+None
+
 # Roles don't return anything, this RETURN block must be defined and remain
 # empty for doc extraction tooling to avoid an error.
 RETURN = r"""
