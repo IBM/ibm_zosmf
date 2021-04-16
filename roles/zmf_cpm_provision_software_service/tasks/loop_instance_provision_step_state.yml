@@ -12,16 +12,16 @@
     - name: Retrieve provision step information
       uri:
         url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr/{{ instance_object_id }}"
-        return_content: yes
+        return_content: true
         user: "{{ zmf_user| trim  }}"
         password: "{{ zmf_password| trim  }}"
-        force_basic_auth: yes
+        force_basic_auth: true
         headers:
           Host: "{{ zmf_host }}"
           Origin: "https://{{ zmf_host }}"
         method: GET
         status_code: "200"
-        validate_certs: no
+        validate_certs: false
       delegate_to: localhost
       register: results
       no_log: true

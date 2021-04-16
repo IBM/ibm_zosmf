@@ -17,5 +17,5 @@ galaxy_info:
   platforms:
     - name: GenericLinux
       versions:
-      - all
+        - all
 dependencies: []
