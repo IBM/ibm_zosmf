@@ -68,12 +68,13 @@ pipeline {
         steps {
 		    echo 'sanity test'
 		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf") {
-                	    sh "pwd"
+                sh "pwd"
 			    sh '/usr/local/bin/ansible-test sanity'
 			    sh '/usr/local/bin/ansible-lint roles/zmf_workflow_complete'
 			    sh '/usr/local/bin/ansible-lint roles/zmf_cpm_manage_software_instance'
 			    sh '/usr/local/bin/ansible-lint roles/zmf_cpm_provision_software_service'
 			    sh '/usr/local/bin/ansible-lint roles/zmf_cpm_remove_software_instance'
+				sh '/usr/local/bin/bandit -r /Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf'
          	    }
 		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
 			    sh "cp -p /Users/strangepear2019/ansible-tmp/p00.yml /Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/p00.yml"
