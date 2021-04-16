@@ -67,7 +67,7 @@ pipeline {
 
         steps {
 		    echo 'sanity test'
-		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zos_zosmf") {
+		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf") {
                 	    sh "pwd"
 			    sh '/usr/local/bin/ansible-test sanity'
 			    sh '/usr/local/bin/ansible-lint roles/zmf_workflow_complete'
@@ -75,12 +75,12 @@ pipeline {
 			    sh '/usr/local/bin/ansible-lint roles/zmf_cpm_provision_software_service'
 			    sh '/usr/local/bin/ansible-lint roles/zmf_cpm_remove_software_instance'
          	    }
-		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zos_zosmf/tests/CICD/playbooks/host_vars") {
-			    sh "cp -p /Users/strangepear2019/ansible-tmp/p00.yml /Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zos_zosmf/tests/CICD/playbooks/host_vars/p00.yml"
-			    sh "cp -p /Users/strangepear2019/ansible-tmp/hosts /Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zos_zosmf/tests/CICD/playbooks/hosts"
+		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
+			    sh "cp -p /Users/strangepear2019/ansible-tmp/p00.yml /Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/p00.yml"
+			    sh "cp -p /Users/strangepear2019/ansible-tmp/hosts /Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/hosts"
 		    }
 		    echo 'Workflow BVT'
-		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zos_zosmf/tests/CICD/playbooks") {
+		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
 		    	sh '/usr/local/bin/ansible-playbook workflow_complete_CICDtest1.yml'
 		    }
 		    echo 'CICD test successfully!'

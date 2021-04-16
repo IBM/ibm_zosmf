@@ -8,7 +8,7 @@
   hosts: workflow
   gather_facts: no
   collections:
-    - ibm.ibm_zos_zosmf
+    - ibm.ibm_zosmf
   tasks:
     - include_role:
         name: zmf_workflow_complete
