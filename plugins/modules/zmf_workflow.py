@@ -254,7 +254,7 @@ options:
         default: true
     workflow_access_type:
         description:
-            - Access type for the workflow when the workflow is created. 
+            - Access type for the workflow when the workflow is created.
             - >
               The access type determines which users can view the workflow
               steps and edit the step notes.
