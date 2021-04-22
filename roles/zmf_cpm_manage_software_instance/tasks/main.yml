@@ -4,14 +4,14 @@
 ---
 # tasks file for zmf_cpm_manage_software_instance
 
-- name: Read instance record
+- name: "Read instance record"
   block:
-    - name: Read from json file path
+    - name: "Read from json file path"
       set_fact:
         instance_record: "{{ lookup('file', instance_info_json_path) | from_json }}"
 
     # Support input_vars to be provided via playbook. If input_vars isn't set then set default below
-    - name: Set input_vars as fact
+    - name: "Set input_vars as fact"
       set_fact:
         input_vars: "[]"
       when: input_vars is not defined
@@ -79,19 +79,19 @@
       when: action_status_result.json.state == "complete"
       delegate_to: localhost
 
-    - name: Update local copy of instance information
+    - name: "Update local copy of instance information"
       block:
         - name: Update fully provisioned instance information to local
           copy:
-            content: '{ "registry-info" : {{ full_instance_json.json | to_nice_json(indent=2) }}}'
+            content: '{ "registry-info" : {{ full_instance_json.json | default("") | to_nice_json(indent=2) }}}'
             dest: '{{ instance_info_json_path }}'
           delegate_to: localhost
 
-    - name: Display instance record file path
+    - name: "Display instance record file path"
       debug:
         msg: "Instance record updated at: {{ instance_info_json_path }}"
 
-    - name: Display action performed and complete status
+    - name: "Display action performed and complete status"
       debug:
         msg: "Action <{{ instance_action_name }}> final status: {{ action_status_result.json.state }}"
       when: action_status_result.json.state == "complete"
