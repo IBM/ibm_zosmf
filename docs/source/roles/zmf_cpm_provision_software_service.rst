@@ -227,7 +227,7 @@ Notes
 -----
 
 .. note::
-   - When playbooks completes, a message shown in following example is displayed. This message includes a file path and file name where instance specific information is returned. This file is required for :ref:`zmf_cpm_manage_software_instance <zmf_cpm_manage_software_instance_module>` and :ref:`zmf_cpm_remove_software_instance <zmf_cpm_remove_software_instance_module>` roles.
+   - When playbooks completes, a message shown in following example is displayed, ``"msg": "Instance record saved at: /tmp/xxx.json"``. This message includes a file path and file name where instance specific information is returned. This file is required for :ref:`zmf_cpm_manage_software_instance <zmf_cpm_manage_software_instance_module>` and :ref:`zmf_cpm_remove_software_instance <zmf_cpm_remove_software_instance_module>` roles.
 
 
 

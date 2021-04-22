@@ -469,6 +469,21 @@ Examples
 
 
 
+Notes
+-----
+
+.. note::
+   - Submitting a z/OSMF workflow found on Ansible control node is currently not supported.
+
+
+   - Only automated steps are supported when starting a z/OSMF workflow.
+
+   - This module is considered to be "weakly" idempotent. That is, this module achieves an idempotent result for the final state of the workflow instance, rather than for the target z/OS systems. A strong idempotent result for the final state of the target z/OS systems depends on the idempotency of the workflow instance steps.
+
+
+   - This module does not support check mode.
+
+
 
 
 
