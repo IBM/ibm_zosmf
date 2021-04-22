@@ -43,7 +43,6 @@ pipeline {
 			    echo "Remote workspace is ${remoteWorkspace}"
 			
 			    dir("${remoteWorkspace}") {
-					    sh "rm -rf *"
 				        if (fileExists('ibm-ibm_zosmf-1.0.0.tar.gz')) {
 					            echo "ibm-ibm_zosmf-1.0.0.tar.gz existed"
 					            sh 'rm ibm-ibm_zosmf-1.0.0.tar.gz'
