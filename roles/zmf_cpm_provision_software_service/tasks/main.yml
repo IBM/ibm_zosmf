@@ -26,7 +26,7 @@
 
 - name: Set systems_nicknames as fact
   set_fact:
-    sysnames: []
+    sysnames: "[]"
   when: systems_nicknames is not defined
 
 
