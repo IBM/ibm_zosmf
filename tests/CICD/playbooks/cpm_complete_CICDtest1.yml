@@ -23,7 +23,7 @@
 
     - name: Save instance info file path
       set_fact:
-        instance_file_path : "{{ instance_info_json_path }}"
+        instance_file_path : "{{ instance_record_dir }}"
 
 - hosts: cpm  
   collections:
@@ -36,7 +36,7 @@
         name: zmf_cpm_manage_software_instance
       vars:
         instance_action_name: "deprovision"
-        instance_info_json_path: "{{ instance_file_path }}"
+        instance_info_json_path: "{{ instance_record_dir }}"
                 
 - hosts: cpm
   collections:
@@ -48,4 +48,4 @@
     - include_role:
         name: zmf_cpm_remove_software_instance
       vars:
-        instance_info_json_path: "{{ instance_file_path }}"
+        instance_info_json_path: "{{ instance_record_dir }}"
