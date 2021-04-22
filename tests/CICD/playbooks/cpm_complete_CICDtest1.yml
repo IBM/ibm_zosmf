@@ -20,8 +20,6 @@
       vars:
         cpm_template_name: 'AnsibleFVT'  # The value for property cpm_template_name which identifies the template (software service) user wants to provision with Cloud Provisioning & Management
         domain_name: 'default' # The value for property domain_name which identifies CP&M domain in which specified template is defined
-        
-
 
     - name: Save instance info file path
       set_fact:
