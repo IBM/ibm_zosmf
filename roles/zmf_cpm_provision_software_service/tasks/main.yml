@@ -50,8 +50,7 @@
     status_code: "200"
     validate_certs: no
     body_format: json
-  #  body: '{"domain-name":"{{ domain_name }}","tenant-name":"{{ tenant_name }}","systems-nicknames":["{{ systems_nicknames }}"]}'
-    body: '{"domain-name":"{{ domain_name }}","tenant-name":"{{ tenant_name }}","systems-nicknames": {{ sysnames }},"input-variables":{{ input_vars }}}'
+    body: "{{ zmf_body }}"
   delegate_to: localhost
   register: provision_results
 
