@@ -35,7 +35,7 @@
       delegate_to: localhost
       register: action_results
 
-    - name: "Action <{{ instance_action_name }}> progress status: in-progress"
+    - name: "Get action <{{ instance_action_name }}> progress status"
       uri:
         url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf\
             /provisioning/rest/1.0/scr\
@@ -94,6 +94,7 @@
         msg: "Instance record updated at: {{ instance_info_json_path }}"
 
     
-    - debug:
-        msg: "Action <{{ instance_action_name }}> progress status: {{ action_status_result.json.state }}"
+    - name: Display action performed and complete status
+      debug:
+        msg: "Action <{{ instance_action_name }}> final status: {{ action_status_result.json.state }}"
       when: action_status_result.json.state == "complete"
