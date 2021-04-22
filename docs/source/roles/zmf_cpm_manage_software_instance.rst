@@ -93,7 +93,7 @@ instance_info_json_path
   Directory path for the JSON file that holds provisioned instance information.
 
 
-  Specify the file name that was generated when the :ref:`zmf_cpm_provision_software_service <zmf_cpm_provision_software_service_module>` role was performed.
+  Specify the file name that was generated when the :ref:`zmf_cpm_provision_software_service <zmf_cpm_provision_software_service>` role was performed.
 
 
   | **required**: True
