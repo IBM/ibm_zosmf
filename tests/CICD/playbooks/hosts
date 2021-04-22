@@ -1,0 +1,8 @@
+# Copyright (c) IBM Corporation 2020
+
+
+
+# this group is used in cpm_complete_CICDtest*.yml
+# If hostname is changed here, please create "host_name".yml file under host_vars and specify host specific variables as shown in example cpmHost1.yml
+[cpm]
+SY1 zmf_host=pkstp00.pok.stglabs.ibm.com zmf_port=1035

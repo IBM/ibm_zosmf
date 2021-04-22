@@ -100,7 +100,15 @@ instance_info_json_path
   | **type**: str
 
 
- 
+input_vars
+  Input variable names and values for the action to be performed on the provisioned instance.
+
+
+  This variable is required if the action processing expects specific inputs from user. This is a dictionary variable and needs to be in following format, ``[{ "name":"VAR1","value":"VAR1_VALUE"},{..},...]``
+
+
+  | **required**: False
+  | **type**: dict 
 
 api_polling_retry_count
   Total retry attempts allowed before the role exits with failure, waiting on the instance action to complete.
