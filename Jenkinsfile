@@ -84,6 +84,10 @@ pipeline {
 		    dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
 		    	sh '/usr/local/bin/ansible-playbook workflow_complete_CICDtest1.yml'
 		    }
+			echo 'CPM BVT'
+			dir("/Users/strangepear2019/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
+		    	sh '/usr/local/bin/ansible-playbook cpm_complete_CICDtest1.yml'
+		    }
 		    echo 'CICD test successfully!'
             }
         }

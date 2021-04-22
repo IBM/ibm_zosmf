@@ -6,7 +6,7 @@
 # Example:
 # ansible-playbook -i hosts cpm_complete_CICDtest1.yml
 
-- hosts: SY1
+- hosts: cpm
   collections:
     - ibm.ibm_zosmf
   gather_facts: no
@@ -20,16 +20,14 @@
       vars:
         cpm_template_name: 'AnsibleFVT'  # The value for property cpm_template_name which identifies the template (software service) user wants to provision with Cloud Provisioning & Management
         domain_name: 'default' # The value for property domain_name which identifies CP&M domain in which specified template is defined
-        
-
 
     - name: Save instance info file path
       set_fact:
         instance_file_path : "{{ instance_info_json_path }}"
 
-- hosts: SY1  
+- hosts: cpm  
   collections:
-    - ibm.ibm_zos_zosmf
+    - ibm.ibm_zosmf
   gather_facts: no
   # vars:
   #   - name: instance_file_path        
@@ -40,9 +38,9 @@
         instance_action_name: "deprovision"
         instance_info_json_path: "{{ instance_file_path }}"
                 
-- hosts: SY1
+- hosts: cpm
   collections:
-    - ibm.ibm_zos_zosmf
+    - ibm.ibm_zosmf
   gather_facts: no
   # vars:
   #   - name: instance_file_path   
