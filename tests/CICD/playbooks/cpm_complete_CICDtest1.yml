@@ -12,7 +12,7 @@
   gather_facts: no
   
   vars:
-    - name: instance_info_json_path #will store instance json information globally thru the playbook
+    - name: instance_record_dir #will store instance json information globally thru the playbook
   
   tasks:
     - include_role:
