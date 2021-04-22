@@ -70,6 +70,18 @@ options:
               M(zmf_cpm_provision_software_service) role was performed.
         required: true
         type: str
+    input_vars:
+        description:
+            - >
+              Input variable names and values for the action to be performed
+              on the provisioned instance.
+            - >
+              This variable is required if the action processing expects
+              specific inputs from user.
+              This is a dictionary variable and needs to be in following
+              format, C([{ "name":"VAR1","value":"VAR1_VALUE"},{..},...])
+        required: false
+        type: dict
     api_polling_retry_count:
         description:
             - >

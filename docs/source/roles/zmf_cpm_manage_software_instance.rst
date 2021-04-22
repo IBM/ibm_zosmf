@@ -100,6 +100,8 @@ instance_info_json_path
   | **type**: str
 
 
+ 
+
 input_vars
   Input variable names and values for the action to be performed on the provisioned instance.
 
@@ -108,7 +110,10 @@ input_vars
 
 
   | **required**: False
-  | **type**: dict 
+  | **type**: dict
+
+
+ 
 
 api_polling_retry_count
   Total retry attempts allowed before the role exits with failure, waiting on the instance action to complete.

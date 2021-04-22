@@ -15,7 +15,7 @@ zmf_authenticate -- Authenticate with z/OSMF server
 
 Synopsis
 --------
-- Authenticate with z/OSMF server by either username/password or HTTPS  client authenticate.
+- Authenticate with z/OSMF server by either username/password or HTTPS client authenticate.
 
 - Return the authentication credentials for successful authentication.
 - The credential can be then used for succeeding Ansible tasks which call z/OSMF Ansible module or role.

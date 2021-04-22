@@ -143,7 +143,7 @@ options:
 notes:
     - >
       When playbooks completes, a message shown in following example is
-      displayed.
+      displayed, C("msg": "Instance record saved at: /tmp/xxx.json").
       This message includes a file path and file name where instance specific
       information is returned.
       This file is required for M(zmf_cpm_manage_software_instance) and

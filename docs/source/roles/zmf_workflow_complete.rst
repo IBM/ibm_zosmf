@@ -364,8 +364,10 @@ Notes
 -----
 
 .. note::
-   - Submitting z/OSMF workflows found on Ansible control node is currently not supported.
+   - Submitting a z/OSMF workflow found on Ansible control node is currently not supported.
 
+
+   - Only automated steps are supported when starting a z/OSMF workflow.
 
 
 

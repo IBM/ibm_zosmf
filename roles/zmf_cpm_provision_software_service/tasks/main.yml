@@ -39,16 +39,16 @@
 - name: Provision template
   uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/psc/{{ cpm_template_name }}/actions/run"
-    return_content: yes
+    return_content: true
     user: "{{ zmf_user| trim }}"
     password: "{{ zmf_password| trim  }}"
-    force_basic_auth: yes
+    force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
       Origin: "https://{{ zmf_host }}"
     method: POST
     status_code: "200"
-    validate_certs: no
+    validate_certs: false
     body_format: json
     body: "{{ zmf_body }}"
   delegate_to: localhost
@@ -85,13 +85,13 @@
     method: GET
     user: "{{ zmf_user | trim  }}"
     password: "{{ zmf_password | trim  }}"
-    force_basic_auth: yes
+    force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
       Origin: "https://{{ zmf_host }}"
     status_code: "200"
-    validate_certs: no
-    return_content: yes
+    validate_certs: false
+    return_content: true
   register: full_instance_json
   delegate_to: localhost
 
