@@ -23,7 +23,7 @@
 
     - name: Save instance info file path
       set_fact:
-        instance_file_path : "{{ instance_info_json_path }}"
+        instance_file_path: "{{ instance_info_json_path }}"
 
 - hosts: cpm  
   collections:

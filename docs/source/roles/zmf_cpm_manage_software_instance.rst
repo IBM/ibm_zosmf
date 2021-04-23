@@ -153,6 +153,7 @@ Examples
      vars:
        instance_action_name: "<action-name>"
        instance_info_json_path: "<full-instance-json-file-path>"
+       input_vars: '<optional-fill-me-input-vars>'
 
 
 
