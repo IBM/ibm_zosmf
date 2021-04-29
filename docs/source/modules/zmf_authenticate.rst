@@ -151,7 +151,7 @@ Return Values
         | **returned**: always
         | **type**: bool
 
-      LtpaToken2
+      ltpa_token_2
         The value of Lightweight Third Party Access (LTPA) token, which supports strong encryption.
 
 
@@ -160,7 +160,7 @@ Return Values
         | **sample**: yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCa......
 
 
-      jwtToken
+      jwt_token
         The value of JSON Web token, which supports strong encryption.
 
         | **returned**: on success

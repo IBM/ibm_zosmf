@@ -3,7 +3,7 @@
 
 DOCUMENTATION = r"""
 role: zmf_cpm_provision_software_service
-short_description: provision a z/OS software service
+short_description: Provision a z/OS software service
 description:
     - >
       Provision a z/OS middleware or software service by using an IBM Cloud

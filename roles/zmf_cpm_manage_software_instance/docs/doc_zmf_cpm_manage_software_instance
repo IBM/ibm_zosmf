@@ -3,7 +3,7 @@
 
 DOCUMENTATION = r"""
 role: zmf_cpm_manage_software_instance
-short_description: manage a z/OS software instance
+short_description: Manage a z/OS software instance
 description:
     - Manage a provisioned instance of z/OS middleware or software.
     - >

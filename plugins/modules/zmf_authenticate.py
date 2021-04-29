@@ -1,17 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) IBM Corporation 2020
+# Copyright (c) IBM Corporation 2021
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
-
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
 DOCUMENTATION = r"""
 ---
@@ -25,7 +19,7 @@ description:
     - >
       The credential can be then used for succeeding Ansible tasks which call
       z/OSMF Ansible module or role.
-version_added: "1.0.0"
+version_added: "2.9"
 author:
     - Yang Cao (@zosmf-Young)
     - Yun Juan Yang (@zosmf-Robyn)
@@ -117,7 +111,7 @@ changed:
     description: Indicates if any change is made during the module operation.
     returned: always
     type: bool
-LtpaToken2:
+ltpa_token_2:
     description:
         - >
           The value of Lightweight Third Party Access (LTPA) token, which
@@ -125,7 +119,7 @@ LtpaToken2:
     returned: on success
     type: str
     sample: "yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCa......"
-jwtToken:
+jwt_token:
     description: The value of JSON Web token, which supports strong encryption.
     returned: on success
     type: str
@@ -166,11 +160,11 @@ def authenticate(module):
                      or 'jwtToken' in response_getAuth['Set-Cookie'])):
             auth = dict()
             if 'LtpaToken2' in response_getAuth['Set-Cookie']:
-                auth['LtpaToken2'] = \
+                auth['ltpa_token_2'] = \
                     re.findall('LtpaToken2=(.+?);',
                                response_getAuth['Set-Cookie'])[0]
             if 'jwtToken' in response_getAuth['Set-Cookie']:
-                auth['jwtToken'] = \
+                auth['jwt_token'] = \
                     re.findall('jwtToken=(.+?);',
                                response_getAuth['Set-Cookie'])[0]
             auth['zmf_host'] = module.params['zmf_host']

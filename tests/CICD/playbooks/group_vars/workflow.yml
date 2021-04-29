@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2020
+# Copyright (c) IBM Corporation 2021
 
 # The value for property zmf_host is the hostname of the system on which z/OSMF server is running on.
 # The value for property zmf_port is the port number of z/OSMF server.

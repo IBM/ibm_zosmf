@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2020
+# Copyright (c) IBM Corporation 2021
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
 from __future__ import (absolute_import, division, print_function)
@@ -62,12 +62,12 @@ def get_connect_session(module):
     auth = None
     if 'zmf_credential' in module.params:
         auth = module.params['zmf_credential']
-    if auth is not None and ('LtpaToken2' in auth or 'jwtToken' in auth):
+    if auth is not None and ('ltpa_token_2' in auth or 'jwt_token' in auth):
         cookie = requests.cookies.RequestsCookieJar()
-        if 'LtpaToken2' in auth:
-            cookie.set('LtpaToken2', auth['LtpaToken2'])
+        if 'ltpa_token_2' in auth:
+            cookie.set('LtpaToken2', auth['ltpa_token_2'])
         else:
-            cookie.set('jwtToken', auth['jwtToken'])
+            cookie.set('jwtToken', auth['jwt_token'])
         session.cookies.update(cookie)
         module.params['zmf_host'] = auth['zmf_host']
         module.params['zmf_port'] = auth['zmf_port']

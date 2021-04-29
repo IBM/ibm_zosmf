@@ -4,7 +4,7 @@
 .. _zmf_cpm_remove_software_instance_module:
 
 
-zmf_cpm_remove_software_instance -- remove a z/OS software instance
+zmf_cpm_remove_software_instance -- Remove a z/OS software instance
 ===================================================================
 
 

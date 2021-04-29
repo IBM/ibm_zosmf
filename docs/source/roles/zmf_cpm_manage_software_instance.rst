@@ -4,7 +4,7 @@
 .. _zmf_cpm_manage_software_instance_module:
 
 
-zmf_cpm_manage_software_instance -- manage a z/OS software instance
+zmf_cpm_manage_software_instance -- Manage a z/OS software instance
 ===================================================================
 
 

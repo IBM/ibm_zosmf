@@ -3,7 +3,7 @@
 
 DOCUMENTATION = r"""
 role: zmf_cpm_remove_software_instance
-short_description: remove a z/OS software instance
+short_description: Remove a z/OS software instance
 description:
     - Remove a deprovisioned instance of z/OS middleware or software service.
 author:

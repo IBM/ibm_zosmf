@@ -4,7 +4,7 @@
 .. _zmf_cpm_provision_software_service_module:
 
 
-zmf_cpm_provision_software_service -- provision a z/OS software service
+zmf_cpm_provision_software_service -- Provision a z/OS software service
 =======================================================================
 
 
