@@ -6,13 +6,11 @@
 # Example:
 # ansible-playbook -i hosts cpm_complete_CICDtest1.yml
 
-- hosts: cpm
+- name: Test all roles provided by cpm
+  hosts: cpm1
   collections:
     - ibm.ibm_zosmf
   gather_facts: no
-  
-  vars:
-    - name: instance_info_json_path #will store instance json information globally thru the playbook
   
   tasks:
     - include_role:
@@ -25,7 +23,7 @@
       set_fact:
         instance_file_path: "{{ instance_info_json_path }}"
 
-- hosts: cpm  
+- hosts: cpm1 
   collections:
     - ibm.ibm_zosmf
   gather_facts: no
@@ -38,7 +36,7 @@
         instance_action_name: "deprovision"
         instance_info_json_path: "{{ instance_file_path }}"
                 
-- hosts: cpm
+- hosts: cpm1
   collections:
     - ibm.ibm_zosmf
   gather_facts: no

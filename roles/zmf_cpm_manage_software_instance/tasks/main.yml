@@ -85,6 +85,7 @@
           copy:
             content: '{ "registry-info" : {{ full_instance_json.json | default("") | to_nice_json(indent=2) }}}'
             dest: '{{ instance_info_json_path }}'
+            mode: '0644'
           delegate_to: localhost
 
     - name: "Display instance record file path"
