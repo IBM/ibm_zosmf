@@ -2,8 +2,8 @@
 .. © Copyright IBM Corporation 2021                                          .
 .. ...........................................................................
 
-Requirements - Provision and Manage z/OS Software Instances
-===========================================================
+Provision and Manage z/OS Software Instances
+============================================
 
 Interacting with **Cloud Provisioning & Management (CP&M)** in your playbook
 requires that you meet the software requirements.

@@ -41,11 +41,11 @@ zmf_credential
 
  
 
-  LtpaToken2
+  ltpa_token_2
     The value of the Lightweight Third Party Access (LTPA) token, which supports strong encryption.
 
 
-    If *jwtToken* is not supplied, *LtpaToken2* is required.
+    If *jwt_token* is not supplied, *ltpa_token_2* is required.
 
 
     | **required**: False
@@ -54,11 +54,11 @@ zmf_credential
 
  
 
-  jwtToken
+  jwt_token
     The value of the JSON web token, which supports strong encryption.
 
 
-    If *LtpaToken2* is not supplied, *jwtToken* is required.
+    If *ltpa_token_2* is not supplied, *jwt_token* is required.
 
 
     | **required**: False

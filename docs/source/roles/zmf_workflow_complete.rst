@@ -4,7 +4,7 @@
 .. _zmf_workflow_complete_module:
 
 
-zmf_workflow_complete -- complete a z/OS workflow
+zmf_workflow_complete -- Complete a z/OS workflow
 =================================================
 
 

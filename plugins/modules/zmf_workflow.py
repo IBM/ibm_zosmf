@@ -1,17 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) IBM Corporation 2020
+# Copyright (c) IBM Corporation 2021
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
-
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
 DOCUMENTATION = r"""
 ---
@@ -22,7 +16,7 @@ description:
     - >
       This module supports to compare, start, delete, and check the status of
       a workflow.
-version_added: "1.0.0"
+version_added: "2.9"
 author:
     - Yang Cao (@zosmf-Young)
     - Yun Juan Yang (@zosmf-Robyn)
@@ -41,24 +35,24 @@ options:
         type: dict
         default: null
         suboptions:
-            LtpaToken2:
+            ltpa_token_2:
                 description:
                     - >
                       The value of the Lightweight Third Party Access (LTPA)
                       token, which supports strong encryption.
                     - >
-                      If I(jwtToken) is not supplied, I(LtpaToken2) is
+                      If I(jwt_token) is not supplied, I(ltpa_token_2) is
                       required.
                 required: false
                 type: str
                 default: null
-            jwtToken:
+            jwt_token:
                 description:
                     - >
                       The value of the JSON web token, which supports strong
                       encryption.
                     - >
-                      If I(LtpaToken2) is not supplied, I(jwtToken) is
+                      If I(ltpa_token_2) is not supplied, I(jwt_token) is
                       required.
                 required: false
                 type: str

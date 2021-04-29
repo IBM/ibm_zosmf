@@ -2,8 +2,8 @@
 .. © Copyright IBM Corporation 2021                                          .
 .. ...........................................................................
 
-Requirements - Operate z/OS Workflows
-=====================================
+Operate z/OS Workflows
+======================
 
 Interacting with **z/OSMF Workflows** in your playbook requires that you meet
 the software requirements.
