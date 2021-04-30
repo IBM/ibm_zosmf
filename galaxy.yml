@@ -41,12 +41,6 @@ tags:
   - zos_workflow
   - cp&m
   - cloud_provisioning
-  - cics
-  - db2
-  - ims
-  - mq
-  - liberty
-  - was
 
 # The URL of the originating SCM repository
 repository: https://github.com/IBM/ibm_zosmf
