@@ -6,14 +6,14 @@
 Releases
 ========
 
-Version 1.0.0
+Version 0.0.1
 =============
 
 Notes
 -----
 
-* Initial release of IBM zOS Management Facility collection, referred to as
-  ibm_zosmf, which is part of the broader offering
+* Initial beta release of IBM z/OS Management Facility (z/OSMF) collection,
+  referred to as ibm_zosmf, which is part of the broader offering
   Red Hat® Ansible Certified Content for IBM Z.
 
 * New modules
@@ -31,15 +31,16 @@ Notes
 Availability
 ------------
 
-* `Automation Hub`_
 * `Galaxy`_
 * `GitHub`_
 
 Reference
 ---------
-  * Supported by `z/OS V2R3`_ or later.
-  * Supported by `z/OS Management Facility`_ V2R3 and later.
-  * Module zmf_authenticate is supported by z/OSMF APAR PH12143 (PTF UI66511 for V2R3, PTF UI66512 for V2R4).
+
+* Supported by `z/OS V2R3`_ or later.
+* Supported by `z/OS Management Facility`_ V2R3 and later.
+* Module zmf_authenticate is supported by z/OSMF APAR PH12143 (PTF UI66511 for V2R3, PTF UI66512 for V2R4).
+
 
 .. .............................................................................
 .. Global Links

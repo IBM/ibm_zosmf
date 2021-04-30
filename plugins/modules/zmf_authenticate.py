@@ -1,17 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) IBM Corporation 2020
+# Copyright (c) IBM Corporation 2021
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
-
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
 DOCUMENTATION = r"""
 ---
@@ -25,7 +19,7 @@ description:
     - >
       The credential can be then used for succeeding Ansible tasks which call
       z/OSMF Ansible module or role.
-version_added: "1.0.0"
+version_added: "0.0.1"
 author:
     - Yang Cao (@zosmf-Young)
     - Yun Juan Yang (@zosmf-Robyn)
@@ -33,12 +27,12 @@ options:
     zmf_host:
         description:
             - Hostname of the z/OSMF server.
-        required: true
+        required: True
         type: str
     zmf_port:
         description:
             - Port number of the z/OSMF server.
-        required: false
+        required: False
         type: int
         default: null
     zmf_user:
@@ -48,7 +42,7 @@ options:
             - >
               If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and
               I(zmf_password) are ignored.
-        required: false
+        required: False
         type: str
         default: null
     zmf_password:
@@ -58,7 +52,7 @@ options:
             - >
               If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and
               I(zmf_password) are ignored.
-        required: false
+        required: False
         type: str
         default: null
     zmf_crt:
@@ -67,7 +61,7 @@ options:
               Location of the PEM-formatted certificate chain file to be used
               for HTTPS client authentication.
             - Required when I(zmf_user) and I(zmf_password) are not supplied.
-        required: false
+        required: False
         type: str
         default: null
     zmf_key:
@@ -76,7 +70,7 @@ options:
               Location of the PEM-formatted file with your private key to be
               used for HTTPS client authentication.
             - Required when I(zmf_user) and I(zmf_password) are not supplied.
-        required: false
+        required: False
         type: str
         default: null
 requirements:
@@ -117,7 +111,7 @@ changed:
     description: Indicates if any change is made during the module operation.
     returned: always
     type: bool
-LtpaToken2:
+ltpa_token_2:
     description:
         - >
           The value of Lightweight Third Party Access (LTPA) token, which
@@ -125,7 +119,7 @@ LtpaToken2:
     returned: on success
     type: str
     sample: "yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCa......"
-jwtToken:
+jwt_token:
     description: The value of JSON Web token, which supports strong encryption.
     returned: on success
     type: str
@@ -166,11 +160,11 @@ def authenticate(module):
                      or 'jwtToken' in response_getAuth['Set-Cookie'])):
             auth = dict()
             if 'LtpaToken2' in response_getAuth['Set-Cookie']:
-                auth['LtpaToken2'] = \
+                auth['ltpa_token_2'] = \
                     re.findall('LtpaToken2=(.+?);',
                                response_getAuth['Set-Cookie'])[0]
             if 'jwtToken' in response_getAuth['Set-Cookie']:
-                auth['jwtToken'] = \
+                auth['jwt_token'] = \
                     re.findall('jwtToken=(.+?);',
                                response_getAuth['Set-Cookie'])[0]
             auth['zmf_host'] = module.params['zmf_host']

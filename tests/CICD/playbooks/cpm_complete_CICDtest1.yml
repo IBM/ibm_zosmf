@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2020 
+# Copyright (c) IBM Corporation 2021 
 
 # This sample playbook demonstrates using roles `zmf_cpm_provision_software_service`, 
 # 'zmf_cpm_manage_software_instance' and 'zmf_remove_software_instance' to provision
@@ -6,13 +6,11 @@
 # Example:
 # ansible-playbook -i hosts cpm_complete_CICDtest1.yml
 
-- hosts: cpm
+- name: Test all roles provided by cpm
+  hosts: cpm1
   collections:
     - ibm.ibm_zosmf
   gather_facts: no
-  
-  vars:
-    - name: instance_info_json_path #will store instance json information globally thru the playbook
   
   tasks:
     - include_role:
@@ -25,7 +23,7 @@
       set_fact:
         instance_file_path: "{{ instance_info_json_path }}"
 
-- hosts: cpm  
+- hosts: cpm1 
   collections:
     - ibm.ibm_zosmf
   gather_facts: no
@@ -38,7 +36,7 @@
         instance_action_name: "deprovision"
         instance_info_json_path: "{{ instance_file_path }}"
                 
-- hosts: cpm
+- hosts: cpm1
   collections:
     - ibm.ibm_zosmf
   gather_facts: no

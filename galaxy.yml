@@ -7,7 +7,7 @@ namespace: ibm
 name: ibm_zosmf
 
 # The collection version
-version: 1.0.0
+version: 0.0.1
 
 # Collection README file
 readme: README.md
@@ -38,21 +38,29 @@ tags:
   - mvs
   - zosmf
   - zos_management_facility
-  - workflow
+  - zos_workflow
   - cpm
   - cloud_provisioning
-  - cics
-  - db2
-  - ims
-  - mq
-  - liberty
-  - was
 
 # The URL of the originating SCM repository
 repository: https://github.com/IBM/ibm_zosmf
 
 # The URL to any online docs
 documentation: https://ibm.github.io/ibm_zosmf/index.html
+# documentation: https://ibm.github.io/z_ansible_collections_doc/index.html
 
 # The URL to the collection issue tracker
 issues: https://github.com/IBM/ibm_zosmf/issues
+
+# Ignore files and directories matching the following patterns
+build_ignore:
+  - Jenkinsfile
+  - ansible.cfg
+  - .gitignore
+  - .github
+  - .git
+  - .cache
+  - '*.tar.gz'
+  - tests
+  - docs
+  - collections

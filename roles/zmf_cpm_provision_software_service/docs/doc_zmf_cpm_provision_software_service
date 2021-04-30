@@ -3,14 +3,22 @@
 
 DOCUMENTATION = r"""
 role: zmf_cpm_provision_software_service
-short_description: provision a z/OS software service
+short_description: Role provisions a z/OS software service
 description:
     - >
-      Provision a z/OS middleware or software service by using an IBM Cloud
-      Provisioning and Management (CP&M) template.
+      The B(IBM z/OSMF collection) provides an Ansible role, referred to as
+      B(zmf_cpm_provision_software_service), to provision a z/OS middleware
+      such as IBM Customer Information Control System (CICS®), IBM Db2®, IBM
+      Information Management System (IMS™), IBM MQ, and IBM WebSphere
+      Application Server or any other software service by using an
+      B(IBM Cloud Provisioning and Management (CP&M)) template.
     - >
-      Template referenced by playbook must be published in z/OSMF Software
-      Services Catalog.
+      Template referenced by playbook must be published in
+      I(z/OSMF Software Services Catalog).
+    - >
+      This role will generate a unique JSON file that holds provisioned
+      instance information. The file location is in following format,
+      C(<instance_record_dir>/<cpm_template_name>-<instance external_name>.json)
 author:
     - Hiren Shah (@shreeji818)
 options:
@@ -19,22 +27,24 @@ options:
             - >
               Hostname of the z/OSMF server, specified in the inventory file
               or vars file.
-        required: true
+        required: True
         type: str
     zmf_port:
         description:
             - >
-              Port number of the z/OSMF server, specified in the inventory
-              file or vars file.
-        required: true
+              Port number of the z/OSMF server.
+              If z/OSMF is not using the default port, you need to specify
+              value for this parameter in the inventory file or vars file.
+        required: False
         type: str
+        default: 443
     zmf_user:
         description:
             - User name to be used for authenticating with the z/OSMF server.
             - >
               This variable can be specified in the inventory file or vars
               file, or prompted when playbook is run.
-        required: true
+        required: True
         type: str
     zmf_password:
         description:
@@ -42,7 +52,7 @@ options:
             - >
               This variable can be specified in the inventory file or vars
               file, or prompted when playbook is run.
-        required: true
+        required: True
         type: str
     instance_record_dir:
         description:
@@ -51,30 +61,25 @@ options:
               various information (in JSON format) about the provisioned
               instance.
             - >
+              On many system default value C("/tmp") used for this variable
+              may not be acceptable because C("/tmp") directory can be
+              transient on the system.
+              In such cases it is recommended to specify non-default value for
+              this variable.
               This variable can be specified in the inventory file or vars
               file.
-        required: true
+        required: False
         type: str
-    instance_info_json_path:
-        description:
-            - >
-              Directory path for the JSON file that holds provisioned instance
-              information.
-            - >
-              This role will automatically generate this variable in following
-              format,
-              C(<instance_record_dir>/<template_name>-<instance external_name>.json)
-        required: false
-        type: str
+        default: /tmp
     cpm_template_name:
         description:
             - Template name for the software service to be provisioned.
-        required: true
+        required: True
         type: str
     domain_name:
         description:
             - Cloud domain name that is associated with the template.
-        required: true
+        required: True
         type: str
     tenant_name:
         description:
@@ -84,16 +89,18 @@ options:
             - >
               This variable is required if I(zmf_user) is associated with
               multiple CP&M tenants.
-        required: true
+        required: False
         type: str
+        default: null
     systems_nicknames:
         description:
             - System nickname as specified in the z/OSMF Systems table.
             - >
               If this variable is not specified, provisioning is performed on
               the system where z/OSMF is currently running.
-        required: false
+        required: False
         type: str
+        default: null
     input_vars:
         description:
             - >
@@ -104,8 +111,9 @@ options:
               inputs from user.
               This is a dictionary variable and needs to be in following
               format, C([{ "name":"VAR1","value":"VAR1_VALUE"},{..},...])
-        required: false
+        required: False
         type: dict
+        default: null
     zmf_body:
         description:
             - >
@@ -119,8 +127,9 @@ options:
             - C("systems-nicknames":["{{ systems_nicknames }}"],)
             - C("input-variables":"{{ input_vars }}")
             - C(})
-        required: false
+        required: False
         type: dict
+        default: null
     api_polling_retry_count:
         description:
             - >
@@ -129,8 +138,9 @@ options:
             - >
               This variable can be specified in the inventory file or vars
               file.
-        required: true
+        required: False
         type: int
+        default: 50
     api_polling_interval_seconds:
         description:
             - >
@@ -138,9 +148,14 @@ options:
             - >
               This variable can be specified in the inventory file or vars
               file.
-        required: true
+        required: False
         type: int
+        default: 10
 notes:
+    - >
+      The given example assumes that you have an inventory file
+      I(inventory.yml) and host vars I(sampleHost.yml) with appropriate values
+      to identify the target z/OSMF server end point.
     - >
       When playbooks completes, a message shown in following example is
       displayed, C("msg": "Instance record saved at: /tmp/xxx.json").
@@ -151,15 +166,21 @@ notes:
 """
 
 EXAMPLES = r"""
-- name: test role for zmf_cpm_provision_software_service
-  include_role :
-    name: zmf_cpm_provision_software_service
-  vars:
-    cpm_template_name: "<fill-me-template-name>"
-    domain_name: "<domain-name>"
-    tenant_name: "<tenant-name>"
-    systems_nicknames: "<system-name>"
-    input_vars: "<input-vars>"
+- name: Provision a z/OS Middleware service
+  hosts: sampleHost
+  gather_facts: no
+  collections: 
+    - ibm.ibm_zosmf
+  tasks: 
+    - include_role:
+        name: zmf_cpm_provision_software_service
+      vars:
+        cpm_template_name: "<fill-me-template-name>"
+        domain_name: "<domain-name>"
+        tenant_name: "<optional-tenant-name>"
+        systems_nicknames: "<optional-system-name>"
+        input_vars: "<optional-input-vars>"
+        
 """
 
 # Roles don't return anything.

@@ -82,6 +82,24 @@ if [[ -f $DOC_DIR/source/requirements.rst ]]; then
     awk '/toctree/ {exit} {print}' $DOC_DIR/source/requirements.rst >> $DOC_DIR/source/requirements-single.rst
 
     # Concat the interested RSTs into requirements-single.rst to create a single RST
+    if [[ -f $DOC_DIR/source/requirements_control.rst ]]; then
+
+        # Inform readers this is auto generated thus avoding the need to maintain
+        echo ".. ...........................................................................\n$(<$DOC_DIR/source/requirements-single.rst)" > $DOC_DIR/source/requirements-single.rst
+        echo ".. Auto generated restructured text                                          .\n$(<$DOC_DIR/source/requirements-single.rst)" > $DOC_DIR/source/requirements-single.rst
+        echo ".. ...........................................................................\n$(<$DOC_DIR/source/requirements-single.rst)" > $DOC_DIR/source/requirements-single.rst
+
+        # For each identified file we want to merge into requirements-single.rst cat them and merge
+        for file in $DOC_DIR/source/requirements_control.rst; do
+            cat "$file" >> $DOC_DIR/source/requirements-single.rst;
+        done
+    else
+        # When unable to merge remove the auto generated RST so that is apparent
+        # it is not generated and will diff in a 'git status'
+        rm -rf $DOC_DIR/source/requirements-single.rst
+    fi
+
+    # Concat the interested RSTs into requirements-single.rst to create a single RST
     if [[ -f $DOC_DIR/source/requirements_managed.rst ]]; then
 
         # Inform readers this is auto generated thus avoding the need to maintain
