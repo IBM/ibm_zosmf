@@ -16,7 +16,7 @@ description:
     - >
       This module supports to compare, start, delete, and check the status of
       a workflow.
-version_added: "2.9"
+version_added: "0.0.1"
 author:
     - Yang Cao (@zosmf-Young)
     - Yun Juan Yang (@zosmf-Robyn)

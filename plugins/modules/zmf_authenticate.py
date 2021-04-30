@@ -19,7 +19,7 @@ description:
     - >
       The credential can be then used for succeeding Ansible tasks which call
       z/OSMF Ansible module or role.
-version_added: "2.9"
+version_added: "0.0.1"
 author:
     - Yang Cao (@zosmf-Young)
     - Yun Juan Yang (@zosmf-Robyn)
