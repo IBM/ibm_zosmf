@@ -27,12 +27,12 @@ options:
     zmf_host:
         description:
             - Hostname of the z/OSMF server.
-        required: true
+        required: True
         type: str
     zmf_port:
         description:
             - Port number of the z/OSMF server.
-        required: false
+        required: False
         type: int
         default: null
     zmf_user:
@@ -42,7 +42,7 @@ options:
             - >
               If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and
               I(zmf_password) are ignored.
-        required: false
+        required: False
         type: str
         default: null
     zmf_password:
@@ -52,7 +52,7 @@ options:
             - >
               If I(zmf_crt) and I(zmf_key) are supplied, I(zmf_user) and
               I(zmf_password) are ignored.
-        required: false
+        required: False
         type: str
         default: null
     zmf_crt:
@@ -61,7 +61,7 @@ options:
               Location of the PEM-formatted certificate chain file to be used
               for HTTPS client authentication.
             - Required when I(zmf_user) and I(zmf_password) are not supplied.
-        required: false
+        required: False
         type: str
         default: null
     zmf_key:
@@ -70,7 +70,7 @@ options:
               Location of the PEM-formatted file with your private key to be
               used for HTTPS client authentication.
             - Required when I(zmf_user) and I(zmf_password) are not supplied.
-        required: false
+        required: False
         type: str
         default: null
 requirements:

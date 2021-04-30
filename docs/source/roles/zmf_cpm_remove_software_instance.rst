@@ -4,8 +4,8 @@
 .. _zmf_cpm_remove_software_instance_module:
 
 
-zmf_cpm_remove_software_instance -- Remove a z/OS software instance
-===================================================================
+zmf_cpm_remove_software_instance -- Role removes a z/OS software instance
+=========================================================================
 
 
 .. contents::
@@ -15,7 +15,8 @@ zmf_cpm_remove_software_instance -- Remove a z/OS software instance
 
 Synopsis
 --------
-- Remove a deprovisioned instance of z/OS middleware or software service.
+- The **IBM z/OSMF collection** provides an Ansible role, referred to as **zmf_cpm_remove_software_instance**, to remove a deprovisioned instance of z/OS middleware such as IBM Customer Information Control System (CICS®), IBM Db2®, IBM Information Management System (IMS™), IBM MQ, and IBM WebSphere Application Server or any other software service from **IBM Cloud Provisioning and Management (CP&M**) registry.
+
 
 
 
@@ -39,11 +40,12 @@ zmf_host
  
 
 zmf_port
-  Port number of the z/OSMF server, specified in the inventory file or vars file.
+  Port number of the z/OSMF server. If z/OSMF is not using the default port, you need to specify value for this parameter in the inventory file or vars file.
 
 
-  | **required**: True
+  | **required**: False
   | **type**: str
+  | **default**: 443
 
 
  
@@ -91,11 +93,24 @@ Examples
 .. code-block:: yaml+jinja
 
    
-   - name: test role for zmf_cpm_remove_software_instance
-     include_role :
-       name: zmf_cpm_remove_software_instance
-     vars:
-       instance_info_json_path: "<full-instance-json-file-path>"
+   - name: Remove deprovisioned instance of z/OS Middleware
+     hosts: sampleHost
+     gather_facts: no
+     collections: 
+       - ibm.ibm_zosmf
+     tasks: 
+       - include_module:
+           name: zmf_cpm_provision_software_service
+         vars:
+           instance_info_json_path: "<full-instance-json-file-path>"
+
+
+
+Notes
+-----
+
+.. note::
+   - The given example assumes that you have an inventory file *inventory.yml* and host vars *sampleHost.yml* with appropriate values to identify the target z/OSMF server end point.
 
 
 

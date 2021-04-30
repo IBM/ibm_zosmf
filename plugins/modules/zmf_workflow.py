@@ -31,7 +31,7 @@ options:
               If I(zmf_credential) is supplied, I(zmf_host), I(zmf_port),
               I(zmf_user), I(zmf_password), I(zmf_crt) and I(zmf_key) are
               ignored.
-        required: false
+        required: False
         type: dict
         default: null
         suboptions:
@@ -43,7 +43,7 @@ options:
                     - >
                       If I(jwt_token) is not supplied, I(ltpa_token_2) is
                       required.
-                required: false
+                required: False
                 type: str
                 default: null
             jwt_token:
@@ -54,16 +54,16 @@ options:
                     - >
                       If I(ltpa_token_2) is not supplied, I(jwt_token) is
                       required.
-                required: false
+                required: False
                 type: str
                 default: null
             zmf_host:
                 description: Hostname of the z/OSMF server.
-                required: true
+                required: True
                 type: str
             zmf_port:
                 description: Port number of the z/OSMF server.
-                required: false
+                required: False
                 type: int
                 default: null
     zmf_host:
@@ -71,14 +71,14 @@ options:
             - Hostname of the z/OSMF server.
             - If I(zmf_credential) is supplied, I(zmf_host) is ignored.
             - If I(zmf_credential) is not supplied, I(zmf_host) is required.
-        required: false
+        required: False
         type: str
         default: null
     zmf_port:
         description:
             - Port number of the z/OSMF server.
             - If I(zmf_credential) is supplied, I(zmf_port) is ignored.
-        required: false
+        required: False
         type: int
         default: null
     zmf_user:
@@ -92,7 +92,7 @@ options:
               If I(zmf_credential) is not supplied and I(zmf_crt) and
               I(zmf_key) are supplied, I(zmf_user) and I(zmf_password) are
               ignored.
-        required: false
+        required: False
         type: str
         default: null
     zmf_password:
@@ -106,7 +106,7 @@ options:
               If I(zmf_credential) is not supplied and I(zmf_crt) and
               I(zmf_key) are supplied, I(zmf_user) and I(zmf_password) are
               ignored.
-        required: false
+        required: False
         type: str
         default: null
     zmf_crt:
@@ -119,7 +119,7 @@ options:
             - >
               If I(zmf_credential) is not supplied, I(zmf_crt) is required when
               I(zmf_user) and I(zmf_password) are not supplied.
-        required: false
+        required: False
         type: str
         default: null
     zmf_key:
@@ -131,7 +131,7 @@ options:
             - >
               If I(zmf_credential) is not supplied, I(zmf_key) is required when
               I(zmf_user) and I(zmf_password) are not supplied.
-        required: false
+        required: False
         type: str
         default: null
     state:
@@ -146,7 +146,7 @@ options:
               then start it.
             - If I(state=deleted), delete a workflow if it exists.
             - If I(state=check), check the status of a workflow.
-        required: true
+        required: True
         type: str
         choices:
             - existed
@@ -164,13 +164,13 @@ options:
             - >
               Either I(workflow_name) or I(workflow_key) is required when
               I(state=started/deleted/check).
-        required: false
+        required: False
         type: str
         default: null
     workflow_file:
         description:
             - Location of the workflow definition file.
-        required: false
+        required: False
         type: str
         default: null
     workflow_host:
@@ -182,14 +182,14 @@ options:
               This variable should be specified as C({{ inventory_hostname }}).
               Its value should be specified in the inventory file as a managed
               node.
-        required: false
+        required: False
         type: str
         default: null
     workflow_owner:
         description:
             - User name of the workflow owner.
             - If this value is omitted, I(zmf_user) is used as workflow owner.
-        required: false
+        required: False
         type: str
         default: null
     workflow_file_system:
@@ -197,7 +197,7 @@ options:
             - >
               Nickname of the system on which the specified workflow definition
               file and any related files reside.
-        required: false
+        required: False
         type: str
         default: null
     workflow_vars_file:
@@ -206,7 +206,7 @@ options:
               Location of the optional properties file to be used to
               pre-specify the values of one or more variables that are defined
               in workflow definition file.
-        required: false
+        required: False
         type: str
         default: null
     workflow_vars:
@@ -215,7 +215,7 @@ options:
             - >
               For example, C({"user_to_list": "DEBUG1", "tsocmd_to_issue":
               "TIME"})
-        required: false
+        required: False
         type: dict
         default: null
     workflow_resolve_global_conflict_by_using:
@@ -224,7 +224,7 @@ options:
               Version of the variable to be used if the supplied workflow
               variable conflicts with an existing global variable in z/OSMF
               Workflows task.
-        required: false
+        required: False
         type: str
         default: global
         choices:
@@ -235,7 +235,7 @@ options:
             - >
               User-specified information to be associated with the workflow at
               creation time.
-        required: false
+        required: False
         type: str
         default: null
     workflow_assign_to_owner:
@@ -243,7 +243,7 @@ options:
             - >
               Specifies whether the workflow steps are assigned to the workflow
               owner when the workflow is created.
-        required: false
+        required: False
         type: bool
         default: true
     workflow_access_type:
@@ -252,7 +252,7 @@ options:
             - >
               The access type determines which users can view the workflow
               steps and edit the step notes.
-        required: false
+        required: False
         type: str
         default: Public
         choices:
@@ -264,7 +264,7 @@ options:
             - >
               For a workflow step that submits a batch job, this variable
               specifies the account information for the JCL JOB statement.
-        required: false
+        required: False
         type: str
         default: null
     workflow_job_statement:
@@ -272,7 +272,7 @@ options:
             - >
               For a workflow that submits a batch job, this variable specifies
               the JOB statement JCL for the job.
-        required: false
+        required: False
         type: str
         default: null
     workflow_delete_completed_jobs:
@@ -280,7 +280,7 @@ options:
             - >
               For a workflow that submits a batch job, this variable specifies
               whether the job is deleted from the JES spool after it completes.
-        required: false
+        required: False
         type: bool
         default: false
     workflow_resolve_conflict_by_using:
@@ -292,7 +292,7 @@ options:
               Such conflicts can be found when z/OSMF Workflows task reads the
               output file from a step that runs a REXX exec or UNIX shell
               script.
-        required: false
+        required: False
         type: str
         default: outputFileValue
         choices:
@@ -304,7 +304,7 @@ options:
             - >
               Name of the workflow step at which automation processing is to
               begin when the workflow is started.
-        required: false
+        required: False
         type: str
         default: null
     workflow_perform_subsequent:
@@ -312,7 +312,7 @@ options:
             - >
               Specifies whether the subsequent automated steps are performed
               when the workflow is started.
-        required: false
+        required: False
         type: bool
         default: true
     workflow_notification_url:
@@ -320,13 +320,13 @@ options:
             - >
               URL to be used for receiving notifications when the workflow is
               started.
-        required: false
+        required: False
         type: str
         default: null
     workflow_category:
         description:
             - Category of the workflow, which is general or configuration.
-        required: false
+        required: False
         type: str
         default: null
         choices:
@@ -335,7 +335,7 @@ options:
     workflow_vendor:
         description:
             - Name of the vendor that provided the workflow definition file.
-        required: false
+        required: False
         type: str
         default: null
     workflow_key:
@@ -346,7 +346,7 @@ options:
             - >
               Either I(workflow_name) or I(workflow_key) is required when
               I(state=started/deleted/check).
-        required: false
+        required: False
         type: str
         default: null
 requirements:

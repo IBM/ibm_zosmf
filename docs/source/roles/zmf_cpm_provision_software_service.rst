@@ -4,8 +4,8 @@
 .. _zmf_cpm_provision_software_service_module:
 
 
-zmf_cpm_provision_software_service -- Provision a z/OS software service
-=======================================================================
+zmf_cpm_provision_software_service -- Role provisions a z/OS software service
+=============================================================================
 
 
 .. contents::
@@ -15,9 +15,11 @@ zmf_cpm_provision_software_service -- Provision a z/OS software service
 
 Synopsis
 --------
-- Provision a z/OS middleware or software service by using an IBM Cloud Provisioning and Management (CP&M) template.
+- The **IBM z/OSMF collection** provides an Ansible role, referred to as **zmf_cpm_provision_software_service**, to provision a z/OS middleware such as IBM Customer Information Control System (CICS®), IBM Db2®, IBM Information Management System (IMS™), IBM MQ, and IBM WebSphere Application Server or any other software service by using an **IBM Cloud Provisioning and Management (CP&M**) template.
 
-- Template referenced by playbook must be published in z/OSMF Software Services Catalog.
+- Template referenced by playbook must be published in *z/OSMF Software Services Catalog*.
+
+- This role will generate a unique JSON file that holds provisioned instance information. The file location is in following format, ``<instance_record_dir>/<cpm_template_name>-<instance external_name>.json``
 
 
 
@@ -42,11 +44,12 @@ zmf_host
  
 
 zmf_port
-  Port number of the z/OSMF server, specified in the inventory file or vars file.
+  Port number of the z/OSMF server. If z/OSMF is not using the default port, you need to specify value for this parameter in the inventory file or vars file.
 
 
-  | **required**: True
+  | **required**: False
   | **type**: str
+  | **default**: 443
 
 
  
@@ -79,24 +82,12 @@ instance_record_dir
   Directory path that the provisioning role uses to capture various information (in JSON format) about the provisioned instance.
 
 
-  This variable can be specified in the inventory file or vars file.
-
-
-  | **required**: True
-  | **type**: str
-
-
- 
-
-instance_info_json_path
-  Directory path for the JSON file that holds provisioned instance information.
-
-
-  This role will automatically generate this variable in following format, ``<instance_record_dir>/<template_name>-<instance external_name>.json``
+  On many system default value ``"/tmp"`` used for this variable may not be acceptable because ``"/tmp"`` directory can be transient on the system. In such cases it is recommended to specify non-default value for this variable. This variable can be specified in the inventory file or vars file.
 
 
   | **required**: False
   | **type**: str
+  | **default**: /tmp
 
 
  
@@ -126,7 +117,7 @@ tenant_name
   This variable is required if *zmf_user* is associated with multiple CP&M tenants.
 
 
-  | **required**: True
+  | **required**: False
   | **type**: str
 
 
@@ -186,8 +177,9 @@ api_polling_retry_count
   This variable can be specified in the inventory file or vars file.
 
 
-  | **required**: True
+  | **required**: False
   | **type**: int
+  | **default**: 50
 
 
  
@@ -199,8 +191,9 @@ api_polling_interval_seconds
   This variable can be specified in the inventory file or vars file.
 
 
-  | **required**: True
+  | **required**: False
   | **type**: int
+  | **default**: 10
 
 
 
@@ -211,15 +204,21 @@ Examples
 .. code-block:: yaml+jinja
 
    
-   - name: test role for zmf_cpm_provision_software_service
-     include_role :
-       name: zmf_cpm_provision_software_service
-     vars:
-       cpm_template_name: "<fill-me-template-name>"
-       domain_name: "<domain-name>"
-       tenant_name: "<tenant-name>"
-       systems_nicknames: "<system-name>"
-       input_vars: "<input-vars>"
+   - name: Provision a z/OS Middleware service
+     hosts: sampleHost
+     gather_facts: no
+     collections: 
+       - ibm.ibm_zosmf
+     tasks: 
+       - include_module:
+           name: zmf_cpm_provision_software_service
+         vars:
+           cpm_template_name: "<fill-me-template-name>"
+           domain_name: "<domain-name>"
+           tenant_name: "<optional-tenant-name>"
+           systems_nicknames: "<optional-system-name>"
+           input_vars: "<optional-input-vars>"
+           
 
 
 
@@ -227,6 +226,9 @@ Notes
 -----
 
 .. note::
+   - The given example assumes that you have an inventory file *inventory.yml* and host vars *sampleHost.yml* with appropriate values to identify the target z/OSMF server end point.
+
+
    - When playbooks completes, a message shown in following example is displayed, ``"msg": "Instance record saved at: /tmp/xxx.json"``. This message includes a file path and file name where instance specific information is returned. This file is required for :ref:`zmf_cpm_manage_software_instance <zmf_cpm_manage_software_instance_module>` and :ref:`zmf_cpm_remove_software_instance <zmf_cpm_remove_software_instance_module>` roles.
 
 

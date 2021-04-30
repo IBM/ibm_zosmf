@@ -4,8 +4,8 @@
 .. _zmf_workflow_complete_module:
 
 
-zmf_workflow_complete -- Complete a z/OS workflow
-=================================================
+zmf_workflow_complete -- Role completes a z/OS workflow
+=======================================================
 
 
 .. contents::

@@ -5,10 +5,13 @@ DOCUMENTATION = r"""
 role: zmf_cpm_remove_software_instance
 short_description: Role removes a z/OS software instance
 description:
-    - The B(IBM z/OSMF Collection) provides an Ansible role, referred to as B(zmf_cpm_remove_software_instance),
-      to remove a deprovisioned instance of z/OS middleware such as IBM Customer Information Control System (CICS®), IBM Db2®, 
-      IBM Information Management System (IMS™), IBM MQ, and IBM WebSphere Application Server or any
-      other software service from B(IBM Cloud Provisioning and Management (CP&M)) registry.
+    - >
+      The B(IBM z/OSMF collection) provides an Ansible role, referred to as
+      B(zmf_cpm_remove_software_instance), to remove a deprovisioned instance
+      of z/OS middleware such as IBM Customer Information Control System
+      (CICS®), IBM Db2®, IBM Information Management System (IMS™), IBM MQ, and
+      IBM WebSphere Application Server or any other software service from
+      B(IBM Cloud Provisioning and Management (CP&M)) registry.
 author:
     - Hiren Shah (@shreeji818)
 options:
@@ -22,8 +25,9 @@ options:
     zmf_port:
         description:
             - >
-              Port number of the z/OSMF server. If z/OSMF is not using the default port, you need to specify value for
-              this parameter in the inventory file or vars file.
+              Port number of the z/OSMF server.
+              If z/OSMF is not using the default port, you need to specify
+              value for this parameter in the inventory file or vars file.
         required: False
         type: str
         default: 443
@@ -53,12 +57,11 @@ options:
               M(zmf_cpm_provision_software_service) role was performed.
         required: True
         type: str
-
 notes:
     - >
-      The given example assumes that you have an inventory file I(hosts) and host vars
-      I(sampleHost.yaml) with appropriate values to identify the target z/OSMF server end point.
-
+      The given example assumes that you have an inventory file
+      I(inventory.yml) and host vars I(sampleHost.yml) with appropriate values
+      to identify the target z/OSMF server end point.
 """
 
 EXAMPLES = r"""
@@ -67,7 +70,6 @@ EXAMPLES = r"""
   gather_facts: no
   collections: 
     - ibm.ibm_zosmf
-
   tasks: 
     - include_role:
         name: zmf_cpm_provision_software_service
