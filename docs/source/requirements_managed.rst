@@ -34,18 +34,43 @@ Review the details of the dependencies before you proceed to install the
    The authentication info to connect to the z/OSMF server is provided when
    running playbook or it will be prompted during playbook run.
 
-Specific Requirements
----------------------
+Provision and Manage z/OS Software Instances
+--------------------------------------------
 
-.. toctree::
-   :maxdepth: 1
-   :glob:
+Interacting with **Cloud Provisioning & Management (CP&M)** in your playbook
+requires that you meet the software requirements.
+Besides meeting the requirements above, you must ensure that the required
+software is installed on the managed nodes, as follows:
 
-   requirements_workflow
-   requirements_cpm
+* `z/OS Management Facility`_: V2R3 or later
+
+   The z/OSMF server must be installed and active on **each** managed z/OS
+   system.
+
+   It is required for using the following roles:
+
+   * role: `zmf_cpm_provision_software_service`_
+   * role: `zmf_cpm_manage_software_instance`_
+   * role: `zmf_cpm_remove_software_instance`_
+
+* `Cloud Provisioning and Management`_:
+
+   It is required for using the following roles:
+
+   * role: `zmf_cpm_provision_software_service`_
+   * role: `zmf_cpm_manage_software_instance`_
+   * role: `zmf_cpm_remove_software_instance`_
 
 
 .. _z/OS:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3/en/homepage.html
 .. _z/OS Management Facility:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3.izua300/abstract.html
+.. _Cloud Provisioning and Management:
+   https://www.ibm.com/support/z-content-solutions/cloud-provisioning
+.. _zmf_cpm_provision_software_service:
+   roles/zmf_cpm_provision_software_service.html
+.. _zmf_cpm_manage_software_instance:
+   roles/zmf_cpm_manage_software_instance.html
+.. _zmf_cpm_remove_software_instance:
+   roles/zmf_cpm_remove_software_instance.html
