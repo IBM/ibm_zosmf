@@ -60,6 +60,7 @@ automate tasks on z/OS.
    :maxdepth: 1
    :caption: Reference
 
+   resources
    community_guides
    license
 
