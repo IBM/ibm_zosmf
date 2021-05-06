@@ -22,7 +22,7 @@ Review the details of the dependencies before you proceed to install the
    With this remote approach, it is not necessary to set up SSH and install
    Python on the target z/OS systems. 
 
-* `z/OSMF server`_: V2R3 or later
+* `z/OSMF server`_
 
    The z/OSMF server must be installed and active on **at least one** z/OS
    system in the same sysplex.
@@ -34,7 +34,7 @@ Review the details of the dependencies before you proceed to install the
    You can specify the same z/OSMF server for multiple z/OS managed nodes in
    the same sysplex.
 
-* `z/OSMF Workflow`_ (Optional)
+* `z/OSMF Workflow`_
    
    z/OSMF Workflow is a plugin of z/OSMF which provides a framework to
    streamline z/OS tasks.
@@ -47,6 +47,9 @@ Review the details of the dependencies before you proceed to install the
 
    * module: `zmf_workflow`_
    * role: `zmf_workflow_complete`_
+   * role: `zmf_cpm_provision_software_service`_
+   * role: `zmf_cpm_manage_software_instance`_
+   * role: `zmf_cpm_remove_software_instance`_
 
 * `Cloud Provisioning and Management`_ (Optional)
 
