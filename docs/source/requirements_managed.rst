@@ -70,7 +70,7 @@ Review the details of the dependencies before you proceed to install the
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3/en/homepage.html
 .. _z/OSMF server:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3.izua300/abstract.html
-.. _z/OSMF Workflows:
+.. _z/OSMF Workflow:
    https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-zosmf-workflows-task
 .. _Cloud Provisioning and Management:
    https://www.ibm.com/support/z-content-solutions/cloud-provisioning
