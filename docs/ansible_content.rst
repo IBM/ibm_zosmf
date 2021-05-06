@@ -19,7 +19,7 @@ RESTful services.
    https://galaxy.ansible.com/ibm/ibm_zosmf
    
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Collection Content
 
    source/modules

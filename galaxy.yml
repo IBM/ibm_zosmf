@@ -39,6 +39,7 @@ tags:
   - zosmf
   - zos_management_facility
   - zos_workflow
+  - zosmf_workflow
   - cpm
   - cloud_provisioning
 
