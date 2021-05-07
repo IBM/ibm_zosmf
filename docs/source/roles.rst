@@ -18,4 +18,3 @@ roles in your playbook.
    :glob:
 
    roles/*
-
