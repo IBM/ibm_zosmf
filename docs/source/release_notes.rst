@@ -6,6 +6,35 @@
 Releases
 ========
 
+Version 1.0.0
+=============
+
+Notes
+-----
+
+* Initial release of IBM z/OS Management Facility (z/OSMF) collection,
+  referred to as ibm_zosmf, which is part of the broader offering
+  Red Hat® Ansible Certified Content for IBM Z.
+* Generic documentation is available at the `documentation site`_, covering
+  guidance on installation, modules, roles and other reference.
+* Sample playbooks are available at the `samples repository`_.
+  Each playbook contains a README that explains what configurations must be
+  made to run a sample playbook.
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
+Reference
+---------
+
+* Supported by `z/OS V2R3`_ or later.
+* Supported by `z/OS Management Facility`_ V2R3 and later.
+* Module zmf_authenticate is supported by z/OSMF APAR PH12143 (PTF UI66511 for V2R3, PTF UI66512 for V2R4).
+
 Version 0.0.1
 =============
 
@@ -78,3 +107,9 @@ Reference
 
 .. _z/OS Management Facility:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3.izua300/abstract.html
+
+.. _documentation site:
+   https://ibm.github.io/z_ansible_collections_doc/ibm_zosmf/docs/ansible_content.html
+
+.. _samples repository:
+   https://github.com/IBM/z_ansible_collections_samples/tree/master/zos_management
