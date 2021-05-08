@@ -63,7 +63,7 @@ def get_connect_session(module):
     if 'zmf_credential' in module.params:
         auth = module.params['zmf_credential']
     if auth is not None and ('ltpa_token_2' in auth or 'jwt_token' in auth):
-        cookie = requests.cookies.RequestsCookieJar()
+        cookie = requests.cookies.RequestsCookieJar()  # pylint: disable=abstract-class-instantiated
         if 'ltpa_token_2' in auth:
             cookie.set('LtpaToken2', auth['ltpa_token_2'])
         else:
