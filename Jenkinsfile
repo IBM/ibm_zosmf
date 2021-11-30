@@ -43,15 +43,15 @@ pipeline {
 					echo "Remote workspace is ${remoteWorkspace}"
 				
 					dir("${remoteWorkspace}") {
-							if (fileExists('ibm-ibm_zosmf-1.0.1.tar.gz')) {
-									echo "ibm-ibm_zosmf-1.0.1.tar.gz existed"
-									sh 'rm ibm-ibm_zosmf-1.0.1.tar.gz'
-									sh '/usr/bin/ansible-galaxy collection build'
+							if (fileExists('ibm-ibm_zosmf-1.1.0.tar.gz')) {
+									echo "ibm-ibm_zosmf-1.1.0.tar.gz existed"
+									sh 'rm ibm-ibm_zosmf-1.1.0.tar.gz'
+									sh '/usr/bin/ansible-galaxy collection build --force'
 							} else {
-									sh '/usr/bin/ansible-galaxy collection build'
+									sh '/usr/bin/ansible-galaxy collection build --force'
 							}
 							sh "pwd"
-							sh '/usr/bin/ansible-galaxy collection install ibm-ibm_zosmf-1.0.1.tar.gz'
+							sh '/usr/bin/ansible-galaxy collection install ibm-ibm_zosmf-1.1.0.tar.gz --force'
 					}
 				}
             }
