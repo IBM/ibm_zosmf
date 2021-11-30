@@ -65,6 +65,22 @@ Review the details of the dependencies before you proceed to install the
    * role: `zmf_cpm_manage_software_instance`_
    * role: `zmf_cpm_remove_software_instance`_
 
+* `z/OSMF SCA`_
+
+   z/OSMF SCA is a plugin of z/OSMF which supports json format of security descriptor file.
+   This file can be used to document security requirements by function or product.
+   With the security descriptor file which is easy to create,
+   SCA is able to display and automatically validate security requirements in a flexible granularity,
+   either by individual requirement, by function or by product. SCA is based on SAF interface,
+   therefore, supports all SAF based security products in most cases.
+
+   To interact with z/OSMF SCA in your playbook, it requires you to
+   setup z/OSMF SCA properly in z/OS managed nodes.
+
+   This dependency is only required for using the following module:
+
+   * module: `zmf_sca`_
+
 
 .. _z/OS:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3/en/homepage.html
@@ -84,3 +100,7 @@ Review the details of the dependencies before you proceed to install the
    roles/zmf_cpm_manage_software_instance.html
 .. _zmf_cpm_remove_software_instance:
    roles/zmf_cpm_remove_software_instance.html
+.. _z/OSMF SCA:
+   https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-zosmf-workflows-task
+.. _zmf_sca:
+   modules/zmf_sca.html

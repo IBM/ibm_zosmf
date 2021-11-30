@@ -7,7 +7,7 @@ namespace: ibm
 name: ibm_zosmf
 
 # The collection version
-version: 1.0.1
+version: 1.1.0
 
 # Collection README file
 readme: README.md
@@ -21,6 +21,7 @@ authors:
   - "Xiao Zhen Zhu <zhuxiaoz@cn.ibm.com>"
   - "Yuan Yuan <yuanyuan@cn.ibm.com>"
   - "Qi Li <lqibj@cn.ibm.com>"
+  - "Xiao Ming Liu <xmliuxm@cn.ibm.com>"
 
 # Description
 description: Ansible collection consisting of modules and roles to work with z/OS based on z/OS Management Facility(z/OSMF).
@@ -48,6 +49,9 @@ tags:
   - liberty_provisioning_template
   - was_provisioning_template
   - zosconnect_provisioning_template
+  - sca
+  - security
+  - security_configuration_assistant
 
 # The URL of the originating SCM repository
 repository: https://github.com/IBM/ibm_zosmf

@@ -6,6 +6,36 @@
 Releases
 ========
 
+
+Version 1.1.0
+=============
+
+Notes
+-----
+
+* Added a new module `zmf_sca`_ for SAF based z/OS security automation, starts with security validation.
+* The new module zmf_sca is based on REST API of z/OSMF Security Configuration Assistant (SCA).
+  SCA supports json format of security descriptor file. This file can be used to document security requirements
+  by function or product. With the security descriptor file which is easy to create,
+  SCA is able to display and automatically validate security requirements in a flexible granularity,
+  either by individual requirement, by function or by product. SCA is based on SAF interface,
+  therefore, supports all SAF based security products in most cases.
+* The new module zmf_sca can be used in use cases like security validation, security audit, etc.
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
+Reference
+---------
+
+* The new module zmf_sca requires z/OSMF SCA is configured properly.
+  For the required configuration of z/OSMF SCA, please refer to `z/OSMF SCA Configuration`_
+* The new module zmf_sca only works with z/OSMF V2R4 and above with APAR PH41248 installed.
+
 Version 1.0.1
 =============
 
@@ -58,6 +88,9 @@ Reference
 .. _zmf_workflow:
    modules/zmf_workflow.html
 
+.. _zmf_sca:
+   modules/zmf_sca.html
+
 .. _zmf_workflow_complete:
    roles/zmf_workflow_complete.html
 
@@ -90,3 +123,6 @@ Reference
 
 .. _samples repository:
    https://github.com/IBM/z_ansible_collections_samples/tree/master/zos_management
+
+.. _z/OSMF SCA Configuration:
+https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-security-configuration-assistant-service
