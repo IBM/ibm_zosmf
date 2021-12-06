@@ -39,9 +39,9 @@ options:
         description: The location of path_of_security_requirements.
         required: false
         type: str
-        default: 'zos'
+        default: 'remote'
         choices:
-            - zos
+            - remote
             - local
 
     path_of_security_requirements:
@@ -207,7 +207,7 @@ EXAMPLES = r'''
     zmf_user: "{{ zmf_user }}"
     zmf_password: "{{ zmf_password }}"
   register: result_auth
-  
+
 - name: Validate resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
   ibm.ibm_zosmf.zmf_sca:
     zmf_credential: "{{ result_auth }}"
@@ -352,8 +352,7 @@ from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_util import (
     get_connect_session,
     cmp_list
 )
-from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_sca_api \
-    import (
+from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_sca_api import (
     get_request_argument_spec,
     call_sca_api
 )
@@ -430,7 +429,7 @@ def run_module():
     argument_spec.update(
         target_userid=dict(type='str', required=False),
         path_of_security_requirements=dict(type='str', required=True),
-        location=dict(type='str', required=False, choices=['zos', 'local'], default='zos'),
+        location=dict(type='str', required=False, choices=['remote', 'local'], default='remote'),
         expected_result=dict(type='str', required=False, choices=['all-passed', 'all-failed'], default='all-passed'),
         state=dict(type='str', required=False, choices=['check'], default='check'),
 
@@ -462,7 +461,7 @@ def run_module():
     # import epdb
     # epdb.serve()
     response = {}
-    if module.params['location'] == 'zos':
+    if module.params['location'] == 'remote':
         validate_descriptor(module)
     else:
         validate_resource(module)
