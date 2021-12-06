@@ -142,7 +142,7 @@ def handle_request(module, session, method, url, params=None, rcode=200,
         if response.content:
             response_content = json.loads(response.content)
         else:
-            response_content = dict()
+            response_content = {}
         if response_code == rcode:
             if '/zosmf/services/authenticate' in url:
                 return dict(response.headers)

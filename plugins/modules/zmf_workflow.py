@@ -565,8 +565,8 @@ def is_same_workflow_instance(module, argument_spec_mapping,
     input_file_defined = False
     default_list_vars = []
     res_list_vars = []
-    module_vars = dict()
-    default_vars = dict()
+    module_vars = {}
+    default_vars = {}
     # compare definition files
     if ('workflowDefinitionFileMD5Value' in response_retrieveD
             and 'workflowDefinitionFileMD5Value' in response_retrieveP):
@@ -727,7 +727,7 @@ def action_compare(module, argument_spec_mapping):
                 + module.params['workflow_name'] + ' ---- '
                 + response_retrieveP
         )
-    response_retrieveD = dict()
+    response_retrieveD = {}
     if (module.params['workflow_file'] is not None
             and module.params['workflow_file'].strip() != ''):
         response_retrieveD = call_workflow_api(module, session,
@@ -1080,7 +1080,7 @@ def action_delete(module):
 
 
 def main():
-    argument_spec = dict()
+    argument_spec = {}
     connect_argument_spec = get_connect_argument_spec()
     (argument_spec_mapping, request_argument_spec) = \
         get_request_argument_spec()

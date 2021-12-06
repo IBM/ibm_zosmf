@@ -20,7 +20,7 @@ def __get_auth_apis():
             method='post',
             header={'Content-Type': 'application/x-www-form-urlencoded'},
             url='https://{zmf_host}:{zmf_port}/zosmf/services/authenticate',
-            args=dict(),
+            args={},
             ok_rcode=200
         )
     )

@@ -89,6 +89,7 @@ def __get_sca_apis():
         )
     )
 
+
 def __get_sca_api_argument_spec(api):
     """
     Return the details of the specific sca API.
@@ -134,7 +135,7 @@ def __get_sca_api_params(module, args):
     :param dict[str, dict] args: the initial params of API
     :rtype: dict[str, str/list]
     """
-    params = dict()
+    params = {}
     for k, v in args.items():
         if k == 'returnData':
             params[k] = v['default']
@@ -226,8 +227,8 @@ def get_request_argument_spec():
     Return the arguments of ansible module used for sca APIs.
     :rtype: (dict[str, dict], dict[str, dict])
     """
-    mapping = dict()
-    argument_spec = dict()
+    mapping = {}
+    argument_spec = {}
     sca_apis = __get_sca_apis()
     for k, v in sca_apis.items():
         for kk, vv in v['args'].items():
