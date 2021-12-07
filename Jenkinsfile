@@ -77,7 +77,7 @@ pipeline {
 					sh '/usr/bin/bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/'
 					}
 				dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
-					sh "cp -p /home/test/ansible-tmp/p00.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/p00.yml"
+					sh "cp -p /home/test/ansible-tmp/P00.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P00.yml"
 					sh "cp -p /home/test/ansible-tmp/hosts /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/hosts"
 				}
 				echo 'Workflow BVT'
