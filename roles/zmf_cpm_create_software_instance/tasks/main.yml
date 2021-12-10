@@ -40,7 +40,7 @@
       }'
   when: zmf_body is not defined
 
-- name: "Create instance {{external_name}}"
+- name: "Create instance {{ external_name }}"
   uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr/"
     return_content: true

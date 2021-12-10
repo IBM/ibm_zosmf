@@ -30,7 +30,7 @@
 
 - name: Set instance_object_id as fact
   set_fact:
-    instance_object_id : "{{ instance_data.json['scr-list'][0]['object-id'] }}"
+    instance_object_id: "{{ instance_data.json['scr-list'][0]['object-id'] }}"
 
 
 - name: Set full_instance_json as fact
@@ -74,4 +74,3 @@
     msg: "Instance record saved at: {{ instance_record_dir }}/{{ inventory_hostname }}/{{ external_software_name }}-\
                {{ full_instance_json.json['object-name'] }}.json"
   run_once: true
-
