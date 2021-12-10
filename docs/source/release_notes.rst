@@ -21,7 +21,15 @@ Notes
   either by individual requirement, by function or by product. SCA is based on SAF interface,
   therefore, supports all SAF based security products in most cases.
 * The new module zmf_sca can be used in use cases like security validation, security audit, etc.
-
+* Added a new cloud provisioning and management (CP&M) role zmf_cpm_list_software_templates to obtain list of published 
+  software templates that can be provisioned by user who is requesting to obtain the list. 
+  List of templates is saved in a file system and contains detailed information about each software template.
+* Added a new CP&M role zmf_cpm_create_software_instance to create a software 
+  instance in z/OSMF CP&M software instnace registry. A json file with various properties for the instance can
+  be provided to save instance specific properties in the registry.
+* Added a new CP&M role zmf_cpm_get_software_instance to obtain a specific software instance from the z/OSMF CP&M
+  software instance registry. Retrieved software instance along with associated properties is saved in a file system.
+  
 Availability
 ------------
 
@@ -35,6 +43,9 @@ Reference
 * The new module zmf_sca requires z/OSMF SCA is configured properly.
   For the required configuration of z/OSMF SCA, please refer to `z/OSMF SCA Configuration`_
 * The new module zmf_sca only works with z/OSMF V2R4 and above with APAR PH41248 installed.
+* The new cloud provisioning and management roles requires z/OSMF cloud provisioning and management
+  configured properly and users who will use these roles should be provided appropriate access on
+  z/OS system.
 
 Version 1.0.1
 =============

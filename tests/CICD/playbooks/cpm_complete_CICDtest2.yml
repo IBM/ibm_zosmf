@@ -1,0 +1,57 @@
+# Copyright (c) IBM Corporation 2021 
+
+# This sample playbook demonstrates using roles `zmf_cpm_create_software_service`, 
+# 'zmf_cpm_manage_software_instance' and 'zmf_remove_software_instance' to create
+# a sample service instance, deprovision the instance and remove the deprovisioned instance.
+# Example:
+# ansible-playbook -i hosts cpm_complete_CICDtest2.yml
+
+- name: Test all roles provided by cpm
+  hosts: cpm1
+  collections:
+    - ibm.ibm_zosmf
+  gather_facts: no
+
+  vars:
+    - name: instance_info_json_path #will store instance json information globally thru the playbook
+  
+  tasks:
+    - include_role:
+        name: zmf_cpm_create_software_instance
+      vars:
+        system_name: "SYS1"
+        sysplex_name: "PLEX1"
+        external_name: "DB2B"
+        software_type: "Db2"
+        vendor_name: "IBM"
+        product_version: "V12"
+        instance_description: "Db2 Subsystem for DevTeam"
+        instance_owner: "IBMUSER"
+        instance_provider: "IBMUSER"
+        instance_state: "deprovisioned"
+        
+    - name: Save instance info file path
+      set_fact:
+        instance_file_path: "{{ instance_info_json_path }}"
+
+- hosts: cpm1
+  collections:
+    - ibm.ibm_zosmf
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: zmf_cpm_get_software_instance
+      vars:
+        external_software_name: "DB2B"
+
+- hosts: cpm1
+  collections:
+    - ibm.ibm_zosmf
+  gather_facts: no
+  # vars:
+  #   - name: instance_file_path   
+  tasks:
+    - include_role:
+        name: zmf_cpm_remove_software_instance
+      vars:
+        instance_info_json_path: "{{ instance_file_path }}"
