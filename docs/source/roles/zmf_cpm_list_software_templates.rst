@@ -4,8 +4,8 @@
 .. _zmf_cpm_list_software_templates_module:
 
 
-zmf_cpm_list_software_templates -- Role retrieves list of published templates
-=============================================================================
+zmf_cpm_list_software_templates -- Role lists all published z/OS software templates
+===================================================================================
 
 
 .. contents::
@@ -15,11 +15,9 @@ zmf_cpm_list_software_templates -- Role retrieves list of published templates
 
 Synopsis
 --------
-- The **IBM z/OSMF collection** provides an Ansible role, referred to as 
-  **zmf_cpm_list_software_templates**, to retrieve list of published templates from
-  **IBM Cloud Provisioning and Management (CP&M)** catalog. Templates are returned based
-  on user's access on z/OS system. User can provision any template returned in this 
-  list. List of templates and associated properties is saved in file system.
+- The **IBM z/OSMF collection** provides an Ansible role, referred to as **zmf_cpm_list_software_templates**, to obtain list of all the published templates that can be used to provision z/OS middleware such as  IBM Customer Information Control System (CICS®), IBM Db2®, IBM MQ, and IBM WebSphere Application Server or any other software service from **IBM Cloud Provisioning and Management (CP&M**) catalog.
+
+
 
 
 
@@ -63,6 +61,7 @@ zmf_user
 
 
  
+
 zmf_password
   Password to be used for authenticating with z/OSMF server.
 
@@ -73,16 +72,20 @@ zmf_password
   | **type**: str
 
 
+ 
+
 instance_record_dir
-  Directory path that the CP&M roles use to capture various information (in JSON format) about the software templates.
-  On many system default value ``"/tmp"`` used for this variable may not be acceptable because ``"/tmp"`` directory
-  can be transient on the system. In such cases it is recommended to specify non-default value for this variable. This
-  variable can be specified in the inventory file or vars file.
+  Directory path that the provisioning role uses to capture list of published templates (in JSON format).
+
+
+  On many system default value ``"/tmp"`` used for this variable may not be acceptable because ``"/tmp"`` directory can be transient on the system. In such cases it is recommended to specify non-default value for this variable. This variable can be specified in the inventory file or vars file.
 
 
   | **required**: False
   | **type**: str
   | **default**: /tmp
+
+
 
 
 Examples
@@ -91,7 +94,7 @@ Examples
 .. code-block:: yaml+jinja
 
    
-   - name: List software templates published in z/OSMF catalog
+   - name: list published provisioning templates
      hosts: sampleHost
      gather_facts: no
      collections: 
@@ -99,6 +102,7 @@ Examples
      tasks: 
        - include_module:
            name: zmf_cpm_list_software_templates
+         
 
 
 
@@ -107,6 +111,7 @@ Notes
 
 .. note::
    - The given example assumes that you have an inventory file *inventory.yml* and host vars *sampleHost.yml* with appropriate values to identify the target z/OSMF server end point.
+When playbooks completes, a message shown in following example is displayed, ``"msg": "Published Template List saved at: /tmp/xxx.json"``. This message includes a file path and file name where the list of published template is returned.
 
 
 

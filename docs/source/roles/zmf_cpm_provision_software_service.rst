@@ -149,7 +149,7 @@ input_vars
  
 
 zmf_body
-  Instead of specifying *domain-name*, *tenant-name*, *system-nicknames* and *input-variable* individually, this parameter can be used to pass them as a dictionary variable. This variable needs to be in following format,
+  Instead of specifying *domain_name*, *tenant_name*, *system_nicknames* and *input_variable* individually, this parameter can be used to pass them as a dictionary variable. This variable needs to be in following format,
 
 
   ``{``

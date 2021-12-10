@@ -12,21 +12,18 @@ description:
       (CICS®), IBM Db2®, IBM Information Management System (IMS™), IBM MQ, and
       IBM WebSphere Application Server or any other z/OS Software in
       B(IBM Cloud Provisioning and Management (CP&M)) registry.
-
 author:
     - Hiren Shah (@shreeji818)
 options:
     zmf_host:
         description:
-            - >
-              Hostname of the z/OSMF server, specified in the inventory file
+            - Hostname of the z/OSMF server, specified in the inventory file
               or vars file.
         required: True
         type: str
     zmf_port:
         description:
-            - >
-              Port number of the z/OSMF server.
+            - Port number of the z/OSMF server.
               If z/OSMF is not using the default port, you need to specify
               value for this parameter in the inventory file or vars file.
         required: False
@@ -50,8 +47,7 @@ options:
         type: str
     instance_record_dir:
         description:
-            - >
-              Directory path that the provisioning role uses to capture
+            - Directory path that the provisioning role uses to capture
               various information (in JSON format) about the provisioned
               instance.
             - >
@@ -67,73 +63,62 @@ options:
         default: /tmp
     systems_name:
         description:
-            - >
-              The name of the system where the software is currently manullay
+            - The name of the system where the software is currently manullay
               configured
         required: True
         type: str
     sysplex_name:
         description:
-            - >
-              The name of the sysplex where the software is currently manullay
+            - The name of the sysplex where the software is currently manullay
               configured
         required: True
         type: str
     external_name:
         description:
-            - >
-              The external name associated with the manually configured
+            - The external name associated with the manually configured
               software
         required: True
         type: str
     vendor_name:
         description:
-            - >
-              The vendor who proivded the software
+            - The vendor who proivded the software
         required: True
         type: str
     software_type:
         description:
-            - >
-              The software type of the configured software
+            - The software type of the configured software
         required: True
         type: str
     product_version:
         description:
-            - >
-              The software product version of the configured software 
+            - The software product version of the configured software 
         required: True
         type: str
     instance_description:
         description:
-            - >
-              Description for the configured software
+            - Description for the configured software
         required: True
         type: str
     instance_provider:
         description:
-            - >
-              User who provided the software instance information
+            - User who provided the software instance information
         required: True
         type: str
     instance_owner:
         description:
-            - >
-              Owner of the software instance. Software instance can be removed
+            - Owner of the software instance. Software instance can be removed
               only by this user
         required: True
         type: str
     instance_info_json_path:
         description:
-            - >
-              Directory path for the JSON file that holds variables associated with
+            - Directory path for the JSON file that holds variables associated with
               software instance. Specify the file name that includes variables
               associated with the configured softare instance e.g. /tmp/myVar.json. 
               File contains json array of variables with name, value and visibility
               format where name identifies variable name, value identifies variable
               value and visibility identifies whether variable is "public" or "private".
               For example,
-            - >
             - C([)
             - C({)
             - C("name":"VAR1",)
@@ -145,13 +130,13 @@ options:
             - C("value":"VAR2_VALUE",)
             - C("visibility":"public")
             - C(},)
-            - C(....])  
-        required: True
+            - C(....]) 
+        required: False
         type: dict
+        default: null
     zmf_body:
         description:
-            - >
-              Instead of specifying I(system-name), I(sysplex-name), I(external_name), I(vendor_name),
+            - Instead of specifying I(system-name), I(sysplex-name), I(external_name), I(vendor_name),
               I(product_version), I(instance_description), I(instance_owner), I(instance_provider), and 
               I(instance_var_json_path) individually, this parameter can be used to pass them as a
               dictionary variable. This variable needs to be in following format,
@@ -171,9 +156,8 @@ options:
                 "instructions":"perform this action to deprovision"} ],)
             - C("variables":{{ instance_variable_record }})
             - C(})
-
             - >
-            Note: *instance_variable_record* is a dictionary object and needs to be in following format
+              Note I(instance_variable_record) is a dictionary object and needs to be in following format
 
             - C([)
             - C({)
@@ -190,7 +174,6 @@ options:
         required: False
         type: dict
         default: null
-
 notes:
     - >
       The given example assumes that you have an inventory file
@@ -203,6 +186,7 @@ notes:
       information is returned.
       This file is required for M(zmf_cpm_manage_software_instance) and
       M(zmf_cpm_remove_software_instance) roles.
+
 """
 
 EXAMPLES = r"""
