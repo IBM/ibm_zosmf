@@ -146,6 +146,7 @@ options:
             - C("sysplex-name":"{{ sysplex_name }}",)
             - C("registry-type":"general",)
             - C("external-name":"{{ external_name }}",)
+            - C("type":"{{ software_type }}",)
             - C("vendor":"{{ vendor_name }}",)
             - C("version":"{{ product_version }}",)
             - C("description":"{{ instance_description }}",)

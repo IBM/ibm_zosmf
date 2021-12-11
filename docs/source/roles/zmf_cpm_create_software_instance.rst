@@ -212,6 +212,8 @@ zmf_body
 
   ``"external-name":"{{ external_name }}",``
 
+  ``"type":"{{ software_type }}",``
+
   ``"vendor":"{{ vendor_name }}",``
 
   ``"version":"{{ product_version }}",``

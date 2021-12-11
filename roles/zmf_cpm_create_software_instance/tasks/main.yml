@@ -23,11 +23,11 @@
     instance_state: "provisioned"
   when: instance_state is not defined
 
-# Allow zmf_body to be set in previous tasks. If zmf_body isn't set then set default below
+# Allow zmf_cs_body to be set in previous tasks. If zmf_body isn't set then set default below
 
-- name: Set zmf_body as fact
+- name: Set zmf_cs_body as fact
   set_fact:
-    zmf_body: '{
+    zmf_cs_body: '{
       "system": "{{ system_name }}","sysplex": "{{ sysplex_name }}",
       "registry-type": "general","external-name": "{{ external_name }}",
       "type": "{{ software_type }}",
@@ -38,7 +38,7 @@
              "instructions" : "perform this action to deprovision"} ],
       "variables":{{ instance_variable_record }}
       }'
-  when: zmf_body is not defined
+  when: zmf_cs_body is not defined
 
 - name: "Create instance {{ external_name }}"
   uri:
@@ -54,7 +54,7 @@
     status_code: "201"
     validate_certs: false
     body_format: json
-    body: "{{ zmf_body }}"
+    body: "{{ zmf_cs_body }}"
   delegate_to: localhost
   register: create_results
 
