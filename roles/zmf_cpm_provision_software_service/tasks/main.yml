@@ -16,7 +16,7 @@
 
 - name: Set tenant_name as fact
   set_fact:
-    tenant_name: ""
+    tenant_name: "default"
   when: tenant_name is not defined
 
 - name: Set systems_nicknames as fact
