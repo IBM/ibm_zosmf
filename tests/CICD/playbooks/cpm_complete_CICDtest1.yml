@@ -1,47 +1,162 @@
-# Copyright (c) IBM Corporation 2021 
+# Copyright (c) IBM Corporation 2021
 
-# This sample playbook demonstrates using roles `zmf_cpm_provision_software_service`, 
+# This sample playbook demonstrates using roles `zmf_cpm_provision_software_service`,
 # 'zmf_cpm_manage_software_instance' and 'zmf_remove_software_instance' to provision
 # a sample service instance, deprovision the instance and remove the deprovisioned instance.
+# This sample playbook also tests new roles 'zmf_cpm_list_software_templates',
+# 'zmf_cpm_create_software_instance' and 'zmf_cpm_get_software_instance'
 # Example:
 # ansible-playbook -i hosts cpm_complete_CICDtest1.yml
 
 - name: Test all roles provided by cpm
-  hosts: cpm1
+  #
+  #   Test zmf_cpm_provision_software_service role
+  #
+  hosts: ClientCtr
   collections:
     - ibm.ibm_zosmf
-  gather_facts: no
-  
+  gather_facts: false
+
   tasks:
     - include_role:
         name: zmf_cpm_provision_software_service
       vars:
-        cpm_template_name: 'AnsibleFVT'  # The value for property cpm_template_name which identifies the template (software service) user wants to provision with Cloud Provisioning & Management
-        domain_name: 'default' # The value for property domain_name which identifies CP&M domain in which specified template is defined
+        # The value for property cpm_template_name
+        # which identifies the template (software
+        # service) user wants to provision with
+        # Cloud Provisioning & Management
+        cpm_template_name: 'AnsibleFVT'
+        # The value for property domain_name which
+        # identifies CP&M domain in which specified
+        # template is defined
+        domain_name: 'default'
 
     - name: Save instance info file path
       set_fact:
         instance_file_path: "{{ instance_info_json_path }}"
 
-- hosts: cpm1 
+#
+#   Test zmf_cpm_manage_software_instance role
+#
+- hosts: ClientCtr
   collections:
     - ibm.ibm_zosmf
-  gather_facts: no
-  # vars:
-  #   - name: instance_file_path        
+  gather_facts: false
   tasks:
     - include_role:
         name: zmf_cpm_manage_software_instance
       vars:
         instance_action_name: "deprovision"
         instance_info_json_path: "{{ instance_file_path }}"
-                
-- hosts: cpm1
+#
+#   Test zmf_cpm_remove_software_instance role
+#
+- hosts: ClientCtr
   collections:
     - ibm.ibm_zosmf
-  gather_facts: no
-  # vars:
-  #   - name: instance_file_path   
+  gather_facts: false
+  tasks:
+    - include_role:
+        name: zmf_cpm_remove_software_instance
+      vars:
+        instance_info_json_path: "{{ instance_file_path }}"
+
+#
+#   Test zmf_cpm_list_software_templates role
+#
+- hosts: ClientCtr
+  collections:
+    - ibm.ibm_zosmf
+  gather_facts: false
+  vars:
+    # will store template json information globally
+    # thru the playbook
+    - name: template_info_json_path
+
+  tasks:
+    - include_role:
+        name: zmf_cpm_list_software_templates
+
+    - name: Set templates as fact
+      set_fact:
+        templates: null
+
+    - name: Gather name of published templates and domains
+      vars:
+        template_info_json: "{{ lookup('file', template_info_json_path) }}"
+
+      set_fact:
+        templates: "{{ item.name }}:{{ item['domain-name'] }}, {{ templates }}"
+
+      loop: "{{ template_info_json['psc-list'] }}"
+
+    - name: Display published templates
+      debug:
+        msg: "Published Template:Domain are : {{ templates }}"
+
+    - name: Clean instance record file
+      file:
+        state: absent
+        path: "{{ template_info_json_path }}"
+      delegate_to: localhost
+#
+#   Test zmf_cpm_create_software_instance role
+#
+- hosts: ClientCtr
+  collections:
+    - ibm.ibm_zosmf
+  gather_facts: false
+  tasks:
+    - include_role:
+        name: zmf_cpm_create_software_instance
+      vars:
+        system_name: "SYS1"
+        sysplex_name: "PLEX1"
+        external_name: "DB2B"
+        software_type: "Db2"
+        vendor_name: "IBM"
+        product_version: "V12"
+        instance_description: "Db2 Subsystem for DevTeam"
+        instance_owner: "IBMUSER"
+        instance_provider: "IBMUSER"
+        instance_state: "deprovisioned"
+
+    - name: Save instance info file path
+      set_fact:
+        instance_file_path: "{{ instance_info_json_path }}"
+#
+#   Test zmf_cpm_create_software_instance role
+#
+- hosts: ClientCtr
+  collections:
+    - ibm.ibm_zosmf
+  gather_facts: false
+
+  tasks:
+    - include_role:
+        name: zmf_cpm_get_software_instance
+      vars:
+        external_software_name: "DB2B"
+
+    - name: Set Provider
+      vars:
+        instance_info_json: "{{ lookup('file', instance_info_json_path) | from_json }}"
+
+      set_fact:
+        PROV: "{{ instance_info_json['registry-info']['provider'] }}"
+
+    - name: Display Provider
+      debug:
+        msg: "Software instance provider is : {{ PROV }}"
+
+#
+#   Cleanup software instance created in registry via
+#   zmf_cpm_remove_software_instance role
+#
+- hosts: ClientCtr
+  collections:
+    - ibm.ibm_zosmf
+  gather_facts: false
   tasks:
     - include_role:
         name: zmf_cpm_remove_software_instance

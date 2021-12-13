@@ -64,6 +64,9 @@ Review the details of the dependencies before you proceed to install the
    * role: `zmf_cpm_provision_software_service`_
    * role: `zmf_cpm_manage_software_instance`_
    * role: `zmf_cpm_remove_software_instance`_
+   * role: `zmf_cpm_list_software_templates`_
+   * role: `zmf_cpm_create_software_instance`_
+   * role: `zmf_cpm_get_software_instance`_
 
 * `z/OSMF SCA`_
 
@@ -100,6 +103,12 @@ Review the details of the dependencies before you proceed to install the
    roles/zmf_cpm_manage_software_instance.html
 .. _zmf_cpm_remove_software_instance:
    roles/zmf_cpm_remove_software_instance.html
+.. _zmf_cpm_list_software_templates:
+   roles/zmf_cpm_list_software_templates.html
+.. _zmf_cpm_create_software_instance:
+   roles/zmf_cpm_create_software_instance.html
+.. _zmf_cpm_get_software_instance:
+   roles/zmf_cpm_get_software_instance.html 
 .. _z/OSMF SCA:
    https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-zosmf-workflows-task
 .. _zmf_sca:
