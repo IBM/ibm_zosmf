@@ -28,7 +28,7 @@ pipeline {
                 }
                 agent {
                     node {
-                        label 'zmf-ansible-configuration-ssh-${SSH_PORT}'
+                        label "zmf-ansible-configuration-ssh-${SSH_PORT}"
                         customWorkspace "workspace/${env.BRANCH_NAME}"
                     }
                 }
