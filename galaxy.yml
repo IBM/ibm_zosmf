@@ -71,6 +71,5 @@ build_ignore:
   - .git
   - .cache
   - '*.tar.gz'
-  - tests/CICD
   - docs
   - collections
