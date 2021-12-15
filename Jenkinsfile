@@ -35,7 +35,7 @@ pipeline {
                 stages {
                     stage('Build') {
                         steps {
-                            echo 'Hello, build'
+                            echo "Hello, build on ${SSH_PORT}"
                             sh "pwd"
                             sh '/usr/bin/ansible --version'
                             dir("/home/test/.ansible") {
@@ -48,11 +48,11 @@ pipeline {
                             script {
                                 remoteWorkspace = env.WORKSPACE
 
-                                echo "Remote workspace is ${remoteWorkspace}"
+                                echo "Remote workspace is ${remoteWorkspace} on ${SSH_PORT}"
 
                                 dir("${remoteWorkspace}") {
                                         if (fileExists('ibm-ibm_zosmf-1.1.0.tar.gz')) {
-                                                echo "ibm-ibm_zosmf-1.1.0.tar.gz existed"
+                                                echo "ibm-ibm_zosmf-1.1.0.tar.gz existed on ${SSH_PORT}"
                                                 sh 'rm ibm-ibm_zosmf-1.1.0.tar.gz'
                                                 sh '/usr/bin/ansible-galaxy collection build --force'
                                         } else {
@@ -67,7 +67,7 @@ pipeline {
 
                     stage('Test') {
                         steps {
-                            echo 'sanity test'
+                            echo "sanity test on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf") {
                                 sh "pwd"
                                 sh '/usr/bin/ansible-test sanity'
@@ -82,19 +82,19 @@ pipeline {
                                 sh "cp -p /home/test/ansible-tmp/P01.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P01.yml"
                                 sh "cp -p /home/test/ansible-tmp/hosts /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/hosts"
                             }
-                            echo 'SCA BVT'
+                            echo "SCA BVT on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
                                 sh '/usr/bin/ansible-playbook sca_CICDtest1.yml'
                             }
-                            echo 'Workflow BVT'
+                            echo "Workflow BVT on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
                                 sh '/usr/bin/ansible-playbook workflow_complete_CICDtest1.yml'
                             }
-                            echo 'CPM BVT'
+                            echo "CPM BVT on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
                                 sh '/usr/bin/ansible-playbook cpm_complete_CICDtest1.yml'
                             }
-                            echo 'CICD test successfully!'
+                            echo "CICD test successfully on ${SSH_PORT}"
                         }
                     }
                 }
