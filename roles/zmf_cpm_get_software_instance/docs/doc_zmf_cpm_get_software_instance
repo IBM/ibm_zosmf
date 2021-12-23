@@ -73,7 +73,7 @@ notes:
       The given example assumes that you have an inventory file
       I(inventory.yml) and host vars I(sampleHost.yml) with appropriate values
       to identify the target z/OSMF server end point.
-
+    - >
       When playbooks completes, a message shown in following example is
       displayed, C("msg": "Instance record saved at: /tmp/xxx/xxx.json").
       This message includes a file path and file name where the instance specific data of

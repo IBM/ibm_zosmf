@@ -136,4 +136,4 @@ Reference
    https://github.com/IBM/z_ansible_collections_samples/tree/master/zos_management
 
 .. _z/OSMF SCA Configuration:
-https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-security-configuration-assistant-service
+   https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-security-configuration-assistant-service
