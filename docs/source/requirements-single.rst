@@ -12,10 +12,10 @@
 Requirements
 ============
 
-The **IBM z/OSMF collection** requires both a **control node** and
-**managed node** be configured with a minimum set of requirements.
+The **IBM z/OSMF collection** requires both a **control node** and a
+**managed node** to be configured with a minimum set of requirements.
 The control node is often referred to as the **controller** and the managed
-node as the **host** or **target**.
+node is referred to as the **host** or **target**.
 
 Refer to RedHat Ansible Certified Content documentation for more on the
 `controllers dependencies`_.
@@ -31,7 +31,7 @@ Control node
 
 When using the **IBM z/OS Management Facility (z/OSMF) collection**, there
 could be additional requirements for the control node.
-Please see details of dependency below:
+Please see details of the dependency below:
 
 * `Requests library for Python`_: 2.23 or later (Optional)
    
@@ -61,7 +61,7 @@ The managed z/OS node is the host that is managed by Ansible, as identified in
 the Ansible inventory.
 The managed node has dependencies that are specific to each release of the
 **IBM z/OSMF collection**.
-Review the details of the dependencies before you proceed to install the
+Review the details of the dependencies before you install the
 **IBM z/OSMF collection**.
 
 * `z/OS`_: V2R3 or later
@@ -69,7 +69,7 @@ Review the details of the dependencies before you proceed to install the
    The target z/OS systems should be configured as the target hosts
    (managed nodes) in your playbook.
    The z/OSMF collection drives z/OSMF REST APIs remotely by default.
-   This is done by specifying ``delegate_to: localhost`` statement in your
+   This is done by specifying the ``delegate_to: localhost`` statement in your
    playbook or roles in this collection.
    With this remote approach, it is not necessary to set up SSH and install
    Python on the target z/OS systems. 
@@ -80,9 +80,9 @@ Review the details of the dependencies before you proceed to install the
    system in the same sysplex.
    Information about the z/OSMF server must be configured in the inventory
    file or in the ``vars`` file, such as the hostname, port number, and
-   authentication info.
-   The authentication info to connect to the z/OSMF server is provided when
-   running playbook or it will be prompted during playbook run.
+   authentication information.
+   The authentication information to connect to the z/OSMF server is provided when
+   running the playbook, otherwise it is prompted during the playbook run.
    You can specify the same z/OSMF server for multiple z/OS managed nodes in
    the same sysplex.
 
@@ -91,7 +91,7 @@ Review the details of the dependencies before you proceed to install the
    z/OSMF Workflow is a plugin of z/OSMF which provides a framework to
    streamline z/OS tasks.
    To interact with z/OSMF Workflow in your playbook, it requires you to
-   setup z/OSMF Workflow properly in z/OS managed nodes.
+   setup z/OSMF Workflow properly in the z/OS managed nodes.
    Typically, you setup z/OSMF Workflow as a plugin of one z/OSMF server in
    each sysplex. 
 
@@ -125,12 +125,12 @@ Review the details of the dependencies before you proceed to install the
 
 * `z/OSMF SCA`_
 
-   z/OSMF SCA is a plugin of z/OSMF which supports json format of security descriptor file.
+   z/OSMF SCA is a plugin of z/OSMF which supports the json format of the security descriptor file.
    This file can be used to document security requirements by function or product.
-   With the security descriptor file which is easy to create,
+   With the security descriptor file that is easy to create,
    SCA is able to display and automatically validate security requirements in a flexible granularity,
-   either by individual requirement, by function or by product. SCA is based on SAF interface,
-   therefore, supports all SAF based security products in most cases.
+   either by individual requirement, by function or by product. SCA is based on the SAF interface,
+   therefore, it supports all SAF based security products in most cases.
 
    To interact with z/OSMF SCA in your playbook, it requires you to
    setup z/OSMF SCA properly in z/OS managed nodes.
@@ -162,7 +162,7 @@ Review the details of the dependencies before you proceed to install the
 .. _zmf_cpm_create_software_instance:
    roles/zmf_cpm_create_software_instance.html
 .. _zmf_cpm_get_software_instance:
-   roles/zmf_cpm_get_software_instance.html         
+   roles/zmf_cpm_get_software_instance.html
 .. _z/OSMF SCA:
    https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-zosmf-workflows-task
 .. _zmf_sca:

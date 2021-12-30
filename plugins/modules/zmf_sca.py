@@ -29,9 +29,9 @@ options:
         description:
             - >
               User ID or group ID to be validated for the security requirements documented by the security descriptor
-              JSON file which is specified by parameter path_of_security_requirements.
+              JSON file that is specified by the parameter path_of_security_requirements.
             - >
-              If this parameter is not specified, the current logon user ID will be used to be validated.
+              If this parameter is not specified, the current logon user ID is used for validation.
         required: false
         type: str
 
@@ -47,23 +47,23 @@ options:
     path_of_security_requirements:
         description:
             - >
-              Absolute path of the security descriptor JSON file which contains the security requirements
+              Absolute path of the security descriptor JSON file that contains the security requirements
               to be validated.
         required: true
         type: str
 
     expected_result:
         description:
-            - Expected validation result of security requirements.
+            - Expected validation result of the security requirements.
             - >
                 For all-passed, the module returns success when all security requirements are satisfied.
-                If any requirement is failed or can not be determined, this module will be failed.
+                If any requirement is not met or can not be determined, this module fails.
             - >
-                For all-failed, the module returns success when all security requirements are failed.
-                If any requirement is satisfied or can not be determined, this module will be failed.
+                For all-failed, the module returns success when all security requirements have failed.
+                If any requirement is satisfied or can not be determined, this module fails.
             - >
-              The value "all-passed" can be used in security validation use case.
-              The value "all-failed" may be used in security auditing use case to check if any over permission exists.
+              The value "all-passed" can be used in security validation use cases.
+              The value "all-failed" may be used in security auditing use cases to check if any over permission exists.
         required: false
         default: 'all-passed'
         type: str
@@ -159,7 +159,7 @@ options:
         default: null
     zmf_password:
         description:
-            - Password to be used for authenticating with z/OSMF server.
+            - Password to be used for authentication with z/OSMF server.
             - If I(zmf_credential) is supplied, I(zmf_password) is ignored.
             - >
               If I(zmf_credential) is not supplied, I(zmf_password) is required
@@ -200,7 +200,7 @@ options:
 '''
 
 EXAMPLES = r'''
-- name: Authenticate with z/OSMF server by username/password, and register the result for later use.
+- name: Authenticate with the z/OSMF server by username/password, and register the result for later use.
   zmf_authenticate:
     zmf_host: "{{ zmf_host }}"
     zmf_port: "{{ zmf_port }}"
@@ -227,7 +227,7 @@ EXAMPLES = r'''
 RETURN = r'''
 changed:
     description:
-        - Indicates if any change is made during the module operation.
+        - Indicates whether any change is made during the module operation.
     returned: always
     type: bool
 
@@ -237,7 +237,7 @@ msg:
     type: str
 
 resourceItems:
-    description: Array of security resources do not match with expected result.
+    description: Array of security resources do not match with the expected result.
     type: list
     elements: dict
     returned: always on fail
@@ -260,7 +260,7 @@ resourceItems:
             sample: 'DFSMSrmm inventory management CHANGEDATASET VX command protection.'
         resourceProfile:
             description:
-                - Name of security resource profile.
+                - Name of the security resource profile.
                 - At current stage,
                 -   Variable in the name is not supported.
                 -   Generic resource name is not supported.
@@ -274,7 +274,7 @@ resourceItems:
             sample: 'FACILITY'
         access:
             description:
-                - Level of access that is required to the security resource for the specified user ID or group ID.
+                - Level of access that is required for the security resource for the specified user ID or group ID.
                 - Value can be the following
             type: str
             returned: always
@@ -284,19 +284,19 @@ resourceItems:
                 - CONTROL
                 - ALTER
         action:
-            description: For validate action, the return value will be 'validate'.
+            description: For action validation, the return value will be 'validate'.
             type: str
             returned: always
             sample: 'validate'
         actionObjectId:
             description:
                 - The object ID of this action. For validation action, this ID is the same as validatedId below.
-                - This field can also be used for other action in further versions.
+                - This field can also be used for other actions in future versions.
             type: str
             returned: always
             sample: ''
         validatedId:
-            description: User ID or group ID that is used to validate for the resource.
+            description: User ID or group ID that is used for resource validation.
             type: str
             returned: always
             sample: ''
