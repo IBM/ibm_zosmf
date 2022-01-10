@@ -19,13 +19,14 @@ Notes
   by function or by product. With the security descriptor file that is easy to create,
   SCA is able to display and automatically validate security requirements in a flexible granularity,
   either by individual requirement, by function or by product. SCA is based on the SAF interface,
-  therefore it supports all SAF based security products in most cases.
+  therefore it supports all SAF based security products in most cases. To learn more about z/OSMF SCA, please refer to
+  the `SCA demo`_ in IBM MediaCenter.
 * The new module zmf_sca can be used in use cases like security validation, security audit, etc.
 * Added a new cloud provisioning and management (CP&M) role zmf_cpm_list_software_templates to obtain list of published
   software templates that can be provisioned by user who is requesting to obtain the list.
   List of templates is saved in a file system and contains detailed information about each software template.
 * Added a new CP&M role zmf_cpm_create_software_instance to create a software
-  instance in z/OSMF CP&M software instnace registry. A json file with various properties for the instance can
+  instance in z/OSMF CP&M software instance registry. A json file with various properties for the instance can
   be provided to save instance specific properties in the registry.
 * Added a new CP&M role zmf_cpm_get_software_instance to obtain a specific software instance from the z/OSMF CP&M
   software instance registry. Retrieved software instance along with associated properties is saved in a file system.
@@ -136,3 +137,6 @@ Reference
 
 .. _z/OSMF SCA Configuration:
    https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-security-configuration-assistant-service
+
+.. _SCA demo:
+   https://mediacenter.ibm.com/media/Use+z+OSMF+to+validate+security+of+DFSMS/1_17jzrqtg/101043781
