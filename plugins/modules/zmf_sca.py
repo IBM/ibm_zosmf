@@ -411,6 +411,9 @@ def process_response(response, module):
         # not found, msg: path of security requirements not found
         if '400' in response and 'not found' in response:
             prefix = 'Path of security requirements not found.'
+        elif '404' in response:
+            prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH41248 installed,' \
+                     'and Security Configuration Assistant is enabled.'
         module.fail_json(
             msg=prefix + ' ---- ' + response
         )
