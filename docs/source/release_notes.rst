@@ -20,7 +20,7 @@ Notes
   SCA is able to display and automatically validate security requirements in a flexible granularity,
   either by individual requirement, by function or by product. SCA is based on the SAF interface,
   therefore it supports all SAF based security products in most cases. To learn more about z/OSMF SCA, please refer to
-  the `SCA demo`_ in IBM MediaCenter.
+  `SCA blog`_ and the `SCA demo`_ in IBM MediaCenter.
 * The new module zmf_sca can be used in use cases like security validation, security audit, etc.
 * Added a new cloud provisioning and management (CP&M) role zmf_cpm_list_software_templates to obtain list of published
   software templates that can be provisioned by user who is requesting to obtain the list.
@@ -140,3 +140,6 @@ Reference
 
 .. _SCA demo:
    https://mediacenter.ibm.com/media/Use+z+OSMF+to+validate+security+of+DFSMS/1_17jzrqtg/101043781
+
+.. _SCA blog:
+   https://community.ibm.com/community/user/ibmz-and-linuxone/blogs/river-jia/2021/07/25/zosmf-security-configuration-assistant
