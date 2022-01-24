@@ -13,10 +13,11 @@ module: zmf_sca
 
 short_description: Automate z/OS security validation
 
-version_added: "1.0.0"
+version_added: "1.1.0"
 
 author:
     - Xiao Ming Liu (@EricLiuAtIbm)
+    - Yun Juan Yang (@zosmf-Robyn)
 
 description:
     - >
@@ -403,7 +404,7 @@ def process_response(response, module):
         res = {}
         if len(unexpected) > 0:
             res['resourceItems'] = unexpected
-            module.fail_json('Security validation does not match with expected_result.', **res)
+            module.fail_json(msg='Security validation does not match with expected_result.', **res)
         else:
             module.exit_json(**res)
     else:
