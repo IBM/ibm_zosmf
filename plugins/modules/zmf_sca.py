@@ -380,8 +380,9 @@ def validate_resource(module):
     try:
         with io.open(path, 'r', encoding='utf8') as f_read:
             body = f_read.read()
-    except OSError as ex:
+    except (OSError, IOError) as ex:
         module.fail_json(msg='Failed to read local security requirements: ' + path + ' ---- OS error: ' + str(ex))
+
     if f_read is not None:
         f_read.close()
     # create session
