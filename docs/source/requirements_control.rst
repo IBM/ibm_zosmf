@@ -15,7 +15,7 @@ Please see details of dependency below:
 
    * module: `zmf_workflow`_
    * role: `zmf_workflow_complete`_
-
+   * module: `zmf_sca`_
 
 .. _Requests library for Python:
    https://requests.readthedocs.io/en/latest/
@@ -23,4 +23,6 @@ Please see details of dependency below:
    modules/zmf_workflow.html
 .. _zmf_workflow_complete:
    roles/zmf_workflow_complete.html
+.. _zmf_sca:
+   modules/zmf_sca.html
 

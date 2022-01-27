@@ -181,7 +181,7 @@ def __get_workflow_apis():
             method='delete',
             url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
                 + version + '/workflows/{workflowKey}',
-            args=dict(),
+            args={},
             ok_rcode=204
         )
     )
@@ -235,7 +235,7 @@ def __get_workflow_api_params(module, args):
     :param dict[str, dict] args: the initial params of API
     :rtype: dict[str, str/list]
     """
-    params = dict()
+    params = {}
     for k, v in args.items():
         if k == 'returnData':
             params[k] = v['default']
@@ -329,8 +329,8 @@ def get_request_argument_spec():
     Return the arguments of ansible module used for workflow APIs.
     :rtype: (dict[str, dict], dict[str, dict])
     """
-    mapping = dict()
-    argument_spec = dict()
+    mapping = {}
+    argument_spec = {}
     workflow_apis = __get_workflow_apis()
     for k, v in workflow_apis.items():
         for kk, vv in v['args'].items():

@@ -117,8 +117,8 @@ options:
     zmf_body:
         description:
             - >
-              Instead of specifying I(domain-name), I(tenant-name),
-              I(system-nicknames) and I(input-variable) individually, this
+              Instead of specifying I(domain_name), I(tenant_name),
+              I(system_nicknames) and I(input_variable) individually, this
               parameter can be used to pass them as a dictionary variable.
               This variable needs to be in following format,
             - C({)

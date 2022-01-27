@@ -95,7 +95,7 @@ def __get_request_headers():
 
 
 def handle_request(module, session, method, url, params=None, rcode=200,
-                   header=None, timeout=30):
+                   header=None, timeout=30, body=None):
     """
     Return the response or error message of HTTP request.
     :param AnsibleModule module: the ansible module
@@ -104,8 +104,9 @@ def handle_request(module, session, method, url, params=None, rcode=200,
     :param str url: the URL of HTTP request
     :param dict params: the params of HTTP request
     :param int rcode: the expected return code of HTTP request
-    :param int timeout: the timeout of HTTP request
     :param dict header: the header of HTTP request
+    :param int timeout: the timeout of HTTP request
+    :param str body: the body of HTTP request
     :rtype: dict or str
     """
     headers = __get_request_headers()
@@ -116,13 +117,21 @@ def handle_request(module, session, method, url, params=None, rcode=200,
             response = session.get(url, params=params, headers=headers,
                                    verify=False, timeout=timeout)
         elif method == 'put':
-            response = session.put(url, data=json.dumps(params),
-                                   headers=headers, verify=False,
-                                   timeout=timeout)
+            if body is not None:
+                response = session.put(url, data=body, headers=headers,
+                                       verify=False, timeout=timeout)
+            else:
+                response = session.put(url, data=json.dumps(params),
+                                       headers=headers, verify=False,
+                                       timeout=timeout)
         elif method == 'post':
-            response = session.post(url, data=json.dumps(params),
-                                    headers=headers, verify=False,
-                                    timeout=timeout)
+            if body is not None:
+                response = session.post(url, data=body, headers=headers,
+                                        verify=False, timeout=timeout)
+            else:
+                response = session.post(url, data=json.dumps(params),
+                                        headers=headers, verify=False,
+                                        timeout=timeout)
         elif method == 'delete':
             response = session.delete(url, headers=headers, verify=False,
                                       timeout=timeout)
@@ -130,10 +139,13 @@ def handle_request(module, session, method, url, params=None, rcode=200,
         module.fail_json(msg='HTTP request error: ' + repr(ex))
     else:
         response_code = response.status_code
+        # In v2r3, response content is a string which will cause error in json.loads.
+        if response_code == 404:
+            return 'HTTP request error: ' + str(response_code)
         if response.content:
             response_content = json.loads(response.content)
         else:
-            response_content = dict()
+            response_content = {}
         if response_code == rcode:
             if '/zosmf/services/authenticate' in url:
                 return dict(response.headers)

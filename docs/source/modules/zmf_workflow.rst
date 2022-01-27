@@ -439,10 +439,18 @@ Examples
 .. code-block:: yaml+jinja
 
    
+   - name: Authenticate with z/OSMF server by username/password, and register the result for later use.
+     zmf_authenticate:
+       zmf_host: "{{ zmf_host }}"
+       zmf_port: "{{ zmf_port }}"
+       zmf_user: "{{ zmf_user }}"
+       zmf_password: "{{ zmf_password }}"
+     register: result_auth
+
    - name: Compare whether a workflow with the given name already exists
      ibm.ibm_zosmf.zmf_workflow:
        state: "existed"
-       zmf_host: "sample.ibm.com"
+       zmf_credential: "{{ result_auth }}"
        workflow_name: "ansible_sample_workflow_SY1"
        workflow_file: "/zosmf/workflow_def/workflow_sample_automation_steps.xml"
        workflow_host: "SY1"
@@ -450,7 +458,7 @@ Examples
    - name: Create a workflow if it does not exist, and start it
      ibm.ibm_zosmf.zmf_workflow:
        state: "started"
-       zmf_host: "sample.ibm.com"
+       zmf_credential: "{{ result_auth }}"
        workflow_name: "ansible_sample_workflow_{{ inventory_hostname }}"
        workflow_file: "/zosmf/workflow_def/workflow_sample_automation_steps.xml"
        workflow_host: "{{ inventory_hostname }}"
@@ -458,13 +466,13 @@ Examples
    - name: Delete a workflow if it exists
      ibm.ibm_zosmf.zmf_workflow:
        state: "deleted"
-       zmf_host: "sample.ibm.com"
+       zmf_credential: "{{ result_auth }}"
        workflow_name: "ansible_sample_workflow_SY1"
 
    - name: Check the status of a workflow
      ibm.ibm_zosmf.zmf_workflow:
        state: "check"
-       zmf_host: "sample.ibm.com"
+       zmf_credential: "{{ result_auth }}"
        workflow_name: "ansible_sample_workflow_SY1"
 
 
