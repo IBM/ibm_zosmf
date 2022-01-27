@@ -149,7 +149,6 @@
       debug:
         msg: "Software instance provider is : {{ PROV }}"
 
-#
 #   Cleanup software instance created in registry via
 #   zmf_cpm_remove_software_instance role
 #
