@@ -158,7 +158,7 @@ def authenticate(module):
         if ('Set-Cookie' in response_getAuth
                 and ('LtpaToken2' in response_getAuth['Set-Cookie']
                      or 'jwtToken' in response_getAuth['Set-Cookie'])):
-            auth = dict()
+            auth = {}
             if 'LtpaToken2' in response_getAuth['Set-Cookie']:
                 auth['ltpa_token_2'] = \
                     re.findall('LtpaToken2=(.+?);',

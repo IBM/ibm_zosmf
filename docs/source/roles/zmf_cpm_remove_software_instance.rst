@@ -100,7 +100,7 @@ Examples
        - ibm.ibm_zosmf
      tasks: 
        - include_module:
-           name: zmf_cpm_provision_software_service
+           name: zmf_cpm_remove_software_instance
          vars:
            instance_info_json_path: "<full-instance-json-file-path>"
 

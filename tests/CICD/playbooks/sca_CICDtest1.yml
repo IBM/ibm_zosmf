@@ -1,0 +1,36 @@
+# Copyright (c) IBM Corporation 2021 
+
+# This sample playbook demonstrates using module `zmf_sca` to complete a z/OS security validation and audit.
+# Example:
+# ansible-playbook -i hosts sample_sca.yml
+
+- name: sample of z/OS security validation and security audit
+  hosts: sca
+  connection: local
+  gather_facts: no
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - zmf_authenticate:
+        zmf_host: "{{ zmf_host }}"
+        zmf_port: "{{ zmf_port }}"
+        zmf_user: "{{ zmf_user }}"
+        zmf_password: "{{ zmf_password }}"
+      register: result_auth
+    - name: Run security validation and expect all requirements are satisified
+      zmf_sca:
+        zmf_credential: "{{ result_auth }}"
+        location: local # The security requirement file is in localhost
+        path_of_security_requirements: "{{path_local}}" # Path of the local security requirement file
+        target_userid: "{{target_userid}}" # Target user /group id to be validated
+      register: result
+    - debug: var=result
+
+    - name: Run security validation and expect no access to any items
+      zmf_sca:
+        zmf_credential: "{{ result_auth }}"
+        path_of_security_requirements: "{{path}}" # Path of the remote security requirement file
+        expected_result: "all-failed" # Expect no access to any security resources mentioned in the security requirement file
+        target_userid: "{{target_userid}}" # Target user or group id to be validated
+      register: result
+    - debug: var=result

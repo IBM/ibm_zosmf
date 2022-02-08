@@ -17,6 +17,7 @@ using the `ansible-doc`_ command:
 .. code-block:: sh
 
    $ ansible-doc ibm.ibm_zosmf.zmf_workflow
+   $ ansible-doc ibm.ibm_zosmf.zmf_sca
 
 The **IBM z/OSMF collection** provides several modules.
 Reference material for each module contains documentation on what parameters
