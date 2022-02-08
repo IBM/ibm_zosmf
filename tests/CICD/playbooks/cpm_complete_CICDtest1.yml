@@ -110,8 +110,8 @@
     - include_role:
         name: zmf_cpm_create_software_instance
       vars:
-        system_name: "SYS1"
-        sysplex_name: "PLEX1"
+        system_name: "P00"
+        sysplex_name: "SVPLEX6"
         external_name: "DB2B"
         software_type: "Db2"
         vendor_name: "IBM"
@@ -149,7 +149,6 @@
       debug:
         msg: "Software instance provider is : {{ PROV }}"
 
-#
 #   Cleanup software instance created in registry via
 #   zmf_cpm_remove_software_instance role
 #

@@ -139,6 +139,9 @@ def handle_request(module, session, method, url, params=None, rcode=200,
         module.fail_json(msg='HTTP request error: ' + repr(ex))
     else:
         response_code = response.status_code
+        # In v2r3, response content is a string which will cause error in json.loads.
+        if response_code == 404:
+            return 'HTTP request error: ' + str(response_code)
         if response.content:
             response_content = json.loads(response.content)
         else:

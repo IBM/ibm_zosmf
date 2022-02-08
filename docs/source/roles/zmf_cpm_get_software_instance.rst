@@ -139,7 +139,9 @@ Notes
 
 .. note::
    - The given example assumes that you have an inventory file *inventory.yml* and host vars *sampleHost.yml* with appropriate values to identify the target z/OSMF server end point.
-When playbooks completes, a message shown in following example is displayed, ``"msg": "Instance record saved at: /tmp/xxx/xxx.json"``. This message includes a file path and file name where the instance specific data of of requested software instance is returned. User can obtain specific property from this file using json_query.
+
+
+   - When playbooks completes, a message shown in following example is displayed, ``"msg": "Instance record saved at: /tmp/xxx/xxx.json"``. This message includes a file path and file name where the instance specific data of of requested software instance is returned. User can obtain specific property from this file using json_query.
 
 
 
