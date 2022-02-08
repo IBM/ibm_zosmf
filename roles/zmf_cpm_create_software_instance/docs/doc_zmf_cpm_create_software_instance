@@ -110,7 +110,7 @@ options:
               only by this user
         required: True
         type: str
-    instance_info_json_path:
+    instance_var_json_path:
         description:
             - Directory path for the JSON file that holds variables associated with
               software instance. Specify the file name that includes variables
