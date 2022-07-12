@@ -75,7 +75,7 @@ pipeline {
                                 sh 'ansible-lint roles/zmf_cpm_manage_software_instance'
                                 sh 'ansible-lint roles/zmf_cpm_provision_software_service'
                                 sh 'ansible-lint roles/zmf_cpm_remove_software_instance'
-                                sh '/usr/bin/bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/'
+                                sh 'bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/'
                                 }
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
                                 sh "cp -p /home/test/ansible-tmp/P00.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P00.yml"
