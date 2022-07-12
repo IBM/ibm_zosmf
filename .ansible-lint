@@ -1,2 +1,5 @@
 skip_list:
+  - experimental
   - 'fqcn-builtins'
+  - var-spacing
+
