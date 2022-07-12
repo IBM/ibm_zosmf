@@ -23,7 +23,7 @@ pipeline {
                 axes {
                     axis {
                         name 'SSH_PORT'
-                        values '22', '3335'
+                        values '22', '3335', '3339'
                     }
                 }
                 agent {
