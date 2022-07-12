@@ -1,0 +1,4 @@
+plugins/modules/zmf_authenticate.py validate-modules:missing-gplv3-license # Licensed under Apache 2.0
+plugins/modules/zmf_workflow.py validate-modules:missing-gplv3-license # Licensed under Apache 2.0
+plugins/modules/zmf_workflow.py validate-modules:no-log-needed # Ignore no-log-needed check for workflow_key
+plugins/modules/zmf_sca.py validate-modules:missing-gplv3-license # Licensed under Apache 2.0
