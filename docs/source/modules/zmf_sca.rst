@@ -4,8 +4,8 @@
 .. _zmf_sca_module:
 
 
-zmf_sca -- Automate z/OS security validation
-============================================
+zmf_sca -- Automate z/OS security requirements validation and provision
+=======================================================================
 
 
 .. contents::
@@ -15,7 +15,7 @@ zmf_sca -- Automate z/OS security validation
 
 Synopsis
 --------
-- This module supports automatically validating security requirements/configuration based on the security descriptor JSON file.
+- This module supports automatically validating and provisioning security requirements/configuration based on the security descriptor JSON file.
 
 - This module drives z/OSMF Security Configuration Assistant REST API undercover.
 
@@ -28,11 +28,28 @@ Parameters
 
  
 
+state
+  The desired final state.
+
+  If *state=check*, this module performs security validation for the security requirements specified in path_of_security_requirements.
+
+
+  If *state=provisioned*, this module performs security provision for the security requirements specified in path_of_security_requirements.
+
+
+  | **required**: False
+  | **type**: str
+  | **default**: check
+  | **choices**: check, provisioned
+
+
+ 
+
 target_userid
-  User ID or group ID to be validated for the security requirements documented by the security descriptor JSON file that is specified by the parameter path_of_security_requirements.
+  User ID or group ID to be validated or provisioned for the security requirements documented by the security descriptor JSON file that is specified by the parameter path_of_security_requirements.
 
 
-  If this parameter is not specified, the current logon user ID is used for validation.
+  If this parameter is not specified, the current logon user ID is used for validation or provision.
 
 
   | **required**: False
@@ -44,6 +61,8 @@ target_userid
 location
   The location of path_of_security_requirements.
 
+  Only support 'local' when *state=provisioned*
+
   | **required**: False
   | **type**: str
   | **default**: remote
@@ -53,7 +72,7 @@ location
  
 
 path_of_security_requirements
-  Absolute path of the security descriptor JSON file that contains the security requirements to be validated.
+  Absolute path of the security descriptor JSON file that contains the security requirements to be validated or provisioned.
 
 
   | **required**: True
@@ -64,6 +83,8 @@ path_of_security_requirements
 
 expected_result
   Expected validation result of the security requirements.
+
+  Be ignored when *state=provisioned*
 
   For all-passed, the module returns success when all security requirements are satisfied. If any requirement is not met or can not be determined, this module fails.
 
@@ -78,20 +99,6 @@ expected_result
   | **type**: str
   | **default**: all-passed
   | **choices**: all-failed, all-passed
-
-
- 
-
-state
-  The desired final state.
-
-  If *state=check*, this module performs security validation for the security requirements specified in path_of_security_requirements.
-
-
-  | **required**: False
-  | **type**: str
-  | **default**: check
-  | **choices**: check
 
 
  
@@ -271,6 +278,13 @@ Examples
        location: local
        expected_result: all-failed
 
+   - name: Provision resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
+     ibm.ibm_zosmf.zmf_sca:
+       zmf_credential: "{{ result_auth }}"
+       state: provisioned
+       target_userid: IBMUSER
+       path_of_security_requirements: /home/user/descriptor.json
+       location: local
 
 
 
@@ -297,7 +311,11 @@ Return Values
         | **type**: str
 
       resourceItems
-        Array of security resources do not match with the expected result.
+        Array of security resources
+
+        If `state=check`, indicate security resources do not match with the expected result.
+
+        If `state=provisioned`, indicate security resources failed to provision.
 
         | **returned**: always on fail
         | **type**: list
@@ -368,7 +386,7 @@ Return Values
 
           | **returned**: always
           | **type**: str
-          | **sample**: validate
+          | **sample**: ['validate', 'provision']
 
 
         actionObjectId

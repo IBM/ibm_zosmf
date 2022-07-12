@@ -7,6 +7,36 @@ Releases
 ========
 
 
+Version 1.2.0
+=============
+
+Notes
+-----
+
+* Updated module `zmf_sca`_ for SAF based z/OS security automation, which supports the security requirements provision.
+* The updated module zmf_sca is based on the REST API of the z/OSMF Security Configuration Assistant (SCA).
+  SCA supports the json format of the security descriptor file. This file can be used to document security requirements
+  by function or by product. With the security descriptor file that is easy to create,
+  SCA is able to display and automatically provision security requirements in a flexible granularity,
+  either by individual requirement, by function or by product. SCA is based on the SAF interface,
+  therefore it supports all SAF based security products in most cases. To learn more about z/OSMF SCA, please refer to
+  `SCA blog`_ and the `SCA demo`_ in IBM MediaCenter.
+* The updated module zmf_sca can be used in security requirements provision.
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
+Reference
+---------
+
+* The updated module zmf_sca requires that z/OSMF SCA is configured properly.
+  For the required configuration of z/OSMF SCA, please refer to `z/OSMF SCA Configuration`_
+* The updated module zmf_sca only works with z/OSMF V2R4 and above with the APAR PH39327 installed.
+
 Version 1.1.0
 =============
 

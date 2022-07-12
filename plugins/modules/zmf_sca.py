@@ -11,9 +11,9 @@ DOCUMENTATION = r'''
 ---
 module: zmf_sca
 
-short_description: Automate z/OS security validation
+short_description: Automate z/OS security requirements validation and provision
 
-version_added: "1.1.0"
+version_added: "1.2.0"
 
 author:
     - Xiao Ming Liu (@EricLiuAtIbm)
@@ -21,23 +21,43 @@ author:
 
 description:
     - >
-      This module supports automatically validating security requirements/configuration based
-      on the security descriptor JSON file.
+      This module supports automatically validating and provisioning security
+      requirements/configuration based on the security descriptor JSON file.
     - This module drives z/OSMF Security Configuration Assistant REST API undercover.
 
 options:
+    state:
+        description:
+            - The desired final state.
+            - >
+              If I(state=check), this module performs security validation for the security
+              requirements specified in path_of_security_requirements.
+            - >
+              If I(state=provisioned), this module performs security provision for the security
+              requirements specified in path_of_security_requirements.
+        required: false
+        type: str
+        default: check
+        choices:
+            - check
+            - provisioned
+
     target_userid:
         description:
             - >
-              User ID or group ID to be validated for the security requirements documented by the security descriptor
-              JSON file that is specified by the parameter path_of_security_requirements.
+              User ID or group ID to be validated or provisioned for the security requirements
+              documented by the security descriptor JSON file that is specified
+              by the parameter path_of_security_requirements.
             - >
-              If this parameter is not specified, the current logon user ID is used for validation.
+              If this parameter is not specified, the current logon user ID is used for
+              validation or provision.
         required: false
         type: str
 
     location:
-        description: The location of path_of_security_requirements.
+        description:
+            - The location of path_of_security_requirements.
+            - Only support 'local' when I(state=provisioned)
         required: false
         type: str
         default: 'remote'
@@ -49,13 +69,14 @@ options:
         description:
             - >
               Absolute path of the security descriptor JSON file that contains the security requirements
-              to be validated.
+              to be validated or provisioned.
         required: true
         type: str
 
     expected_result:
         description:
             - Expected validation result of the security requirements.
+            - Be ignored when I(state=provisioned)
             - >
                 For all-passed, the module returns success when all security requirements are satisfied.
                 If any requirement is not met or can not be determined, this module fails.
@@ -71,18 +92,6 @@ options:
         choices:
             - all-failed
             - all-passed
-
-    state:
-        description:
-            - The desired final state.
-            - >
-              If I(state=check), this module performs security validation for the security requirements
-              specified in path_of_security_requirements.
-        required: false
-        type: str
-        default: check
-        choices:
-            - check
 
     zmf_credential:
         description:
@@ -223,6 +232,13 @@ EXAMPLES = r'''
     location: local
     expected_result: all-failed
 
+- name: Provision resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
+  ibm.ibm_zosmf.zmf_sca:
+    zmf_credential: "{{ result_auth }}"
+    state: provisioned
+    target_userid: IBMUSER
+    path_of_security_requirements: /home/user/descriptor.json
+    location: local
 '''
 
 RETURN = r'''
@@ -238,7 +254,10 @@ msg:
     type: str
 
 resourceItems:
-    description: Array of security resources do not match with the expected result.
+    description:
+        - Array of security resources
+        - If `state=check`, indicate security resources do not match with the expected result.
+        - If `state=provisioned`, indicate security resources failed to provision.
     type: list
     elements: dict
     returned: always on fail
@@ -288,7 +307,9 @@ resourceItems:
             description: For action validation, the return value will be 'validate'.
             type: str
             returned: always
-            sample: 'validate'
+            sample:
+                - validate
+                - provision
         actionObjectId:
             description:
                 - The object ID of this action. For validation action, this ID is the same as validatedId below.
@@ -350,8 +371,7 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_util import (
     get_connect_argument_spec,
-    get_connect_session,
-    cmp_list
+    get_connect_session
 )
 from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_sca_api import (
     get_request_argument_spec,
@@ -387,12 +407,66 @@ def validate_resource(module):
         f_read.close()
     # create session
     session = get_connect_session(module)
-    # step1 - find workflow instance by name
     # import epdb
     # epdb.serve()
     response = call_sca_api(module, session, 'validateResource', body)
 
     process_response(response, module)
+
+
+def provision_resource(module):
+    """
+    Provision security requirements
+    """
+
+    path = module.params['path_of_security_requirements']
+    body = None
+    try:
+        with io.open(path, 'r', encoding='utf8') as f_read:
+            body = f_read.read()
+    except (OSError, IOError) as ex:
+        module.fail_json(msg='Failed to read local security requirements: ' + path + ' ---- error: ' + str(ex))
+
+    if f_read is not None:
+        f_read.close()
+    # create session
+    session = get_connect_session(module)
+    # import epdb
+    # epdb.serve()
+    response = call_sca_api(module, session, 'provisionResource', body)
+
+    process_provision_response(response, module)
+
+
+def process_provision_response(response, module):
+    if isinstance(response, dict):
+        unexpected = []
+        has_changed = False
+        for item in response['resourceItems']:
+            if item['status'].lower() != 'passed':
+                unexpected.append(item)
+            elif item['action'].lower() == 'provision':
+                has_changed = True
+
+        res = {
+            "changed": has_changed
+        }
+        if len(unexpected) > 0:
+            res['resourceItems'] = unexpected
+            module.fail_json(msg='Provision of security requirements failed.', **res)
+        else:
+            module.exit_json(**res)
+    else:
+        prefix = 'Failed to provision security requirements:'
+        # not found, msg: path of security requirements not found
+        if '400' in response and 'not found' in response:
+            prefix = 'Path of security requirements not found.'
+        elif '404' in response:
+            prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH39327 installed,' \
+                     'and Security Configuration Assistant is enabled.'
+        module.fail_json(
+            msg=prefix + ' ---- ' + response
+        )
 
 
 def process_response(response, module):
@@ -436,7 +510,7 @@ def run_module():
         path_of_security_requirements=dict(type='str', required=True),
         location=dict(type='str', required=False, choices=['remote', 'local'], default='remote'),
         expected_result=dict(type='str', required=False, choices=['all-passed', 'all-failed'], default='all-passed'),
-        state=dict(type='str', required=False, choices=['check'], default='check'),
+        state=dict(type='str', required=False, choices=['check', 'provisioned'], default='check'),
 
     )
 
@@ -465,11 +539,20 @@ def run_module():
         module.exit_json(**result)
     # import epdb
     # epdb.serve()
-    response = {}
-    if module.params['location'] == 'remote':
-        validate_descriptor(module)
+    # response = {}
+    if module.params['state'] == 'provisioned':
+        if module.params['location'] == 'remote':
+            module.fail_json(
+                msg='"remote" location is not supported for "provisioned" state'
+            )
+        else:
+            provision_resource(module)
+
     else:
-        validate_resource(module)
+        if module.params['location'] == 'remote':
+            validate_descriptor(module)
+        else:
+            validate_resource(module)
 
     # in the event of a successful module execution, you will want to
     # simple AnsibleModule.exit_json(), passing the key/value results
