@@ -166,7 +166,7 @@ instance_owner
 
  
 
-instance_info_json_path
+instance_var_json_path
   Directory path for the JSON file that holds variables associated with software instance. Specify the file name that includes variables associated with the configured softare instance e.g. /tmp/myVar.json. File contains json array of variables with name, value and visibility format where name identifies variable name, value identifies variable value and visibility identifies whether variable is "public" or "private". For example,
 
   ``[``
