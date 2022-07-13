@@ -930,13 +930,21 @@ def action_check(module):
         if 'statusName' in response_retrieveP:
             status = response_retrieveP['statusName']
             if status == 'automation-in-progress':
+                current_step_message = ''
+                step_status = response_retrieveP['automationStatus']
+                if (step_status is not None
+                        and step_status['currentStepNumber'] is not None):
+                    current_step_message = ' Current step is ' \
+                        + step_status['currentStepNumber'] + ' ' \
+                        + step_status['currentStepTitle']
                 if check_by_key is True:
                     check_result['message'] = 'Workflow instance with key: ' \
-                        + workflow_key + ' is still in progress.'
+                        + workflow_key + ' is still in progress.' \
+                        + current_step_message
                 else:
                     check_result['message'] = 'Workflow instance named: ' \
                         + module.params['workflow_name'] + \
-                        ' is still in progress.'
+                        ' is still in progress.' + current_step_message
                 module.exit_json(**check_result)
             elif status == 'complete':
                 check_result['waiting'] = False
