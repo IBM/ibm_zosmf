@@ -13,7 +13,7 @@ module: zmf_sca
 
 short_description: Automate z/OS security requirements validation and provision
 
-version_added: "1.2.0"
+version_added: "1.1.0"
 
 author:
     - Xiao Ming Liu (@EricLiuAtIbm)
