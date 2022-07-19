@@ -88,7 +88,19 @@ def __get_sca_apis():
             args=resource_dict,
             ok_rcode=200
         ),
-        # validate resource
+        # provision descriptor
+        provisionDescriptor=dict(
+            method='post',
+            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
+                + version + '/provision/descriptor?userid={userid}',
+            args=dict(
+                path=dict(
+                    required=True, type='str', nickname='path_of_security_requirements'
+                )
+            ),
+            ok_rcode=200
+        ),
+        # provision resource
         provisionResource=dict(
             method='post',
             url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \

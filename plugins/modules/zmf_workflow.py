@@ -25,7 +25,7 @@ options:
         description:
             - >
               Authentication credentials, returned by module
-              M(ibm.ibm_zosmf.zmf_authenticate), for successful authentication with the
+              M(zmf_authenticate), for successful authentication with the
               z/OSMF server.
             - >
               If I(zmf_credential) is supplied, I(zmf_host), I(zmf_port),

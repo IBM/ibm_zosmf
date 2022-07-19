@@ -26,7 +26,6 @@ releases:
         namespace: null
     release_date: '2021-06-18'
   1.1.0:
-    changes: {}
     fragments:
     - 1.1.0.yaml
     modules:
