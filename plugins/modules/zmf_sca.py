@@ -57,7 +57,6 @@ options:
     location:
         description:
             - The location of path_of_security_requirements.
-            - Only support 'local' when I(state=provisioned)
         required: false
         type: str
         default: 'remote'
@@ -97,7 +96,7 @@ options:
         description:
             - >
               Authentication credentials, returned by module
-              M(ibm.ibm_zosmf.zmf_authenticate), for successful authentication with the
+              M(zmf_authenticate), for successful authentication with the
               z/OSMF server.
             - >
               If I(zmf_credential) is supplied, I(zmf_host), I(zmf_port),
@@ -383,8 +382,6 @@ import io
 def validate_descriptor(module):
     # create session
     session = get_connect_session(module)
-    # step1 - find workflow instance by name
-    # path = module.params['path_of_security_requirements']
 
     response = call_sca_api(module, session, 'validateDescriptor')
 
@@ -438,6 +435,16 @@ def provision_resource(module):
     process_provision_response(response, module)
 
 
+def provision_descriptor(module):
+    """
+    Provision security requirements
+    """
+    # create session
+    session = get_connect_session(module)
+    response = call_sca_api(module, session, 'provisionDescriptor')
+    process_provision_response(response, module)
+
+
 def process_provision_response(response, module):
     if isinstance(response, dict):
         unexpected = []
@@ -460,6 +467,8 @@ def process_provision_response(response, module):
         prefix = 'Failed to provision security requirements:'
         # not found, msg: path of security requirements not found
         if '400' in response and 'not found' in response:
+            prefix = 'Path of security requirements not found.'
+        elif '500' in response and 'No such file' in response:
             prefix = 'Path of security requirements not found.'
         elif '404' in response:
             prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH39327 installed,' \
@@ -486,6 +495,8 @@ def process_response(response, module):
         prefix = 'Failed to validate security requirements:'
         # not found, msg: path of security requirements not found
         if '400' in response and 'not found' in response:
+            prefix = 'Path of security requirements not found.'
+        elif '500' in response and 'No such file' in response:
             prefix = 'Path of security requirements not found.'
         elif '404' in response:
             prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH41248 installed,' \
@@ -542,9 +553,7 @@ def run_module():
     # response = {}
     if module.params['state'] == 'provisioned':
         if module.params['location'] == 'remote':
-            module.fail_json(
-                msg='"remote" location is not supported for "provisioned" state'
-            )
+            provision_descriptor(module)
         else:
             provision_resource(module)
 

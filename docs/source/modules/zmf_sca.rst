@@ -61,8 +61,6 @@ target_userid
 location
   The location of path_of_security_requirements.
 
-  Only support 'local' when *state=provisioned*
-
   | **required**: False
   | **type**: str
   | **default**: remote
