@@ -236,6 +236,13 @@ EXAMPLES = r'''
     zmf_credential: "{{ result_auth }}"
     state: provisioned
     target_userid: IBMUSER
+    path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
+    
+- name: Provision resources defined in a local security descriptor file and expect all requirements are satisfied.
+  ibm.ibm_zosmf.zmf_sca:
+    zmf_credential: "{{ result_auth }}"
+    state: provisioned
+    target_userid: IBMUSER
     path_of_security_requirements: /home/user/descriptor.json
     location: local
 '''
