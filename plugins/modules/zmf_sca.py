@@ -478,8 +478,13 @@ def process_provision_response(response, module):
         elif '500' in response and 'No such file' in response:
             prefix = 'Path of security requirements not found.'
         elif '404' in response:
-            prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH39327 installed,' \
-                     'and Security Configuration Assistant is enabled.'
+            if module.params['location'] == 'remote':
+                prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH47746 installed,' \
+                         'and Security Configuration Assistant is enabled.'
+            else:
+                prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH39327 installed,' \
+                         'and Security Configuration Assistant is enabled.'
+
         module.fail_json(
             msg=prefix + ' ---- ' + response
         )
