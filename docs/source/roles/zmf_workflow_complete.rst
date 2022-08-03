@@ -124,6 +124,9 @@ zmf_key
 workflow_name
   Descriptive name of the workflow.
 
+  The workflow name is not case-sensitive, for example, ``MyWorkflow`` and ``MYWORKFLOW`` are the same workflow.
+
+
   | **required**: True
   | **type**: str
 

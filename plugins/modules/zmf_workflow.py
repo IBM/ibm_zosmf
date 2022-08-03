@@ -157,6 +157,9 @@ options:
         description:
             - Descriptive name of the workflow.
             - >
+              The workflow name is not case-sensitive, for example,
+              C(MyWorkflow) and C(MYWORKFLOW) are the same workflow.
+            - >
               It is recommended that you use the naming rule
               C(ansible_workflowName_{{ workflow_host }}) when
               I(state=started).
@@ -390,6 +393,13 @@ EXAMPLES = r"""
     workflow_file: "/zosmf/workflow_def/workflow_sample_automation_steps.xml"
     workflow_host: "{{ inventory_hostname }}"
 
+- name: Start the existing workflow with the specified step `workflow_step_name` to begin at
+  ibm.ibm_zosmf.zmf_workflow:
+    state: "started"
+    zmf_credential: "{{ result_auth }}"
+    workflow_name: "ansible_sample_workflow_{{ inventory_hostname }}"
+    workflow_step_name: "attrConditionStep"
+
 - name: Delete a workflow if it exists
   ibm.ibm_zosmf.zmf_workflow:
     state: "deleted"
@@ -436,23 +446,51 @@ message:
           Workflow instance named: ansible_sample_workflow_SY1 with different
           definition file is found.
         sample3: >-
+          Workflow instance named: ansible_sample_workflow_SY1 is found.
+          While it could not be compared since the argument: workflow_file is
+          required, and please supply variables by the argument: workflow_vars
+          rather than the argument:  workflow_vars_file."
+        sample4: >-
           Workflow instance named: ansible_sample_workflow_SY1 is started, you
           can use state=check to check its final status.
-        sample4: >-
-          Workflow instance named: ansible_sample_workflow_SY1 is still in
-          progress.
         sample5: >-
-          Workflow instance named: ansible_sample_workflow_SY1 is completed.
+          Workflow instance named: ansible_sample_workflow_SY1 is still in
+          progress. Current step is 1.2 Second-level step 2. Percent complete
+          is 28%.
         sample6: >-
-          Workflow instance named: ansible_sample_workflow_SY1 is deleted.
+          Workflow instance named: ansible_sample_workflow_SY1 is completed.
         sample7: >-
+          Workflow instance named: ansible_sample_workflow_SY1 is not
+          completed: No step is started.
+        sample8: >-
+          Workflow instance named: ansible_sample_workflow_SY1 is not
+          completed: In step 1.2 Second-level step 2: IZUWF0145E: Automation
+          processing for the workflow `ansible_sample_workflow_SY1` stopped at
+          step `Second-level step 2`. This step cannot be performed
+          automatically. You can manually complete this step in z/OSMF
+          Workflows task, and start this workflow instance again with next step
+          name: subStep3 specified in argument: workflow_step_name.
+        sample9: >-
+          Workflow instance named: ansible_sample_workflow_SY1 is not
+          completed: In step 1.2 Second-level step 2: IZUWF0162I: Automation
+          processing for workflow `ansible_sample_workflow_SY1` is complete.
+          While one or more steps may be skipped.
+        sample10: >-
+          Workflow instance named: ansible_sample_workflow_SY1 is deleted.
+        sample11: >-
           Workflow instance named: ansible_sample_workflow_SY1 does not exist.
 workflow_key:
     description:
         - Generated key to uniquely identify the existing or started workflow.
-    returned: on success when `state=existed/started`
+    returned: on success when `state=existed/started/check/deleted`
     type: str
     sample: "2535b19e-a8c3-4a52-9d77-e30bb920f912"
+workflow_name:
+    description:
+        - Descriptive name of the workflow.
+    returned: on success when `state=existed/started/check/deleted`
+    type: str
+    sample: "ansible_sample_workflow_SY1"
 same_workflow_instance:
     description:
         - >
@@ -690,6 +728,7 @@ def action_compare(module, argument_spec_mapping):
     exist, or exists with same or different definition file, variables and
     properties.
     Return the workflow_key of the existing workflow instance.
+    Return the workflow_name of the existing workflow instance.
     Return the same_workflow_instance flag to indicate whether the existing
     workflow instance has same or different definition file, variables and
     properties.
@@ -798,9 +837,9 @@ def action_compare(module, argument_spec_mapping):
         compare_result['same_workflow_instance'] = True
         compare_result['message'] = 'Workflow instance named: ' \
             + module.params['workflow_name'].strip() \
-            + ' is found. While it could not be compared since the argument: '\
+            + ' is found. While it could not be compared since the argument:'\
             + ' workflow_file is required, and please supply variables by the'\
-            + ' argument: workflow_vars rather than the argument: ' \
+            + ' argument: workflow_vars rather than the argument:' \
             + ' workflow_vars_file.'
     else:
         compare_result['same_workflow_instance'] = True
@@ -821,6 +860,7 @@ def action_start(module):
     workflow_name if not exist and then start it.
     Return the message to indicate the workflow instance is started.
     Return the workflow_key of the started workflow instance.
+    Return the workflow_name of the started workflow instance.
 
     :param AnsibleModule module: the ansible module
     """
@@ -940,6 +980,8 @@ def action_check(module):
     specified by workflow_name.
     Return the message to indicate whether the workflow instance is completed,
     is not completed, or is still in progress.
+    Return the workflow_key of the workflow instance.
+    Return the workflow_name of the workflow instance.
     Return the waiting flag to indicate whether it needs to wait and check
     again since the workflow instance is still in progress.
     :param AnsibleModule module: the ansible module
@@ -1125,6 +1167,8 @@ def action_delete(module):
     workflow_name.
     Return the message to indicate whether the workflow instance does not exist
     or is deleted.
+    Return the workflow_key of the deleted workflow instance.
+    Return the workflow_name of the deleted workflow instance.
 
     :param AnsibleModule module: the ansible module
     """
