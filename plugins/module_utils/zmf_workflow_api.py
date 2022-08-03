@@ -315,7 +315,9 @@ def call_workflow_api(module, session, api, workflow_key):
     zmf_api_params = __get_workflow_api_params(module, zmf_api['args'])
     if ((module.params['state'] == 'existed'
             or module.params['state'] == 'deleted') and api == 'list'):
-        v = zmf_api_params['workflowName']
+        v = ''
+        if 'workflowName' in zmf_api_params:
+            v = zmf_api_params['workflowName']
         zmf_api_params.clear()
         zmf_api_params['workflowName'] = v
     return handle_request(module, session, zmf_api['method'],

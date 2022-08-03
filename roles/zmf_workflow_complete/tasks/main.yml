@@ -104,6 +104,7 @@
 - name: Update final_result
   set_fact:
     final_result: "{{ final_result | combine({ \
+                   'workflow_name': result.workflow_name, \
                    'workflow_key': start_result.workflow_key | default(compare_result.workflow_key), \
                    'completed': result.completed, \
                    'msg': result.message }) }}"
