@@ -706,35 +706,65 @@ def action_compare(module, argument_spec_mapping):
     compare_result = dict(
         changed=False,
         workflow_key='',
+        workflow_name=module.params['workflow_name'].strip(),
         same_workflow_instance=False,
         completed=False,
         message=''
     )
     # create session
     session = get_connect_session(module)
-    # step1 - find workflow instance by name
+    # step1.1 - find workflow instance by name
     response_list = call_workflow_api(module, session, 'list', workflow_key)
     if isinstance(response_list, dict):
         if ('workflows' in response_list
                 and len(response_list['workflows']) > 0):
             workflow_key = response_list['workflows'][0]['workflowKey']
-        else:
-            compare_result['message'] = 'No workflow instance named: ' \
-                + module.params['workflow_name'] + ' is found.'
-            module.exit_json(**compare_result)
+        # else:
+        #     compare_result['message'] = 'No workflow instance named: ' \
+        #         + module.params['workflow_name'].strip() \
+        #         + ' is found.'
+        #     module.exit_json(**compare_result)
     else:
         module.fail_json(
             msg='Failed to find workflow instance named: '
-            + module.params['workflow_name'] + ' ---- ' + response_list)
+            + module.params['workflow_name'].strip()
+            + ' ---- ' + response_list)
+    # step1.2 - if not found, find workflow instance by case-insensitive name
+    if workflow_key == '':
+        tmp_name = module.params['workflow_name']
+        module.params['workflow_name'] = ''
+        response_list = call_workflow_api(module, session, 'list',
+                                          workflow_key)
+        module.params['workflow_name'] = tmp_name
+        if isinstance(response_list, dict):
+            if ('workflows' in response_list
+                    and len(response_list['workflows']) > 0):
+                for item in response_list['workflows']:
+                    if ('workflowName' in item
+                            and item['workflowName'].upper() ==
+                            tmp_name.strip().upper()):
+                        workflow_key = item['workflowKey']
+                        module.params['workflow_name'] = item['workflowName']
+                        compare_result['workflow_name'] = module.params['workflow_name'].strip()
+                        break
+            if workflow_key == '':
+                compare_result['message'] = 'No workflow instance named: ' \
+                    + module.params['workflow_name'].strip() \
+                    + ' is found.'
+                module.exit_json(**compare_result)
+        else:
+            module.fail_json(
+                msg='Failed to find workflow instance named: '
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_list)
     # step2 - compare the properties and definition files
     response_retrieveP = call_workflow_api(module, session,
                                            'retrieveProperties', workflow_key)
     if isinstance(response_retrieveP, str):
         module.fail_json(
             msg='Failed to get properties of workflow instance named: '
-                + module.params['workflow_name'] + ' ---- '
-                + response_retrieveP
-        )
+            + module.params['workflow_name'].strip()
+            + ' ---- ' + response_retrieveP)
     response_retrieveD = {}
     if (module.params['workflow_file'] is not None
             and module.params['workflow_file'].strip() != ''):
@@ -744,28 +774,30 @@ def action_compare(module, argument_spec_mapping):
         if isinstance(response_retrieveD, str):
             module.fail_json(
                 msg='Failed to get definition file of workflow instance '
-                    + 'named: ' + module.params['workflow_name'] + ' ---- '
-                    + response_retrieveD
-            )
+                + 'named: '
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_retrieveD)
     (sameD, sameV, sameP, diff_name, diff_value) = \
         is_same_workflow_instance(module, argument_spec_mapping,
                                   response_retrieveP, response_retrieveD)
     if sameD is False:
         compare_result['message'] = 'Workflow instance named: ' \
-            + module.params['workflow_name'] \
+            + module.params['workflow_name'].strip() \
             + ' with different definition file is found.'
     elif sameV is False:
         compare_result['message'] = 'Workflow instance named: ' \
-            + module.params['workflow_name'] + ' with different variable: ' \
+            + module.params['workflow_name'].strip() \
+            + ' with different variable: ' \
             + diff_name + ' = ' + str(diff_value) + ' is found.'
     elif sameP is False:
         compare_result['message'] = 'Workflow instance named: ' \
-            + module.params['workflow_name'] + ' with different property: ' \
+            + module.params['workflow_name'].strip() \
+            + ' with different property: ' \
             + diff_name + ' = ' + str(diff_value) + ' is found.'
     elif sameD is None or sameV is None:
         compare_result['same_workflow_instance'] = True
         compare_result['message'] = 'Workflow instance named: ' \
-            + module.params['workflow_name'] \
+            + module.params['workflow_name'].strip() \
             + ' is found. While it could not be compared since the argument: '\
             + ' workflow_file is required, and please supply variables by the'\
             + ' argument: workflow_vars rather than the argument: ' \
@@ -773,7 +805,7 @@ def action_compare(module, argument_spec_mapping):
     else:
         compare_result['same_workflow_instance'] = True
         compare_result['message'] = 'Workflow instance named: ' \
-            + module.params['workflow_name'] \
+            + module.params['workflow_name'].strip() \
             + ' with same definition file, variables and properties is found.'
     if (compare_result['same_workflow_instance'] is not False
             and response_retrieveP['statusName'] == 'complete'):
@@ -797,6 +829,7 @@ def action_start(module):
     start_result = dict(
         changed=False,
         workflow_key='',
+        workflow_name='',
         message=''
     )
     # create session
@@ -804,14 +837,16 @@ def action_start(module):
     # decide if start by name or key
     if (module.params['workflow_key'] is not None
             and module.params['workflow_key'].strip() != ''):
-        workflow_key = module.params['workflow_key']
+        workflow_key = module.params['workflow_key'].strip()
         start_by_key = True
-    # step1 - find workflow instance by name
+    # step1.1 - find workflow instance by name if needed
     if workflow_key == '':
         if (module.params['workflow_name'] is None
                 or module.params['workflow_name'].strip() == ''):
-            module.fail_json(msg='A valid argument of either workflow_name or'
-                             + ' workflow_key is required.')
+            module.fail_json(
+                msg='A valid argument of either workflow_name or workflow_key'
+                + ' is required.')
+        start_result['workflow_name'] = module.params['workflow_name'].strip()
         response_list = call_workflow_api(module, session, 'list',
                                           workflow_key)
         if isinstance(response_list, dict):
@@ -821,7 +856,31 @@ def action_start(module):
         else:
             module.fail_json(
                 msg='Failed to find workflow instance named: '
-                + module.params['workflow_name'] + ' ---- ' + response_list)
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_list)
+    # step1.2 - if not found, find workflow instance by case-insensitive name
+    if workflow_key == '':
+        tmp_name = module.params['workflow_name']
+        module.params['workflow_name'] = ''
+        response_list = call_workflow_api(module, session, 'list',
+                                          workflow_key)
+        module.params['workflow_name'] = tmp_name
+        if isinstance(response_list, dict):
+            if ('workflows' in response_list
+                    and len(response_list['workflows']) > 0):
+                for item in response_list['workflows']:
+                    if ('workflowName' in item
+                            and item['workflowName'].upper() ==
+                            tmp_name.strip().upper()):
+                        workflow_key = item['workflowKey']
+                        module.params['workflow_name'] = item['workflowName']
+                        start_result['workflow_name'] = module.params['workflow_name'].strip()
+                        break
+        else:
+            module.fail_json(
+                msg='Failed to find workflow instance named: '
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_list)
     # step2 - create workflow instance if needed
     if workflow_key == '':
         response_create = call_workflow_api(module, session, 'create',
@@ -832,26 +891,28 @@ def action_start(module):
                 workflow_key = response_create['workflowKey']
             else:
                 module.fail_json(
-                    msg='Failed to create workflow instance '
-                    + 'named: ' + module.params['workflow_name'] + '.')
+                    msg='Failed to create workflow instance named: '
+                    + module.params['workflow_name'].strip()
+                    + '.')
         else:
             module.fail_json(
                 msg='Failed to create workflow instance named: '
-                + module.params['workflow_name'] + ' ---- ' + response_create)
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_create)
     # step3 - start workflow instance
     response_start = call_workflow_api(module, session, 'start', workflow_key)
     if isinstance(response_start, dict):
         start_result['changed'] = True
-        start_result['workflow_key'] = workflow_key
         if start_by_key is True:
             start_result['message'] = 'Workflow instance with key: ' \
-                + workflow_key + ' is started, you can use state=check to ' \
-                + 'check its final status.'
+                + workflow_key + ' is started, ' \
+                + 'you can use state=check to check its final status.'
         else:
             start_result['message'] = 'Workflow instance named: ' \
-                + module.params['workflow_name'] \
-                + ' is started, you can use state=check to check its final ' \
-                + 'status.'
+                + module.params['workflow_name'].strip() \
+                + ' is started, '\
+                + 'you can use state=check to check its final status.'
+        start_result['workflow_key'] = workflow_key
         module.exit_json(**start_result)
     else:
         # handle start issue caused by non-automated step
@@ -864,15 +925,12 @@ def action_start(module):
         if start_by_key is True:
             module.fail_json(
                 msg='Failed to start workflow instance with key: '
-                    + workflow_key + ' ---- ' + response_start
-                    + next_step_message
-            )
+                + workflow_key + ' ---- ' + response_start + next_step_message)
         else:
             module.fail_json(
                 msg='Failed to start workflow instance named: '
-                    + module.params['workflow_name'] + ' ---- '
-                    + response_start + next_step_message
-            )
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_start + next_step_message)
 
 
 def action_check(module):
@@ -891,6 +949,8 @@ def action_check(module):
     next_step_name = ''
     check_result = dict(
         changed=False,
+        workflow_key='',
+        workflow_name='',
         waiting=True,
         completed=False,
         message=''
@@ -900,9 +960,9 @@ def action_check(module):
     # decide if check by name or key
     if (module.params['workflow_key'] is not None
             and module.params['workflow_key'].strip() != ''):
-        workflow_key = module.params['workflow_key']
+        workflow_key = module.params['workflow_key'].strip()
         check_by_key = True
-    # step1 - find workflow instance by name if needed
+    # step1.1 - find workflow instance by name if needed
     if workflow_key == '':
         if (module.params['workflow_name'] is None
                 or module.params['workflow_name'].strip() == ''):
@@ -915,20 +975,51 @@ def action_check(module):
             if ('workflows' in response_list
                     and len(response_list['workflows']) > 0):
                 workflow_key = response_list['workflows'][0]['workflowKey']
-            else:
-                module.fail_json(
-                    msg='No workflow instance named: '
-                    + module.params['workflow_name'] + ' is found.')
+            # else:
+            #     module.fail_json(
+            #         msg='No workflow instance named: '
+            #         + module.params['workflow_name'].strip()
+            #         + ' is found.')
         else:
             module.fail_json(
                 msg='Failed to find workflow instance named: '
-                + module.params['workflow_name'] + ' ---- ' + response_list)
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_list)
+    # step1.2 - if not found, find workflow instance by case-insensitive name
+    if workflow_key == '':
+        tmp_name = module.params['workflow_name']
+        module.params['workflow_name'] = ''
+        response_list = call_workflow_api(module, session, 'list',
+                                          workflow_key)
+        module.params['workflow_name'] = tmp_name
+        if isinstance(response_list, dict):
+            if ('workflows' in response_list
+                    and len(response_list['workflows']) > 0):
+                for item in response_list['workflows']:
+                    if ('workflowName' in item
+                            and item['workflowName'].upper() ==
+                            tmp_name.strip().upper()):
+                        workflow_key = item['workflowKey']
+                        module.params['workflow_name'] = item['workflowName']
+                        break
+            if workflow_key == '':
+                module.fail_json(
+                    msg='No workflow instance named: '
+                    + module.params['workflow_name'].strip()
+                    + ' is found.')
+        else:
+            module.fail_json(
+                msg='Failed to find workflow instance named: '
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_list)
     # step2 - get workflow properties
     response_retrieveP = call_workflow_api(module, session,
                                            'retrieveProperties', workflow_key)
     if isinstance(response_retrieveP, dict):
         if 'statusName' in response_retrieveP:
             status = response_retrieveP['statusName']
+            check_result['workflow_key'] = workflow_key
+            check_result['workflow_name'] = response_retrieveP['workflowName']
             if status == 'automation-in-progress':
                 current_step_message = ''
                 step_status = response_retrieveP['automationStatus']
@@ -936,16 +1027,17 @@ def action_check(module):
                         and step_status['currentStepNumber'] is not None):
                     current_step_message = ' Current step is ' \
                         + step_status['currentStepNumber'] + ' ' \
-                        + step_status['currentStepTitle'] + '. Percent complete is ' \
+                        + step_status['currentStepTitle'] \
+                        + '. Percent complete is ' \
                         + str(response_retrieveP['percentComplete']) + '%.'
                 if check_by_key is True:
                     check_result['message'] = 'Workflow instance with key: ' \
-                        + workflow_key + ' is still in progress.' \
-                        + current_step_message
+                        + workflow_key \
+                        + ' is still in progress.' + current_step_message
                 else:
                     check_result['message'] = 'Workflow instance named: ' \
-                        + module.params['workflow_name'] + \
-                        ' is still in progress.' + current_step_message
+                        + module.params['workflow_name'].strip() \
+                        + ' is still in progress.' + current_step_message
                 module.exit_json(**check_result)
             elif status == 'complete':
                 check_result['waiting'] = False
@@ -955,7 +1047,8 @@ def action_check(module):
                         + workflow_key + ' is completed.'
                 else:
                     check_result['message'] = 'Workflow instance named: ' \
-                        + module.params['workflow_name'] + ' is completed.'
+                        + module.params['workflow_name'].strip() \
+                        + ' is completed.'
                 module.exit_json(**check_result)
             else:
                 step_status = response_retrieveP['automationStatus']
@@ -967,7 +1060,7 @@ def action_check(module):
                             + ' is not completed: No step is started.'
                     else:
                         check_result['message'] = 'Workflow instance named: ' \
-                            + module.params['workflow_name'] \
+                            + module.params['workflow_name'].strip() \
                             + ' is not completed: No step is started.'
                 else:
                     current_step_message = ''
@@ -993,37 +1086,35 @@ def action_check(module):
                         next_step_message = ' While one or more steps may be '\
                             + 'skipped.'
                     if check_by_key is True:
-                        check_result['message'] = 'Workflow instance with' \
-                            + 'key: ' + workflow_key + ' is not completed: ' \
-                            + current_step_message \
+                        check_result['message'] = 'Workflow instance with ' \
+                            + 'key: ' + workflow_key \
+                            + ' is not completed: ' + current_step_message \
                             + step_status['messageText'] + next_step_message
                     else:
                         check_result['message'] = 'Workflow instance named: ' \
-                            + module.params['workflow_name'] + ' is not ' \
-                            + 'completed: ' \
-                            + current_step_message \
+                            + module.params['workflow_name'].strip() \
+                            + ' is not completed: ' + current_step_message \
                             + step_status['messageText'] + next_step_message
                 module.exit_json(**check_result)
         else:
             if check_by_key is True:
                 module.fail_json(
-                    msg='Failed to get properties of workflow '
-                    + 'instance with key: ' + workflow_key + '.')
+                    msg='Failed to get properties of workflow instance with '
+                    + 'key: ' + workflow_key + '.')
             else:
                 module.fail_json(
-                    msg='Failed to get properties of workflow '
-                    + 'instance named: ' + module.params['workflow_name']
+                    msg='Failed to get properties of workflow instance named: '
+                    + module.params['workflow_name'].strip()
                     + '.')
     else:
         if check_by_key is True:
             module.fail_json(
-                msg='Failed to get properties of workflow '
-                + 'instance with key: ' + workflow_key + ' ---- '
-                + response_retrieveP)
+                msg='Failed to get properties of workflow instance with key: '
+                + workflow_key + ' ---- ' + response_retrieveP)
         else:
             module.fail_json(
-                msg='Failed to get properties of workflow '
-                + 'instance named: ' + module.params['workflow_name']
+                msg='Failed to get properties of workflow instance named: '
+                + module.params['workflow_name'].strip()
                 + ' ---- ' + response_retrieveP)
 
 
@@ -1041,6 +1132,8 @@ def action_delete(module):
     delete_by_key = False
     delete_result = dict(
         changed=False,
+        workflow_key='',
+        workflow_name='',
         deleted=False,
         message=''
     )
@@ -1049,29 +1142,60 @@ def action_delete(module):
     # decide if delete by name or key
     if (module.params['workflow_key'] is not None
             and module.params['workflow_key'].strip() != ''):
-        workflow_key = module.params['workflow_key']
+        workflow_key = module.params['workflow_key'].strip()
         delete_by_key = True
-    # step1 - find workflow instance by name if needed
+    # step1.1 - find workflow instance by name if needed
     if workflow_key == '':
         if (module.params['workflow_name'] is None
                 or module.params['workflow_name'].strip() == ''):
             module.fail_json(
                 msg='A valid argument of either workflow_name or'
                 + ' workflow_key is required.')
+        delete_result['workflow_name'] = module.params['workflow_name'].strip()
         response_list = call_workflow_api(module, session, 'list',
                                           workflow_key)
         if isinstance(response_list, dict):
             if ('workflows' in response_list
                     and len(response_list['workflows']) > 0):
                 workflow_key = response_list['workflows'][0]['workflowKey']
-            else:
+            # else:
+            #     delete_result['message'] = 'Workflow instance named: ' \
+            #         + module.params['workflow_name'].strip() \
+            #         + ' does not exist.'
+            #     module.exit_json(**delete_result)
+        else:
+            module.fail_json(
+                msg='Failed to find workflow instance named: '
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_list)
+    # step1.2 - if not found, find workflow instance by case-insensitive name
+    if workflow_key == '':
+        tmp_name = module.params['workflow_name']
+        module.params['workflow_name'] = ''
+        response_list = call_workflow_api(module, session, 'list',
+                                          workflow_key)
+        module.params['workflow_name'] = tmp_name
+        if isinstance(response_list, dict):
+            if ('workflows' in response_list
+                    and len(response_list['workflows']) > 0):
+                for item in response_list['workflows']:
+                    if ('workflowName' in item
+                            and item['workflowName'].upper() ==
+                            tmp_name.strip().upper()):
+                        workflow_key = item['workflowKey']
+                        module.params['workflow_name'] = item['workflowName']
+                        delete_result['workflow_name'] = module.params['workflow_name'].strip()
+                        break
+            if workflow_key == '':
                 delete_result['message'] = 'Workflow instance named: ' \
-                    + module.params['workflow_name'] + ' does not exist.'
+                    + module.params['workflow_name'].strip() \
+                    + ' does not exist.'
                 module.exit_json(**delete_result)
         else:
             module.fail_json(
                 msg='Failed to find workflow instance named: '
-                + module.params['workflow_name'] + ' ---- ' + response_list)
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_list)
     # step2 - delete workflow instance
     response_delete = call_workflow_api(module, session, 'delete',
                                         workflow_key)
@@ -1083,17 +1207,20 @@ def action_delete(module):
                 + workflow_key + ' is deleted.'
         else:
             delete_result['message'] = 'Workflow instance named: ' \
-                + module.params['workflow_name'] + ' is deleted.'
+                + module.params['workflow_name'].strip() \
+                + ' is deleted.'
+        delete_result['workflow_key'] = workflow_key
         module.exit_json(**delete_result)
     else:
         if delete_by_key is True:
             module.fail_json(
-                msg='Failed to delete workflow instance with '
-                + 'key: ' + workflow_key + ' ---- ' + response_delete)
+                msg='Failed to delete workflow instance with key: '
+                + workflow_key + ' ---- ' + response_delete)
         else:
             module.fail_json(
                 msg='Failed to delete workflow instance named: '
-                + module.params['workflow_name'] + ' ---- ' + response_delete)
+                + module.params['workflow_name'].strip()
+                + ' ---- ' + response_delete)
 
 
 def main():
@@ -1117,8 +1244,9 @@ def main():
     if module.params['state'] == 'existed':
         if (module.params['workflow_name'] is None
                 or module.params['workflow_name'].strip() == ''):
-            module.fail_json(msg='Missing required argument or invalid '
-                             + 'argument: workflow_name.')
+            module.fail_json(
+                msg='Missing required argument or invalid argument: '
+                + 'workflow_name.')
         action_compare(module, argument_spec_mapping)
     elif module.params['state'] == 'started':
         action_start(module)
