@@ -83,6 +83,9 @@ options:
     workflow_name:
         description:
             - Descriptive name of the workflow.
+            - >
+              The workflow name is not case-sensitive, for example,
+              C(MyWorkflow) and C(MYWORKFLOW) are the same workflow.
         required: True
         type: str
     workflow_file:

@@ -198,6 +198,9 @@ state
 workflow_name
   Descriptive name of the workflow.
 
+  The workflow name is not case-sensitive, for example, ``MyWorkflow`` and ``MYWORKFLOW`` are the same workflow.
+
+
   It is recommended that you use the naming rule ``ansible_workflowName_{{ workflow_host }}`` when *state=started*.
 
 
@@ -463,6 +466,13 @@ Examples
        workflow_file: "/zosmf/workflow_def/workflow_sample_automation_steps.xml"
        workflow_host: "{{ inventory_hostname }}"
 
+   - name: Start the existing workflow with the specified step `workflow_step_name` to begin at
+     ibm.ibm_zosmf.zmf_workflow:
+       state: "started"
+       zmf_credential: "{{ result_auth }}"
+       workflow_name: "ansible_sample_workflow_{{ inventory_hostname }}"
+       workflow_step_name: "attrConditionStep"
+
    - name: Delete a workflow if it exists
      ibm.ibm_zosmf.zmf_workflow:
        state: "deleted"
@@ -536,11 +546,19 @@ Return Values
 
           Workflow instance named: ansible_sample_workflow_SY1 with different definition file is found.
 
+          Workflow instance named: ansible_sample_workflow_SY1 is found. While it could not be compared since the argument: workflow_file is required, and please supply variables by the argument: workflow_vars rather than the argument:  workflow_vars_file."
+
           Workflow instance named: ansible_sample_workflow_SY1 is started, you can use state=check to check its final status.
 
-          Workflow instance named: ansible_sample_workflow_SY1 is still in progress.
+          Workflow instance named: ansible_sample_workflow_SY1 is still in progress. Current step is 1.2 Second-level step 2. Percent complete is 28%.
 
           Workflow instance named: ansible_sample_workflow_SY1 is completed.
+
+          Workflow instance named: ansible_sample_workflow_SY1 is not completed: No step is started.
+
+          Workflow instance named: ansible_sample_workflow_SY1 is not completed: In step 1.2 Second-level step 2: IZUWF0145E: Automation processing for the workflow `ansible_sample_workflow_SY1` stopped at step `Second-level step 2`. This step cannot be performed automatically. You can manually complete this step in z/OSMF Workflows task, and start this workflow instance again with next step name: subStep3 specified in argument: workflow_step_name.
+
+          Workflow instance named: ansible_sample_workflow_SY1 is not completed: In step 1.2 Second-level step 2: IZUWF0162I: Automation processing for workflow `ansible_sample_workflow_SY1` is complete. While one or more steps may be skipped.
 
           Workflow instance named: ansible_sample_workflow_SY1 is deleted.
 
@@ -550,9 +568,17 @@ Return Values
       workflow_key
         Generated key to uniquely identify the existing or started workflow.
 
-        | **returned**: on success when `state=existed/started`
+        | **returned**: on success when `state=existed/started/check/deleted`
         | **type**: str
         | **sample**: 2535b19e-a8c3-4a52-9d77-e30bb920f912
+
+
+      workflow_name
+        Descriptive name of the workflow.
+
+        | **returned**: on success when `state=existed/started/check/deleted`
+        | **type**: str
+        | **sample**: ansible_sample_workflow_SY1
 
 
       same_workflow_instance
