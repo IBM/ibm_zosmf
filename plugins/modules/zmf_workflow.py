@@ -936,7 +936,8 @@ def action_check(module):
                         and step_status['currentStepNumber'] is not None):
                     current_step_message = ' Current step is ' \
                         + step_status['currentStepNumber'] + ' ' \
-                        + step_status['currentStepTitle']
+                        + step_status['currentStepTitle'] + '. Percent complete is ' \
+                        + str(response_retrieveP['percentComplete']) + '%.'
                 if check_by_key is True:
                     check_result['message'] = 'Workflow instance with key: ' \
                         + workflow_key + ' is still in progress.' \
