@@ -138,10 +138,11 @@ options:
         description:
             - The desired final state for the specified workflow.
             - >
-              If I(state=existed), checks whether a workflow instance exists or not. 
-                  - If only I(workflow_name) is specified, the module looks for a workflow instance with same name. 
-                  - If I(workflow_file), I(workflow_vars), I(workflow_vars_file) are also specified, the module not only looks for workflow instance 
-                    with same name, but also validates if content of workflow definition and variables are consistent. 
+              If I(state=existed), checks whether a workflow instance exists or not.
+                  - If only I(workflow_name) is specified, the module looks for a workflow instance with same name.
+                  - If I(workflow_file), I(workflow_vars), I(workflow_vars_file) are also specified,
+                    the module not only looks for workflow instance with same name,
+                    but also validates if content of workflow definition and variables are consistent.
             - >
               If I(state=started), starts the workflow instance.
                   - If I(workflow_key) is specified, finds the workflow instance and starts it.
@@ -151,20 +152,20 @@ options:
             - If I(state=deleted), delete a workflow instance if it exists.
             - >
               If I(state=check), check the status of a workflow.
-                  - 
+                  -
                     If the status of the workflow is 'automation-in-progress', return message\:
                     Workflow instance with key:{} is still in progress. Current step is {}.Percent complete is xx%.
 
-                  - 
+                  -
                     If the status of the workflow is 'complete', return message:
                     Workflow instance with key:{} is is completed.
 
-                  - 
+                  -
                     If the status of the workflow is not 'automation-in-progress' or 'complete', return message\:
-                    
+
                       - Workflow instance with key:{} is not completed\: No step is started.
-                      - 
-                        Workflow instance with key:{} is not completed\: In step {}\:  
+                      -
+                        Workflow instance with key:{} is not completed\: In step {}\:
                         You can manually complete this step in z/OSMF Workflows task,
                         and start this workflow instance again with next step name: {}
                         specified in argument: workflow_step_name.
@@ -528,7 +529,7 @@ waiting:
           Indicate whether it needs to wait and check again because the
           workflow is still in progress.
           Return True if the status of the workflow is 'automation-in-progress'. Otherwise
-          (the workflow is either completed or paused/failed at some step), return False.  
+          (the workflow is either completed or paused/failed at some step), return False.
     returned: on success when `state=check`
     type: bool
 completed:
