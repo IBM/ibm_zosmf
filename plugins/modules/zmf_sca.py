@@ -75,7 +75,7 @@ options:
     expected_result:
         description:
             - Expected validation result of the security requirements.
-            - Be ignored when I(state=provisioned)
+            - This parameter is ignored when I(state=provisioned)
             - >
                 For all-passed, the module returns success when all security requirements are satisfied.
                 If any requirement is not met or can not be determined, this module fails.
@@ -217,13 +217,13 @@ EXAMPLES = r'''
     zmf_password: "{{ zmf_password }}"
   register: result_auth
 
-- name: Validate resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
+- name: Validate security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
   ibm.ibm_zosmf.zmf_sca:
     zmf_credential: "{{ result_auth }}"
     target_userid: IBMUSER
     path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-- name: Validate resources defined in a local security descriptor file and expect no access to any items.
+- name: Validate security requirements defined in a local (Ansible control node) security descriptor file and expect no access to any items.
   ibm.ibm_zosmf.zmf_sca:
     zmf_credential: "{{ result_auth }}"
     target_userid: IBMUSER
@@ -231,14 +231,14 @@ EXAMPLES = r'''
     location: local
     expected_result: all-failed
 
-- name: Provision resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
+- name: Provision security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
   ibm.ibm_zosmf.zmf_sca:
     zmf_credential: "{{ result_auth }}"
     state: provisioned
     target_userid: IBMUSER
     path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-- name: Provision resources defined in a local security descriptor file and expect all requirements are satisfied.
+- name: Provision resources defined in a local (Ansible control node) security descriptor file and expect all requirements are satisfied.
   ibm.ibm_zosmf.zmf_sca:
     zmf_credential: "{{ result_auth }}"
     state: provisioned
@@ -261,9 +261,9 @@ msg:
 
 resourceItems:
     description:
-        - Array of security resources
-        - If `state=check`, indicate security resources do not match with the expected result.
-        - If `state=provisioned`, indicate security resources failed to provision.
+        - Array of security requirements that need attention.
+        - If `state=check`, indicate security requirements which do not match with the expected result.
+        - If `state=provisioned`, indicate security requirements that are failed to provision.
     type: list
     elements: dict
     returned: always on fail
@@ -310,7 +310,9 @@ resourceItems:
                 - CONTROL
                 - ALTER
         action:
-            description: For action validation, the return value will be 'validate'.
+            description:
+                - \"validate\" will be returned if SCA only did validation for this security requirement.
+                - \"provision\" will be returned if SCA provisioned the security requirement.
             type: str
             returned: always
             sample:
@@ -482,7 +484,7 @@ def process_provision_response(response, module):
                 prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH47746 installed,' \
                          'and Security Configuration Assistant is enabled.'
             else:
-                prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH39327 installed,' \
+                prefix = 'Please make sure z/OSMF is V2R4 or above with the APAR PH47746 installed,' \
                          'and Security Configuration Assistant is enabled.'
 
         module.fail_json(
@@ -560,6 +562,11 @@ def run_module():
     # state with no modifications
     if module.check_mode:
         module.exit_json(**result)
+
+    if module.params['path_of_security_requirements'] is None:
+        module.fail_json(
+            msg='Input value of path_of_security_requirements is empty.'
+        )
     # import epdb
     # epdb.serve()
     # response = {}

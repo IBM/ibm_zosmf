@@ -82,7 +82,7 @@ path_of_security_requirements
 expected_result
   Expected validation result of the security requirements.
 
-  Be ignored when *state=provisioned*
+  This parameter is ignored when *state=provisioned*
 
   For all-passed, the module returns success when all security requirements are satisfied. If any requirement is not met or can not be determined, this module fails.
 
@@ -262,13 +262,13 @@ Examples
        zmf_password: "{{ zmf_password }}"
      register: result_auth
 
-   - name: Validate resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
+   - name: Validate security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        target_userid: IBMUSER
        path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-   - name: Validate resources defined in a local security descriptor file and expect no access to any items.
+   - name: Validate security requirements defined in a local (Ansible control node) security descriptor file and expect no access to any items.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        target_userid: IBMUSER
@@ -276,14 +276,14 @@ Examples
        location: local
        expected_result: all-failed
 
-   - name: Provision resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
+   - name: Provision security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        state: provisioned
        target_userid: IBMUSER
        path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-   - name: Provision resources defined in a local security descriptor file and expect all requirements are satisfied.
+   - name: Provision resources defined in a local (Ansible control node) security descriptor file and expect all requirements are satisfied.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        state: provisioned
@@ -316,11 +316,11 @@ Return Values
         | **type**: str
 
       resourceItems
-        Array of security resources
+        Array of security requirements that need attention.
 
-        If `state=check`, indicate security resources do not match with the expected result.
+        If `state=check`, indicate security requirements which do not match with the expected result.
 
-        If `state=provisioned`, indicate security resources failed to provision.
+        If `state=provisioned`, indicate security requirements that are failed to provision.
 
         | **returned**: always on fail
         | **type**: list
@@ -387,7 +387,9 @@ Return Values
 
 
         action
-          For action validation, the return value will be 'validate'.
+          \"validate\" will be returned if SCA only did validation for this security requirement.
+
+          \"provision\" will be returned if SCA provisioned the security requirement.
 
           | **returned**: always
           | **type**: str
