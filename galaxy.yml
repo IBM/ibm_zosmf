@@ -76,3 +76,4 @@ build_ignore:
   - venv
 #  - tests
   - .idea
+  - meta/context
