@@ -34,3 +34,13 @@
         target_userid: "{{target_userid}}" # Target user or group id to be validated
       register: result
     - debug: var=result
+
+    - name: Run security requirements provision and expect all requirements are satisified
+      zmf_sca:
+        state: "provisioned"
+        zmf_credential: "{{ result_auth }}"
+        location: local # The security requirement file is in localhost
+        path_of_security_requirements: "{{path_local}}" # Path of the local security requirement file
+        target_userid: "{{target_userid}}" # Target user or group id to be validated
+      register: result
+    - debug: var=result

@@ -4,8 +4,8 @@
 .. _zmf_sca_module:
 
 
-zmf_sca -- Automate z/OS security validation
-============================================
+zmf_sca -- Automate z/OS security requirements validation and provision
+=======================================================================
 
 
 .. contents::
@@ -15,7 +15,7 @@ zmf_sca -- Automate z/OS security validation
 
 Synopsis
 --------
-- This module supports automatically validating security requirements/configuration based on the security descriptor JSON file.
+- This module supports automatically validating and provisioning security requirements/configuration based on the security descriptor JSON file.
 
 - This module drives z/OSMF Security Configuration Assistant REST API undercover.
 
@@ -28,11 +28,28 @@ Parameters
 
  
 
+state
+  The desired final state.
+
+  If *state=check*, this module performs security validation for the security requirements specified in path_of_security_requirements.
+
+
+  If *state=provisioned*, this module performs security provision for the security requirements specified in path_of_security_requirements.
+
+
+  | **required**: False
+  | **type**: str
+  | **default**: check
+  | **choices**: check, provisioned
+
+
+ 
+
 target_userid
-  User ID or group ID to be validated for the security requirements documented by the security descriptor JSON file that is specified by the parameter path_of_security_requirements.
+  User ID or group ID to be validated or provisioned for the security requirements documented by the security descriptor JSON file that is specified by the parameter path_of_security_requirements.
 
 
-  If this parameter is not specified, the current logon user ID is used for validation.
+  If this parameter is not specified, the current logon user ID is used for validation or provision.
 
 
   | **required**: False
@@ -53,7 +70,7 @@ location
  
 
 path_of_security_requirements
-  Absolute path of the security descriptor JSON file that contains the security requirements to be validated.
+  Absolute path of the security descriptor JSON file that contains the security requirements to be validated or provisioned.
 
 
   | **required**: True
@@ -64,6 +81,8 @@ path_of_security_requirements
 
 expected_result
   Expected validation result of the security requirements.
+
+  This parameter is ignored when *state=provisioned*
 
   For all-passed, the module returns success when all security requirements are satisfied. If any requirement is not met or can not be determined, this module fails.
 
@@ -78,20 +97,6 @@ expected_result
   | **type**: str
   | **default**: all-passed
   | **choices**: all-failed, all-passed
-
-
- 
-
-state
-  The desired final state.
-
-  If *state=check*, this module performs security validation for the security requirements specified in path_of_security_requirements.
-
-
-  | **required**: False
-  | **type**: str
-  | **default**: check
-  | **choices**: check
 
 
  
@@ -257,13 +262,13 @@ Examples
        zmf_password: "{{ zmf_password }}"
      register: result_auth
 
-   - name: Validate resources defined in a z/OS security descriptor file and expect all requirements are satisfied.
+   - name: Validate security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        target_userid: IBMUSER
        path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-   - name: Validate resources defined in a local security descriptor file and expect no access to any items.
+   - name: Validate security requirements defined in a local (Ansible control node) security descriptor file and expect no access to any items.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        target_userid: IBMUSER
@@ -271,6 +276,20 @@ Examples
        location: local
        expected_result: all-failed
 
+   - name: Provision security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
+     ibm.ibm_zosmf.zmf_sca:
+       zmf_credential: "{{ result_auth }}"
+       state: provisioned
+       target_userid: IBMUSER
+       path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
+
+   - name: Provision resources defined in a local (Ansible control node) security descriptor file and expect all requirements are satisfied.
+     ibm.ibm_zosmf.zmf_sca:
+       zmf_credential: "{{ result_auth }}"
+       state: provisioned
+       target_userid: IBMUSER
+       path_of_security_requirements: /home/user/descriptor.json
+       location: local
 
 
 
@@ -297,7 +316,11 @@ Return Values
         | **type**: str
 
       resourceItems
-        Array of security resources do not match with the expected result.
+        Array of security requirements that need attention.
+
+        If `state=check`, indicate security requirements which do not match with the expected result.
+
+        If `state=provisioned`, indicate security requirements that are failed to provision.
 
         | **returned**: always on fail
         | **type**: list
@@ -364,11 +387,13 @@ Return Values
 
 
         action
-          For action validation, the return value will be 'validate'.
+          \"validate\" will be returned if SCA only did validation for this security requirement.
+
+          \"provision\" will be returned if SCA provisioned the security requirement.
 
           | **returned**: always
           | **type**: str
-          | **sample**: validate
+          | **sample**: ['validate', 'provision']
 
 
         actionObjectId

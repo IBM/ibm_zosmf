@@ -124,6 +124,9 @@ zmf_key
 workflow_name
   Descriptive name of the workflow.
 
+  The workflow name is not case-sensitive, for example, ``MyWorkflow`` and ``MYWORKFLOW`` are the same workflow.
+
+
   | **required**: True
   | **type**: str
 
@@ -310,7 +313,17 @@ force_complete
   If *force_complete=true* (Forcibly), this role will delete the workflow instance if it exists in the z/OSMF server, create a new workflow instance and start it on each target z/OS system, and periodically check the workflow status and return the final result when the workflow completes.
 
 
-  If *force_complete=false* (Idempotently), this role will create the workflow instance if it does not exist in the z/OSMF server, start the workflow on each target z/OS system, and periodically check the workflow status and return the final result when the workflow completes.
+  If *force_complete=false* (Idempotently),
+    - If the workflow does not exist, this role will create the workflow instance.
+    -
+      If the workflow exists but has different content(such as same workflow definition, same
+      varaible values, etc.), this role will delete the existing workflow and create a new workflow instance.
+    -
+      If the workflow exists and has consistent content(such as same workflow definition, same
+      varaible values, etc.), this workflow will be used.
+
+
+  Then this role will start the workflow on each target z/OS system, and periodically check the workflow status and return the final result when the workflow completes.
 
 
   | **required**: False
