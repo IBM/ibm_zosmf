@@ -24,12 +24,55 @@ def __get_sca_apis():
     :rtype: dict[str, dict]
     """
     version = __get_api_version()
+    resource_dict = dict(
+        serviceId=dict(
+            required=False, type='str', nickname=''
+        ),
+        serviceName=dict(
+            required=False, type='str', nickname=''
+        ),
+        version=dict(
+            required=False, type='str', nickname=''
+        ),
+        vendor=dict(
+            required=False, type='str', nickname=''
+        ),
+        resourceItems=dict(
+            required=True, type='list', nickname='', elements='dict',
+            options=dict(
+                itemId=dict(
+                    required=False, type='str', nickname=''
+                ),
+                itemType=dict(
+                    required=False, type='str', nickname=''
+                ),
+                itemCategory=dict(
+                    required=False, type='str', nickname=''
+                ),
+                itemDescription=dict(
+                    required=False, type='str', nickname=''
+                ),
+                resourceProfile=dict(
+                    required=True, type='str', nickname='resourceProfile'
+                ),
+                resourceClass=dict(
+                    required=True, type='str', nickname='resourceClass'
+                ),
+                access=dict(
+                    required=True, type='str', nickname='access'
+                ),
+                whoNeedsAccess=dict(
+                    required=False, type='str', nickname=''
+                )
+            )
+        )
+    )
     return dict(
         # validate descriptor
         validateDescriptor=dict(
             method='post',
             url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
-                + version + '/validate/descriptor?{userid}',
+                + version + '/validate/descriptor?userid={userid}',
             args=dict(
                 path=dict(
                     required=True, type='str', nickname='path_of_security_requirements'
@@ -41,50 +84,28 @@ def __get_sca_apis():
         validateResource=dict(
             method='post',
             url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
-                + version + '/validate?{userid}',
+                + version + '/validate?userid={userid}',
+            args=resource_dict,
+            ok_rcode=200
+        ),
+        # provision descriptor
+        provisionDescriptor=dict(
+            method='post',
+            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
+                + version + '/provision/descriptor?userid={userid}',
             args=dict(
-                serviceId=dict(
-                    required=False, type='str', nickname=''
-                ),
-                serviceName=dict(
-                    required=False, type='str', nickname=''
-                ),
-                version=dict(
-                    required=False, type='str', nickname=''
-                ),
-                vendor=dict(
-                    required=False, type='str', nickname=''
-                ),
-                resourceItems=dict(
-                    required=True, type='list', nickname='', elements='dict',
-                    options=dict(
-                        itemId=dict(
-                            required=False, type='str', nickname=''
-                        ),
-                        itemType=dict(
-                            required=False, type='str', nickname=''
-                        ),
-                        itemCategory=dict(
-                            required=False, type='str', nickname=''
-                        ),
-                        itemDescription=dict(
-                            required=False, type='str', nickname=''
-                        ),
-                        resourceProfile=dict(
-                            required=True, type='str', nickname='resourceProfile'
-                        ),
-                        resourceClass=dict(
-                            required=True, type='str', nickname='resourceClass'
-                        ),
-                        access=dict(
-                            required=True, type='str', nickname='access'
-                        ),
-                        whoNeedsAccess=dict(
-                            required=False, type='str', nickname=''
-                        )
-                    )
+                path=dict(
+                    required=True, type='str', nickname='path_of_security_requirements'
                 )
             ),
+            ok_rcode=200
+        ),
+        # provision resource
+        provisionResource=dict(
+            method='post',
+            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
+                + version + '/provision?userid={userid}',
+            args=resource_dict,
             ok_rcode=200
         )
     )
@@ -120,7 +141,7 @@ def __get_sca_api_url(module, url, userid):
     for x in matchObj:
         if x == 'userid':
             if userid is not None and userid.strip() != '':
-                url = re.sub('{' + x + '}', 'userid=' + userid.strip(), url)
+                url = re.sub('{' + x + '}', userid.strip(), url)
         elif x == 'zmf_port' and module.params[x] == '':
             url = re.sub(':{' + x + '}', module.params[x], url)
         else:

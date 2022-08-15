@@ -83,6 +83,9 @@ options:
     workflow_name:
         description:
             - Descriptive name of the workflow.
+            - >
+              The workflow name is not case-sensitive, for example,
+              C(MyWorkflow) and C(MYWORKFLOW) are the same workflow.
         required: True
         type: str
     workflow_file:
@@ -240,11 +243,19 @@ options:
               system, and periodically check the workflow status and return
               the final result when the workflow completes.
             - >
-              If I(force_complete=false) (Idempotently), this role will create
-              the workflow instance if it does not exist in the z/OSMF server,
-              start the workflow on each target z/OS system, and periodically
+              If I(force_complete=false) (Idempotently),
+                  - If the workflow does not exist, this role will create the workflow instance.
+                  -
+                    If the workflow exists but has different content(such as same workflow definition, same
+                    varaible values, etc.), this role will delete the existing workflow and create a new workflow instance.
+                  -
+                    If the workflow exists and has consistent content(such as same workflow definition, same
+                    varaible values, etc.), this workflow will be used.
+            - >
+              Then this role will start the workflow on each target z/OS system, and periodically
               check the workflow status and return the final result when the
               workflow completes.
+
         required: False
         type: bool
         default: false

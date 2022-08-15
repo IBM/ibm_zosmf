@@ -73,7 +73,7 @@ Review the details of the dependencies before you proceed to install the
    z/OSMF SCA is a plugin of z/OSMF which supports json format of security descriptor file.
    This file can be used to document security requirements by function or product.
    With the security descriptor file which is easy to create,
-   SCA is able to display and automatically validate security requirements in a flexible granularity,
+   SCA is able to display and automatically validate or provision security requirements in a flexible granularity,
    either by individual requirement, by function or by product. SCA is based on SAF interface,
    therefore, supports all SAF based security products in most cases.
 

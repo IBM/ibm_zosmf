@@ -178,15 +178,43 @@ zmf_key
 state
   The desired final state for the specified workflow.
 
-  If *state=existed*, indicate whether a workflow with the given name does not exist, or exists with same or different definition file, variables, and properties.
+  If *state=existed*, checks whether a workflow instance exists or not.
+    - If only *workflow_name* is specified, the module looks for a workflow instance with same name.
+    - If *workflow_file*, *workflow_vars*, *workflow_vars_file* are also specified,
+      the module not only looks for workflow instance with same name,
+      but also validates if content of workflow definition and variables are consistent.
 
 
-  If *state=started*, create a workflow if it does not exist, then start it.
+  If *state=started*, starts the workflow instance.
+    - If *workflow_key* is specified, finds the workflow instance and starts it.
+    - If *workflow_key* is not specified, checks if workflow exists by *workflow_name*,
+        - If exists, starts the workflow instance.
+        - If not exist, creates a new workflow instance and starts it.
 
 
-  If *state=deleted*, delete a workflow if it exists.
+  If *state=deleted*, delete a workflow instance if it exists.
 
   If *state=check*, check the status of a workflow.
+    -
+      If the status of the workflow is 'automation-in-progress', return message\:
+      Workflow instance with key:{} is still in progress. Current step is {}.Percent complete is xx%.
+
+    -
+      If the status of the workflow is 'complete', return message:
+      Workflow instance with key:{} is is completed.
+
+    -
+      If the status of the workflow is not 'automation-in-progress' or 'complete', return message\:
+
+        - Workflow instance with key:{} is not completed\: No step is started.
+        -
+          Workflow instance with key:{} is not completed\: In step {}\:
+          You can manually complete this step in z/OSMF Workflows task,
+          and start this workflow instance again with next step name: {}
+          specified in argument: workflow_step_name.
+        - Workflow instance with key:{} is not completed\:
+          In step {}\: While one or more steps may be skipped.
+
 
   | **required**: True
   | **type**: str
@@ -197,6 +225,9 @@ state
 
 workflow_name
   Descriptive name of the workflow.
+
+  The workflow name is case insensitive, for example, ``MyWorkflow`` and ``MYWORKFLOW`` are the same workflow.
+
 
   It is recommended that you use the naming rule ``ansible_workflowName_{{ workflow_host }}`` when *state=started*.
 
@@ -463,6 +494,13 @@ Examples
        workflow_file: "/zosmf/workflow_def/workflow_sample_automation_steps.xml"
        workflow_host: "{{ inventory_hostname }}"
 
+   - name: Start the existing workflow from the specified step `workflow_step_name`
+     ibm.ibm_zosmf.zmf_workflow:
+       state: "started"
+       zmf_credential: "{{ result_auth }}"
+       workflow_name: "ansible_sample_workflow_{{ inventory_hostname }}"
+       workflow_step_name: "StepName"
+
    - name: Delete a workflow if it exists
      ibm.ibm_zosmf.zmf_workflow:
        state: "deleted"
@@ -536,11 +574,19 @@ Return Values
 
           Workflow instance named: ansible_sample_workflow_SY1 with different definition file is found.
 
+          Workflow instance named: ansible_sample_workflow_SY1 is found. While it could not be compared since the argument: workflow_file is required, and please supply variables by the argument: workflow_vars rather than the argument:  workflow_vars_file."
+
           Workflow instance named: ansible_sample_workflow_SY1 is started, you can use state=check to check its final status.
 
-          Workflow instance named: ansible_sample_workflow_SY1 is still in progress.
+          Workflow instance named: ansible_sample_workflow_SY1 is still in progress. Current step is 1.2 Step title. Percent complete is 28%.
 
           Workflow instance named: ansible_sample_workflow_SY1 is completed.
+
+          Workflow instance named: ansible_sample_workflow_SY1 is not completed: No step is started.
+
+          Workflow instance named: ansible_sample_workflow_SY1 is not completed: In step 1.2 Step title: IZUWF0145E: Automation processing for the workflow `ansible_sample_workflow_SY1` stopped at step `Step title`. This step cannot be performed automatically. You can manually complete this step in z/OSMF Workflows task, and start this workflow instance again with next step name: subStep3 specified in argument: workflow_step_name.
+
+          Workflow instance named: ansible_sample_workflow_SY1 is not completed: In step 1.2 Step title: IZUWF0162I: Automation processing for workflow `ansible_sample_workflow_SY1` is complete. While one or more steps may be skipped.
 
           Workflow instance named: ansible_sample_workflow_SY1 is deleted.
 
@@ -550,9 +596,17 @@ Return Values
       workflow_key
         Generated key to uniquely identify the existing or started workflow.
 
-        | **returned**: on success when `state=existed/started`
+        | **returned**: on success when `state=existed/started/check/deleted`
         | **type**: str
         | **sample**: 2535b19e-a8c3-4a52-9d77-e30bb920f912
+
+
+      workflow_name
+        Descriptive name of the workflow.
+
+        | **returned**: on success when `state=existed/started/check/deleted`
+        | **type**: str
+        | **sample**: ansible_sample_workflow_SY1
 
 
       same_workflow_instance
@@ -563,14 +617,15 @@ Return Values
         | **type**: bool
 
       waiting
-        Indicate whether it needs to wait and check again because the workflow is still in progress.
+        Indicate whether it needs to wait and check again because the workflow is still in progress. Return True if the status of the workflow is 'automation-in-progress'. Otherwise (the workflow is either completed or paused/failed at some step), return False.
 
 
         | **returned**: on success when `state=check`
         | **type**: bool
 
       completed
-        Indicate whether the workflow is completed.
+        Indicate whether the workflow is completed. Return True if the status of the workflow is 'complete'. Otherwise, return False.
+
 
         | **returned**: on success when `state=existed/check`
         | **type**: bool
