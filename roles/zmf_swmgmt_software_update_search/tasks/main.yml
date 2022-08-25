@@ -1,0 +1,164 @@
+# Copyright (c) IBM Corporation 2022
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+# Tasks file for zmf_swmgmt_software_update_search play.
+
+# Create a variable for the software update search status URL.
+- name: Initialize the software update search status URL
+  set_fact:
+    software_update_search_request_id: ""
+
+#- name: "Updates not defined"
+#  set_fact:
+#    updates: "[]"
+#  when: updates is not defined
+#
+#- name: "Including only the updates in the request content body"
+#  set_fact:
+#    zosmfuid_value: "default"
+#  when: zosmfuid_value is not defined
+#
+#- name: "Including updates, zosmfuid, and zosmfpw in the request content body"
+#  set_fact:
+#    zosmfpw_value: "default"
+#  when: zosmfpw_value is not defined
+#
+#- name: "Including updates, proxyuid, and proxypw in the request content body"
+#  set_fact:
+#    proxyuid_value: "default"
+#  when: proxyuid_value is not defined
+#
+#- name: "Including updates, zosmfuid, zosmfpw, proxyuid, and proxypw in the request content body"
+#  set_fact:
+#    proxypw_value: "default"
+#  when: proxypw_value is not defined
+
+# TODO remove all
+
+#- name: "Including only the updates in the request content body"
+#  set_fact:
+#    software_update_search_request_body: '{"updates":{{ updates }}}'
+#  when: zosmfuid_value is not defined and zosmfpw_value is not defined and proxyuid_value is not defined and proxypw_value is not defined
+#
+#- name: "Including updates, zosmfuid, and zosmfpw in the request content body"
+#  set_fact:
+#    software_update_search_request_body: '{"updates":{{ updates }}, "zosmfuid":"{{ zosmfuid_value }}", "zosmfpw":"{{ zosmfpw_value }}"}'
+#  when: zosmfuid_value is defined and zosmfpw_value is defined
+#
+#- name: "Including updates, proxyuid, and proxypw in the request content body"
+#  set_fact:
+#    software_update_search_request_body: '{"updates":{{ updates }}, "proxyuid":"{{ proxyuid_value }}", "proxypw":"{{ proxypw_value }}"}'
+#  when: proxyuid_value is defined and proxypw_value is defined
+#
+#- name: "Including updates, zosmfuid, zosmfpw, proxyuid, and proxypw in the request content body"
+#  set_fact:
+#    software_update_search_request_body: '{"updates":{{ updates }}, "zosmfuid":"{{ zosmfuid_value }}", "zosmfpw":"{{ zosmfpw_value }}", "proxyuid":"{{ proxyuid_value }}", "proxypw":"{{ proxypw_value }}"}'
+#  when: zosmfuid_value is defined and zosmfpw_value is defined and proxyuid_value is defined and proxypw_value is defined
+
+# Allow software_update_search_request_body to be set in previous tasks. If software_update_search_request_body isn't set then set default below
+#- name: Set software_update_search_request_body as fact
+#  set_fact:
+#    software_update_search_request_body: '{"updates":"{{ updates }}","zosmfuid":"{{ zosmfuid_value }}",
+#      "zosmfpw": {{ zosmfpw_value }},"proxyuid":{{ proxyuid_value }},"proxypw":{{ proxypw_value }}}'
+#  when: software_update_search_request_body is not defined
+
+# Set the request content body as an empty dictionary.
+- name: No request content specified for software update search operation, using empty request content body
+  set_fact:
+    software_update_search_request_body: '{}'
+  when: software_update_search_request_body is not defined
+
+##################################################################################
+# TASK #1: Start a software update search async request for a software instance. #
+##################################################################################
+
+# Start the software update search asynchronous operation.
+- name: "Searching software instance <{{ software_instance_name }}> for software updates"
+  uri:
+    url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/softwareupdatesearch"
+    return_content: true
+    user: "{{ zmf_user| trim }}"
+    password: "{{ zmf_password| trim  }}"
+    force_basic_auth: true
+    headers:
+#      Content-Type: "text/plain"
+#      Connection: "keep-alive"
+#      X-CSRF-ZOSMF-HEADER: "z/OSMF"
+#      X-IBM-OPTION: "R"
+       Host: "{{ zmf_host }}"
+       Origin: "https://{{ zmf_host }}"
+    method: POST
+    status_code: 202
+    validate_certs: false
+    body_format: json
+    body: "{{ software_update_search_request_body }}"
+  delegate_to: localhost
+  register: software_update_search_request_id
+
+# Save the software update search operation's response in a file or return the operation's failure information.
+- name: Write the results for the software update search operation to a JSON file
+  block:
+    # Create a variable for the software update search status monitor URL.
+    - name: Set the software update search status monitor URL
+      set_fact:
+        software_update_search_status_monitor_url: "{{ software_update_search_request_id.json['statusurl'] }}"
+      when: software_update_search_request_id.status == 202
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the software update search action failure information
+      fail:
+        msg: "Software Update Search failure details: {{ software_update_search_request_id }} "
+      when: software_update_search_request_id.status != 202
+
+##########################################################################
+# TASK #2: Check the status of the software update search async request. #
+##########################################################################
+
+# Wait for the asynchronous thread to finish and return a response.
+- name: "Poll the status monitor URL of the software update search operation every {{ async_thread_check_delay }} second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
+  uri:
+    url: "{{ software_update_search_status_monitor_url }}"
+    method: GET
+    user: "{{ zmf_user | trim  }}"
+    password: "{{ zmf_password | trim  }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    status_code: 200
+    validate_certs: false
+    return_content: true
+  register: software_update_search_response
+  delegate_to: localhost
+  # This task's URL will be called repeatedly either until the "until" condition is met (request failed or
+  # request completed) or the request still isn't finished after the specified "complete_check_times" attempts.
+  until: (software_update_search_response is failed) or (software_update_search_response.json['status'] == 'complete')
+  retries: "{{ async_thread_check_times }}"
+  delay: "{{ async_thread_check_delay }}"
+
+# Return the software update search REST API response to the console.
+- name: Display software update search response
+  debug:
+    msg: "{{ software_update_search_response.json }}"
+
+# Save the software update search operation's response in a file.
+- name: Write the results for the software update search operation to a JSON file
+  block:
+    # Perform the copy of the software update search response to the file.
+    - name: "Copy the software update search results to JSON file <{{ software_update_search_response_info_json_path }}>"
+      copy:
+        content: '{ "registry-info" : {{ software_update_search_response.json | default("") | to_nice_json(indent=2) }}}'
+        dest: '{{ software_update_search_response_info_json_path }}'
+        mode: '0644'
+      delegate_to: localhost
+
+    # Save the response content into a local variable.
+    - name: Create a variable to hold the value of the software update search results
+      set_fact:
+        software_update_search_response_json: "{{ software_update_search_response.json }}"
+
+# Show the path to the software update search REST API results file.
+- name: Display the path to the file containing the results from the software update search operation
+  debug:
+    msg: "{{ software_update_search_response_info_json_path }}"

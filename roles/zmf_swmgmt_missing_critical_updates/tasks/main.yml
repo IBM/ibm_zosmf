@@ -1,0 +1,110 @@
+# Copyright (c) IBM Corporation 2022
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+# Tasks file for zmf_swmgmt_missing_critical_updates play.
+
+# Create a variable for the missing critical updates status URL.
+- name: Initialize the missing critical updates status URL
+  set_fact:
+    missing_critical_updates_request_id: ""
+
+# Set the request content body as an empty dictionary.
+- name: "No request content specified for missing critical updates operation, using empty request content body"
+  set_fact:
+    missing_critical_updates_request_body: '{}'
+  when: missing_critical_updates_request_body is not defined
+
+####################################################################################
+# TASK #1: Start a missing critical updates async request for a software instance. #
+####################################################################################
+
+# Start the missing critical updates asynchronous operation.
+- name: "Determining the missing critical software updates for software instance <{{ software_instance_name }}>"
+  uri:
+    url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/missingcriticalupdates"
+    return_content: true
+    user: "{{ zmf_user| trim }}"
+    password: "{{ zmf_password| trim }}"
+    force_basic_auth: true
+    headers:
+#      Content-Type: "text/plain" TODO remove
+#      Connection: "keep-alive"
+#      X-CSRF-ZOSMF-HEADER: "z/OSMF"
+#      X-IBM-OPTION: "R"
+       Host: "{{ zmf_host }}"
+       Origin: "https://{{ zmf_host }}"
+    method: POST
+    status_code: 202
+    validate_certs: false
+    body_format: json
+    body: "{{ missing_critical_updates_request_body }}"
+  delegate_to: localhost
+  register: missing_critical_updates_request_id
+
+# Save the missing critical updates operation's response in a file.
+- name: Write the results for the missing critical updates operation to a JSON file
+  block:
+    # Create a variable for the missing critical updates status monitor URL.
+    - name: Set the missing critical updates status monitor URL
+      set_fact:
+        missing_critical_updates_status_monitor_url: "{{ missing_critical_updates_request_id.json['statusurl'] }}"
+      when: missing_critical_updates_request_id.status == 202
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the missing critical updates action failure information
+      fail:
+        msg: "Missing Critical Updates failure details: {{ missing_critical_updates_request_id }} "
+      when: missing_critical_updates_request_id.status != 202
+
+############################################################################
+# TASK #2: Check the status of the missing critical updates async request. #
+############################################################################
+
+# Wait for the asynchronous thread to finish and return a response.
+- name: "Poll the status monitor URL of the missing critical updates operation every {{ async_thread_check_delay }} second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
+  uri:
+    url: "{{ missing_critical_updates_status_monitor_url }}"
+    method: GET
+    user: "{{ zmf_user | trim  }}"
+    password: "{{ zmf_password | trim  }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    status_code: 200
+    validate_certs: false
+    return_content: true
+  register: missing_critical_updates_response
+  delegate_to: localhost
+  # This task's URL will be called repeatedly either until the "until" condition is met (request failed or
+  # request completed) or the request still isn't finished after the specified "complete_check_times" attempts.
+  until: (missing_critical_updates_response is failed) or (missing_critical_updates_response.json['status'] == 'complete')
+  retries: "{{ async_thread_check_times }}"
+  delay: "{{ async_thread_check_delay }}"
+
+# Return the missing critical updates REST API response to the console.
+- name: Display missing critical updates response
+  debug:
+    msg: "{{ missing_critical_updates_response.json }}"
+
+# Save the missing critical updates operation's response in a file.
+- name: Write the results for the missing critical updates operation to a JSON file
+  block:
+    # Perform the copy of the missing critical updates response to the file.
+    - name: "Copy the missing critical updates results to JSON file <{{ missing_critical_updates_response_info_json_path }}>"
+      copy:
+        content: '{ "registry-info" : {{ missing_critical_updates_response.json | default("") | to_nice_json(indent=2) }}}'
+        dest: '{{ missing_critical_updates_response_info_json_path }}'
+        mode: '0644'
+      delegate_to: localhost
+
+    # Save the response content into a local variable.
+    - name: Create a variable to hold the value of the missing critical updates results
+      set_fact:
+        missing_critical_updates_response_json: "{{ missing_critical_updates_response.json }}"
+
+# Show the path to the missing critical updates REST API results file.
+- name: Display the path to the file containing the results from the missing critical updates operation
+  debug:
+    msg: "{{ missing_critical_updates_response_info_json_path }}"
