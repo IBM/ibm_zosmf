@@ -1,0 +1,40 @@
+# Copyright (c) IBM Corporation 2022
+# This playbook demonstrates using roles: 'zmf_swmgmt_missing_critical_updates',
+# 'zmf_swmgmt_missing_fixcat_updates', and 'zmf_swmgmt_software_update_search' to complete
+# the software management software instance report REST APIs.
+
+#######################################################################################
+# PLAY #1: Complete a missing critical updates async request for a software instance. #
+#######################################################################################
+- name: Software Instance Missing Critical Updates REST API
+  hosts: missing_critical_report
+  gather_facts: no
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - include_role:
+        name: zmf_swmgmt_missing_critical_updates
+
+#####################################################################################
+# PLAY #2: Complete a missing fixcat updates async request for a software instance. #
+#####################################################################################
+- name: Software Instance Missing Fixcat Updates REST API
+  hosts: missing_fixcat_report
+  gather_facts: no
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - include_role:
+        name: zmf_swmgmt_missing_fixcat_updates
+
+#####################################################################################
+# PLAY #3: Complete a software update search async request for a software instance. #
+#####################################################################################
+- name: Software Instance Software Update Search REST API
+  hosts: software_update_search_report
+  gather_facts: no
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - include_role:
+        name: zmf_swmgmt_software_update_search
