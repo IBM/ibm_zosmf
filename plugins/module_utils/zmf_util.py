@@ -8,6 +8,7 @@ import json
 from ansible.module_utils.urls import Request
 import ansible.module_utils.six.moves.http_cookiejar as cookiejar
 
+
 def get_auth_argument_spec():
     """
     Return the arguments of ansible module used for authentication with z/OSMF

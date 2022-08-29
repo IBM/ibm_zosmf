@@ -223,7 +223,8 @@ EXAMPLES = r'''
     target_userid: IBMUSER
     path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-- name: Validate security requirements defined in a local (Ansible control node) security descriptor file and expect no access to any items.
+- name: Validate security requirements defined in a local (Ansible control node) security descriptor file\
+        and expect no access to any items.
   ibm.ibm_zosmf.zmf_sca:
     zmf_credential: "{{ result_auth }}"
     target_userid: IBMUSER
