@@ -227,7 +227,7 @@ def call_sca_api(module, session, api, body=None):
     """
     Return the response or error message of the specific sca API.
     :param AnsibleModule module: the ansible module
-    :param Session session: the current connection session
+    :param Request session: the current connection session
     :param str api: the name of API
     :param str body: the body of API
     :rtype: dict or str
