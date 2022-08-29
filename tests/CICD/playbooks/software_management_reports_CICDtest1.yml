@@ -8,11 +8,12 @@
 #######################################################################################
 - name: Software Instance Missing Critical Updates REST API
   hosts: missing_critical_report
-  gather_facts: no
+  gather_facts: false
   collections:
     - ibm.ibm_zosmf
   tasks:
-    - include_role:
+    - name: Execute missing critical updates role
+      include_role:
         name: zmf_swmgmt_missing_critical_updates
 
 #####################################################################################
@@ -20,11 +21,12 @@
 #####################################################################################
 - name: Software Instance Missing Fixcat Updates REST API
   hosts: missing_fixcat_report
-  gather_facts: no
+  gather_facts: false
   collections:
     - ibm.ibm_zosmf
   tasks:
-    - include_role:
+    - name: Execute missing fixcat updates role
+      include_role:
         name: zmf_swmgmt_missing_fixcat_updates
 
 #####################################################################################
@@ -32,9 +34,10 @@
 #####################################################################################
 - name: Software Instance Software Update Search REST API
   hosts: software_update_search_report
-  gather_facts: no
+  gather_facts: false
   collections:
     - ibm.ibm_zosmf
   tasks:
-    - include_role:
+    - name: Execute software update search role
+      include_role:
         name: zmf_swmgmt_software_update_search
