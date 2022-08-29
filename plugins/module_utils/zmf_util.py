@@ -114,8 +114,8 @@ def handle_request(module, session, method, url, params=None, rcode=200,
         headers.update(header)
     try:
         if method == 'get':
-            response = session.get(url, params=params, headers=headers,
-                                   validate_certs=False, timeout=timeout)
+            response = session.get(url + '?' + "&".join(["=".join([key, str(val)]) for key, val in params.items()]),
+                                   headers=headers, validate_certs=False, timeout=timeout)
         elif method == 'put':
             if body is not None:
                 response = session.put(url, data=body, headers=headers,
@@ -136,7 +136,7 @@ def handle_request(module, session, method, url, params=None, rcode=200,
             response = session.delete(url, headers=headers, validate_certs=False,
                                       timeout=timeout)
     except Exception as ex:
-        if ex.status is not None:
+        if 'status' in dir(ex) and ex.status is not None:
             # In v2r3, response content is a string which will cause error in json.loads.
             if ex.status == 404:
                 return 'HTTP request error: ' + str(ex.status)
