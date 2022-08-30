@@ -73,8 +73,7 @@ options:
         required: False
         type: str
         default: null
-requirements:
-    - requests >= 2.23.0
+
 """
 
 EXAMPLES = r"""
