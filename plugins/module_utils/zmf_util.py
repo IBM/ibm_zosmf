@@ -178,7 +178,14 @@ def handle_request(module, session, method, url, params=None, rcode=200,
 
         if response_code == rcode:
             if '/zosmf/services/authenticate' in url:
-                return dict(response.headers)
+                # in python2, addinfourl instance has no attribute 'headers'
+                if 'status' in dir(response):
+                    return dict(response.headers)
+                else:
+                    # in python2, set-cookie in the header dict, so we need to transform it.
+                    if response.info().dict['set-cookie'] is not None:
+                        return {'Set-Cookie': response.info().dict['set-cookie']}
+                    return response.info().dict
             else:
                 return response_content
         else:
