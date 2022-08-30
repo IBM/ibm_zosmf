@@ -56,6 +56,7 @@ def get_connect_session(module):
     if 'zmf_credential' in module.params:
         auth = module.params['zmf_credential']
     if auth is not None and ('ltpa_token_2' in auth or 'jwt_token' in auth):
+        # use ltpa_token_2 or jwt_token to authenticate
         if 'ltpa_token_2' in auth:
             cookie = cookiejar.Cookie(0, 'LtpaToken2', auth['ltpa_token_2'], None, False, auth['zmf_host'],
                                       True, True, '/', True, False, None, None, None, None, None)
@@ -70,12 +71,14 @@ def get_connect_session(module):
         return session
     elif ((crt is not None and crt.strip() != '')
             and (key is not None and key.strip() != '')):
+        # use client cert and key to authenticate
         # session.cert = (crt.strip(), key.strip())
         session.client_cert = crt.strip()
         session.client_key = key.strip()
         return session
     elif ((user is not None and user.strip() != '')
             and (pw is not None and pw.strip() != '')):
+        # use username and password to authenticate
         session.url_username = user.strip()
         session.url_password = pw.strip()
         session.force_basic_auth = True
@@ -161,7 +164,11 @@ def handle_request(module, session, method, url, params=None, rcode=200,
         else:
             module.fail_json(msg='HTTP request error: ' + repr(ex))
     else:
-        response_code = response.status
+        # in python2, addinfourl instance has no attribute 'status'
+        if 'status' in dir(response):
+            response_code = response.status
+        else:
+            response_code = response.code
         content = response.read()
 
         if content:
@@ -185,8 +192,8 @@ def handle_request_raw(module, session, method, url, params=None, header=None,
         headers.update(header)
     try:
         if method == 'get':
-            response = session.get(url, params=params, headers=headers,
-                                   validate_certs=False, timeout=timeout)
+            response = session.get(url + '?' + "&".join(["=".join([key, str(val)]) for key, val in params.items()]),
+                                   headers=headers, validate_certs=False, timeout=timeout)
         elif method == 'put':
             if body is not None:
                 response = session.put(url, data=body, headers=headers,
