@@ -262,13 +262,15 @@ Examples
        zmf_password: "{{ zmf_password }}"
      register: result_auth
 
-   - name: Validate security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
+   - name: Validate security requirements defined in a z/OS security descriptor file and \
+           expect all requirements are satisfied.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        target_userid: IBMUSER
        path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-   - name: Validate security requirements defined in a local (Ansible control node) security descriptor file and expect no access to any items.
+   - name: Validate security requirements defined in a local (Ansible control node) security descriptor file\
+           and expect no access to any items.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        target_userid: IBMUSER
@@ -276,14 +278,16 @@ Examples
        location: local
        expected_result: all-failed
 
-   - name: Provision security requirements defined in a z/OS security descriptor file and expect all requirements are satisfied.
+   - name: Provision security requirements defined in a z/OS security descriptor file and \
+           expect all requirements are satisfied.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        state: provisioned
        target_userid: IBMUSER
        path_of_security_requirements: /global/zosmf/sample/configuration/security/descriptor.json
 
-   - name: Provision resources defined in a local (Ansible control node) security descriptor file and expect all requirements are satisfied.
+   - name: Provision resources defined in a local (Ansible control node) security descriptor file and \
+           expect all requirements are satisfied.
      ibm.ibm_zosmf.zmf_sca:
        zmf_credential: "{{ result_auth }}"
        state: provisioned

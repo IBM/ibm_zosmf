@@ -72,7 +72,6 @@ def get_connect_session(module):
     elif ((crt is not None and crt.strip() != '')
             and (key is not None and key.strip() != '')):
         # use client cert and key to authenticate
-        # session.cert = (crt.strip(), key.strip())
         session.client_cert = crt.strip()
         session.client_key = key.strip()
         return session
