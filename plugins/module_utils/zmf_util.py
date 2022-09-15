@@ -116,6 +116,7 @@ def handle_request(module, session, method, url, params=None, rcode=200,
         headers.update(header)
     try:
         if method == 'get':
+            # convert params dict to string and append it to the URL
             response = session.get(url + '?' + "&".join(["=".join([key, str(val)]) for key, val in params.items()]),
                                    headers=headers, validate_certs=False, timeout=timeout)
         elif method == 'put':
@@ -146,20 +147,30 @@ def handle_request(module, session, method, url, params=None, rcode=200,
             content = ex.read()
             if content:
                 response_content = json.loads(content)
+                if 'messageText' in response_content:
+                    return 'HTTP request error: ' + str(ex.status) + ' : ' \
+                           + response_content['messageText']
+                elif 'errorMsg' in response_content:
+                    return 'HTTP request error: ' + str(ex.status) + ' : ' \
+                           + response_content['errorMsg']
+                elif 'return-code' in response_content:
+                    return 'HTTP request error: ' + str(ex.status) \
+                           + ' : return-code=' \
+                           + str(response_content['return-code']) \
+                           + ' reason-code=' + str(response_content['reason-code']) \
+                           + ' reason=' + response_content['reason']
+                elif 'returnCode' in response_content:
+                    return 'HTTP request error: ' + str(ex.status) \
+                           + ' : return-code=' \
+                           + str(response_content['returnCode']) \
+                           + ' reason-code=' + str(response_content['reasonCode']) \
+                           + ' reason=' + response_content['message']
+                else:
+                    return content.decode()
             else:
-                response_content = {}
-            if 'messageText' in response_content:
                 return 'HTTP request error: ' + str(ex.status) + ' : ' \
-                    + response_content['messageText']
-            elif 'errorMsg' in response_content:
-                return 'HTTP request error: ' + str(ex.status) + ' : ' \
-                    + response_content['errorMsg']
-            elif 'return-code' in response_content:
-                return 'HTTP request error: ' + str(ex.status) \
-                    + ' : return-code=' \
-                    + str(response_content['return-code']) \
-                    + ' reason-code=' + str(response_content['reason-code']) \
-                    + ' reason=' + response_content['reason']
+                       + ex.reason
+
         else:
             module.fail_json(msg='HTTP request error: ' + repr(ex))
     else:
