@@ -7,6 +7,21 @@ Releases
 ========
 
 
+Version 1.2.1
+=============
+
+Notes
+-----
+
+* Removed dependency on Requests library for Python on the control node.
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
 Version 1.2.0
 =============
 

@@ -5,13 +5,21 @@ Ibm.Ibm_Zosmf Release Notes
 .. contents:: Topics
 
 
+v1.2.1
+======
+
+Major Changes
+-------------
+
+- Removed dependency on Requests library for Python on the control node.
+
 v1.2.0
 ======
 
 Major Changes
 -------------
 
-- Updated module `zmf_sca` which supports the security requirements provision.
+- Updated module `zmf_sca` which adds support for the security requirements provision.
 
 New Modules
 -----------

@@ -377,8 +377,7 @@ options:
         required: False
         type: str
         default: null
-requirements:
-    - requests >= 2.23.0
+
 notes:
     - >
       Submitting a z/OSMF workflow found on Ansible control node is

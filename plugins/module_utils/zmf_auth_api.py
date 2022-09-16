@@ -62,7 +62,7 @@ def call_auth_api(module, session, api):
     """
     Return the response or error message of the specific authentication API.
     :param AnsibleModule module: the ansible module
-    :param Session session: the current connection session
+    :param Request session: the current connection session
     :param str api: the name of API
     :rtype: dict or str
     """

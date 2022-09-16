@@ -305,7 +305,7 @@ def call_workflow_api(module, session, api, workflow_key):
     """
     Return the response or error message of the specific workflow API.
     :param AnsibleModule module: the ansible module
-    :param Session session: the current connection session
+    :param Request session: the current connection session
     :param str api: the name of API
     :param str workflow_key: the key of workflow instance
     :rtype: dict or str
