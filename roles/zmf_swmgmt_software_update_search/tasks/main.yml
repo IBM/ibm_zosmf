@@ -4,74 +4,99 @@
 ---
 # Tasks file for zmf_swmgmt_software_update_search play.
 
-# Create a variable for the software update search status URL.
-- name: Initialize the software update search status URL
+# Create a variable for the software update search response content.
+- name: Initialize the container for the software update search response content
   set_fact:
-    software_update_search_request_id: ""
-
-#- name: "Updates not defined"
-#  set_fact:
-#    updates: "[]"
-#  when: updates is not defined
-#
-#- name: "Including only the updates in the request content body"
-#  set_fact:
-#    zosmfuid_value: "default"
-#  when: zosmfuid_value is not defined
-#
-#- name: "Including updates, zosmfuid, and zosmfpw in the request content body"
-#  set_fact:
-#    zosmfpw_value: "default"
-#  when: zosmfpw_value is not defined
-#
-#- name: "Including updates, proxyuid, and proxypw in the request content body"
-#  set_fact:
-#    proxyuid_value: "default"
-#  when: proxyuid_value is not defined
-#
-#- name: "Including updates, zosmfuid, zosmfpw, proxyuid, and proxypw in the request content body"
-#  set_fact:
-#    proxypw_value: "default"
-#  when: proxypw_value is not defined
-
-# TODO remove all
-
-#- name: "Including only the updates in the request content body"
-#  set_fact:
-#    software_update_search_request_body: '{"updates":{{ updates }}}'
-#  when: zosmfuid_value is not defined and zosmfpw_value is not defined and proxyuid_value is not defined and proxypw_value is not defined
-#
-#- name: "Including updates, zosmfuid, and zosmfpw in the request content body"
-#  set_fact:
-#    software_update_search_request_body: '{"updates":{{ updates }}, "zosmfuid":"{{ zosmfuid_value }}", "zosmfpw":"{{ zosmfpw_value }}"}'
-#  when: zosmfuid_value is defined and zosmfpw_value is defined
-#
-#- name: "Including updates, proxyuid, and proxypw in the request content body"
-#  set_fact:
-#    software_update_search_request_body: '{"updates":{{ updates }}, "proxyuid":"{{ proxyuid_value }}", "proxypw":"{{ proxypw_value }}"}'
-#  when: proxyuid_value is defined and proxypw_value is defined
-#
-#- name: "Including updates, zosmfuid, zosmfpw, proxyuid, and proxypw in the request content body"
-#  set_fact:
-#    software_update_search_request_body: '{"updates":{{ updates }}, "zosmfuid":"{{ zosmfuid_value }}", "zosmfpw":"{{ zosmfpw_value }}", "proxyuid":"{{ proxyuid_value }}", "proxypw":"{{ proxypw_value }}"}'
-#  when: zosmfuid_value is defined and zosmfpw_value is defined and proxyuid_value is defined and proxypw_value is defined
-
-# Allow software_update_search_request_body to be set in previous tasks. If software_update_search_request_body isn't set then set default below
-#- name: Set software_update_search_request_body as fact
-#  set_fact:
-#    software_update_search_request_body: '{"updates":"{{ updates }}","zosmfuid":"{{ zosmfuid_value }}",
-#      "zosmfpw": {{ zosmfpw_value }},"proxyuid":{{ proxyuid_value }},"proxypw":{{ proxypw_value }}}'
-#  when: software_update_search_request_body is not defined
+    software_update_search_response: ""
 
 # Set the request content body as an empty dictionary.
-- name: No request content specified for software update search operation, using empty request content body
+- name: Initialize the list of software updates being searched if none were provided
   set_fact:
-    software_update_search_request_body: '{}'
-  when: software_update_search_request_body is not defined
+    updates: '[]'
+  when: updates is not defined
 
-##################################################################################
-# TASK #1: Start a software update search async request for a software instance. #
-##################################################################################
+- name: "Including updates and zosmfuid in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfuid":"{{ remote_zmf_user }}"}'
+  when: remote_zmf_user is defined and remote_zmf_password is not defined and proxy_zmf_user is not defined and proxy_zmf_password is not defined
+
+- name: "Including updates, zosmfuid and zosmfpw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfuid":"{{ remote_zmf_user }}",
+ "zosmfpw":"{{ remote_zmf_password }}"}'
+  when: remote_zmf_user is defined and remote_zmf_password is defined and proxy_zmf_user is not defined and proxy_zmf_password is not defined
+
+- name: "Including updates, zosmfuid and proxyuid in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfuid":"{{ remote_zmf_user }}",
+ "proxyuid":"{{ proxy_zmf_user }}"}'
+  when: remote_zmf_user is defined and remote_zmf_password is not defined and proxy_zmf_user is defined and proxy_zmf_password is not defined
+
+- name: "Including updates, zosmfuid and proxypw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfuid":"{{ remote_zmf_user }}",
+ "proxypw":"{{ proxy_zmf_password }}"}'
+  when: remote_zmf_user is defined and remote_zmf_password is not defined and proxy_zmf_user is not defined and proxy_zmf_password is defined
+
+- name: "Including updates, zosmfuid, zosmfpw, and proxyuid in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfuid":"{{ remote_zmf_user }}",
+ "zosmfpw":"{{ remote_zmf_password }}", "proxyuid":"{{ proxy_zmf_user }}"}'
+  when: remote_zmf_user is defined and remote_zmf_password is defined and proxy_zmf_user is defined and proxy_zmf_password is not defined
+
+- name: "Including updates, zosmfuid, zosmfpw, and proxypw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfuid":"{{ remote_zmf_user }}",
+ "zosmfpw":"{{ remote_zmf_password }}", "proxypw":"{{ proxy_zmf_password }}"}'
+  when: remote_zmf_user is defined and remote_zmf_password is defined and proxy_zmf_user is not defined and proxy_zmf_password is defined
+
+- name: "Including updates and zosmfpw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfpw":"{{ remote_zmf_password }}"}'
+  when: remote_zmf_password is defined and remote_zmf_user is not defined and proxy_zmf_user is not defined and proxy_zmf_password is not defined
+
+- name: "Including updates, zosmfpw, and proxyuid in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfpw":"{{ remote_zmf_password }}",
+  "proxyuid":"{{ proxy_zmf_user }}"}'
+  when: remote_zmf_user is not defined and remote_zmf_password is defined and proxy_zmf_user is defined and proxy_zmf_password is not defined
+
+- name: "Including updates, zosmfpw and proxypw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }},
+ "zosmfpw":"{{ remote_zmf_password }}", "proxypw":"{{ proxy_zmf_password }}"}'
+  when: remote_zmf_user is not defined and remote_zmf_password is defined and proxy_zmf_user is not defined and proxy_zmf_password is defined
+
+- name: "Including updates and proxyuid in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "proxyuid":"{{ proxy_zmf_user }}"}'
+  when: proxy_zmf_user is defined and remote_zmf_user is not defined and remote_zmf_password is not defined and proxy_zmf_password is not defined
+
+- name: "Including updates, proxyuid and proxypw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "proxyuid":"{{ proxy_zmf_user }}",
+  "proxypw":"{{ proxy_zmf_password }}"}'
+  when: remote_zmf_user is not defined and remote_zmf_password is not defined and proxy_zmf_user is defined and proxy_zmf_password is defined
+
+- name: "Including updates and proxypw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "proxypw":"{{ proxy_zmf_password }}"}'
+  when: proxy_zmf_password is defined and proxy_zmf_user is not defined and remote_zmf_user is not defined and remote_zmf_password is not defined
+
+- name: "Including updates, zosmfuid, zosmfpw, proxyuid, and proxypw in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}, "zosmfuid":"{{ remote_zmf_user }}",
+ "zosmfpw":"{{ remote_zmf_password }}", "proxyuid":"{{ proxy_zmf_user }}", "proxypw":"{{ proxy_zmf_password }}"}'
+  when: remote_zmf_user is defined and remote_zmf_password is defined and proxy_zmf_user is defined and proxy_zmf_password is defined
+
+- name: "Including updates in the request content body"
+  set_fact:
+    software_update_search_request_body: '{"updates": {{ updates }}}'
+  when: remote_zmf_user is not defined and remote_zmf_password is not defined and proxy_zmf_user is not defined and proxy_zmf_password is not defined
+
+########################################################################################
+# URI MODULE #1: Start a software update search async request for a software instance. #
+########################################################################################
 
 # Start the software update search asynchronous operation.
 - name: "Searching software instance <{{ software_instance_name }}> for software updates"
@@ -82,19 +107,15 @@
     password: "{{ zmf_password| trim  }}"
     force_basic_auth: true
     headers:
-#      Content-Type: "text/plain"
-#      Connection: "keep-alive"
-#      X-CSRF-ZOSMF-HEADER: "z/OSMF"
-#      X-IBM-OPTION: "R"
-       Host: "{{ zmf_host }}"
-       Origin: "https://{{ zmf_host }}"
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
     method: POST
-    status_code: 202
+    status_code: 202, 404
     validate_certs: false
     body_format: json
     body: "{{ software_update_search_request_body }}"
   delegate_to: localhost
-  register: software_update_search_request_id
+  register: software_update_search_response
 
 # Save the software update search operation's response in a file or return the operation's failure information.
 - name: Write the results for the software update search operation to a JSON file
@@ -102,21 +123,31 @@
     # Create a variable for the software update search status monitor URL.
     - name: Set the software update search status monitor URL
       set_fact:
-        software_update_search_status_monitor_url: "{{ software_update_search_request_id.json['statusurl'] }}"
-      when: software_update_search_request_id.status == 202
+        software_update_search_status_monitor_url: "{{ software_update_search_response.json['statusurl'] }}"
+      when: software_update_search_response.status == 202
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display Software Update Search REST API failure information
+      fail:
+        msg: "There was an error encountered during Software Update Search REST API execution. Its possible the host
+        system is missing required APAR PH47050 which contains the software instance report REST APIs. Otherwise there
+        was invalid request content passed into the REST API. These are the failure
+        details: {{ software_update_search_response.json }}"
+      when: software_update_search_response.status == 404
 
     # Issue a failure message and stop the playbook.
     - name: Display the software update search action failure information
       fail:
-        msg: "Software Update Search failure details: {{ software_update_search_request_id }} "
-      when: software_update_search_request_id.status != 202
+        msg: "Software Update Search failure details: {{ software_update_search_response }} "
+      when: software_update_search_response.status != 202
 
-##########################################################################
-# TASK #2: Check the status of the software update search async request. #
-##########################################################################
+################################################################################
+# URI MODULE #2: Check the status of the software update search async request. #
+################################################################################
 
 # Wait for the asynchronous thread to finish and return a response.
-- name: "Poll the status monitor URL of the software update search operation every {{ async_thread_check_delay }} second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
+- name: "Poll the status monitor URL of the software update search operation every {{ async_thread_check_delay }}
+second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
   uri:
     url: "{{ software_update_search_status_monitor_url }}"
     method: GET
@@ -137,19 +168,14 @@
   retries: "{{ async_thread_check_times }}"
   delay: "{{ async_thread_check_delay }}"
 
-# Return the software update search REST API response to the console.
-- name: Display software update search response
-  debug:
-    msg: "{{ software_update_search_response.json }}"
-
 # Save the software update search operation's response in a file.
 - name: Write the results for the software update search operation to a JSON file
   block:
     # Perform the copy of the software update search response to the file.
-    - name: "Copy the software update search results to JSON file <{{ software_update_search_response_info_json_path }}>"
+    - name: "Copy the software update search results to JSON file <{{ software_update_search_response_file }}>"
       copy:
         content: '{ "registry-info" : {{ software_update_search_response.json | default("") | to_nice_json(indent=2) }}}'
-        dest: '{{ software_update_search_response_info_json_path }}'
+        dest: '{{ software_update_search_response_file }}'
         mode: '0644'
       delegate_to: localhost
 
@@ -161,4 +187,4 @@
 # Show the path to the software update search REST API results file.
 - name: Display the path to the file containing the results from the software update search operation
   debug:
-    msg: "{{ software_update_search_response_info_json_path }}"
+    msg: "Output filename= {{ software_update_search_response_file }}"
