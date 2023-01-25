@@ -1,7 +1,9 @@
 # Copyright (c) IBM Corporation 2023
-# This playbook demonstrates using roles: 'zmf_swmgmt_identify_missing_critical_updates',
-# 'zmf_swmgmt_identify_missing_fixcat_updates', and 'zmf_swmgmt_search_software_updates' to complete
-# the software management software instance report REST APIs.
+# This playbook demonstrates using roles:
+# 'zmf_swmgmt_identify_missing_critical_updates',
+# 'zmf_swmgmt_identify_missing_fixcat_updates',
+# and 'zmf_swmgmt_search_software_updates' to complete the software management
+# software instance report REST APIs.
 
 #######################################################################################
 # PLAY #1: Identify missing critical software updates for a software instance.        #
