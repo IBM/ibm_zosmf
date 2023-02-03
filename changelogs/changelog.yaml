@@ -47,9 +47,15 @@ releases:
   1.2.0:
     changes:
       major_changes:
-      - Updated module `zmf_sca` which supports the security requirements provision.
+      - Updated module `zmf_sca` which adds support for the security requirements
+        provision.
     modules:
     - description: Automate z/OS security requirements validation and provision
       name: zmf_sca
       namespace: ''
     release_date: '2022-07-18'
+  1.2.1:
+    changes:
+      major_changes:
+      - Removed dependency on Requests library for Python on the control node.
+    release_date: '2022-08-31'
