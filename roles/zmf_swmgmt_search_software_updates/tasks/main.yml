@@ -103,8 +103,8 @@
   uri:
     url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/softwareupdatesearch"
     return_content: true
-    user: "{{ zmf_user| trim }}"
-    password: "{{ zmf_password| trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
@@ -151,8 +151,8 @@ second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s)
   uri:
     url: "{{ software_update_search_status_monitor_url }}"
     method: GET
-    user: "{{ zmf_user | trim  }}"
-    password: "{{ zmf_password | trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"

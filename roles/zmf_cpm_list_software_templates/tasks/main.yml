@@ -11,8 +11,8 @@
 - name: "List published provisioning templates"
   uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/psc/"
-    user: "{{ zmf_user| trim }}"
-    password: "{{ zmf_password| trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
