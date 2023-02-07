@@ -1,5 +1,5 @@
 .. ...........................................................................
-.. © Copyright IBM Corporation 2021                                          .
+.. © Copyright IBM Corporation 2023                                          .
 .. ...........................................................................
 
 Managed node
@@ -84,6 +84,17 @@ Review the details of the dependencies before you proceed to install the
 
    * module: `zmf_sca`_
 
+* `z/OSMF Software Management`_ (Optional)
+
+   To interact with the Software Management software instance maintenance reports in your playbook,
+   it requires you to set up Software Management properly in z/OS managed nodes.
+   Typically, you setup Software Management as a plugin of one z/OSMF server in each sysplex.
+
+   This dependency is only required for using the following roles:
+
+   * role: `zmf_swmgmt_identify_missing_critical_updates`_
+   * role: `zmf_swmgmt_identify_missing_fixcat_updates`_
+   * role: `zmf_swmgmt_search_software_updates`_
 
 .. _z/OS:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3/en/homepage.html
@@ -113,3 +124,11 @@ Review the details of the dependencies before you proceed to install the
    https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-zosmf-workflows-task
 .. _zmf_sca:
    modules/zmf_sca.html
+.. _z/OSMF Software Management:
+   https://www.ibm.com/docs/en/zos/2.4.0?topic=services-configure-software-management-service
+.. _zmf_swmgmt_identify_missing_critical_updates:
+   roles/zmf_swmgmt_identify_missing_critical_updates.html
+.. _zmf_swmgmt_identify_missing_fixcat_updates:
+   roles/zmf_swmgmt_identify_missing_fixcat_updates.html
+.. _zmf_swmgmt_search_software_updates:
+   roles/zmf_swmgmt_search_software_updates.html

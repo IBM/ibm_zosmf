@@ -1,11 +1,46 @@
 .. ...........................................................................
-.. © Copyright IBM Corporation 2021                                          .
+.. © Copyright IBM Corporation 2023                                          .
 .. ...........................................................................
 
 ========
 Releases
 ========
 
+
+Version 1.3.0
+=============
+
+Notes
+-----
+
+* Added a new z/OSMF Software Management role zmf_swmgmt_identify_missing_critical_updates to determine if a software
+  instance is missing software updates to resolve PE PTFs, HIPER fixes, or other exception SYSMODs identified by ERROR
+  HOLDDATA.  It also helps you identify the SYSMODs that resolve those exceptions.
+* Added a new z/OSMF Software Management role zmf_swmgmt_identify_missing_fixcat_updates to determine if a software
+  instance is missing updates for fix categories that might be applicable to the software instance.  It also helps you
+  identify the SYSMODs that resolve the missing updates.
+* Added a new z/OSMF Software Management role zmf_swmgmt_search_software_updates to search a software instance for one
+  or more software updates  to determine which updates are installed or updates that need to be installed.
+
+* New roles
+
+  * `zmf_swmgmt_identify_missing_critical_updates`_
+  * `zmf_swmgmt_identify_missing_fixcat_updates`_
+  * `zmf_swmgmt_search_software_updates`_
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
+Reference
+---------
+
+* The new software management roles only work with z/OSMF V2R5 and above with the APAR PH47050 installed.
+* The new software management roles require proper input values and users who will use these roles should be provided
+  appropriate access on z/OS system.
 
 Version 1.2.1
 =============
@@ -132,7 +167,6 @@ Reference
 * Supported by `z/OS Management Facility`_ V2R3 or later.
 * Module zmf_authenticate is supported by z/OSMF APAR PH12143 (PTF UI66511 for V2R3, PTF UI66512 for V2R4).
 
-
 .. .............................................................................
 .. Global Links
 .. .............................................................................
@@ -157,6 +191,15 @@ Reference
 
 .. _zmf_cpm_remove_software_instance:
    roles/zmf_cpm_remove_software_instance.html
+
+.. _zmf_swmgmt_identify_missing_critical_updates:
+   roles/zmf_swmgmt_identify_missing_critical_updates.html
+
+.. _zmf_swmgmt_identify_missing_fixcat_updates:
+   roles/zmf_swmgmt_identify_missing_fixcat_updates.html
+
+.. _zmf_swmgmt_search_software_updates:
+   roles/zmf_swmgmt_search_software_updates.html
 
 .. _Automation Hub:
    https://www.ansible.com/products/automation-hub
