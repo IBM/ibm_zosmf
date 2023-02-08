@@ -42,7 +42,7 @@ pipeline {
                             echo "Hello, build on ${SSH_PORT}"
                             sh "pwd"
                             sh "whoami"
-                            sh "export LANG=en_US.UTF-8"
+                            sh "env LANG=en_US.UTF-8"
                             sh 'ansible --version'
                             dir("/home/test/.ansible") {
                                 sh "pwd"
