@@ -97,7 +97,7 @@
 - name: "Set the zmf_port if specified"
   set_fact:
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
-  when: zmf_port is defined
+  when: zmf_port is defined and ':' not in zmf_host
 
 ########################################################################################
 # URI MODULE #1: Start a software update search async request for a software instance. #
