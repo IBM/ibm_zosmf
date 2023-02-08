@@ -41,6 +41,7 @@ pipeline {
                         steps {
                             echo "Hello, build on ${SSH_PORT}"
                             sh "pwd"
+                            sh "whoami"
                             sh 'ansible --version'
                             dir("/home/test/.ansible") {
                                 sh "pwd"
