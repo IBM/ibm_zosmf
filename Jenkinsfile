@@ -44,8 +44,9 @@ pipeline {
                             sh "whoami"
 
                             checkout scm
-                            
-                            sh "env LANG=en_US.UTF-8"
+
+                            sh "env LC_ALL=en_US.UTF-8"
+                            sh "export LC_ALL=en_US.UTF-8"
                             sh 'ansible --version'
                             dir("/home/test/.ansible") {
                                 sh "pwd"
