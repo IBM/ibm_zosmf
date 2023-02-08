@@ -42,6 +42,9 @@ pipeline {
                             echo "Hello, build on ${SSH_PORT}"
                             sh "pwd"
                             sh "whoami"
+
+                            checkout scm
+                            
                             sh "env LANG=en_US.UTF-8"
                             sh 'ansible --version'
                             dir("/home/test/.ansible") {
@@ -49,7 +52,7 @@ pipeline {
                                 sh "rm -rf *"
                             }
 
-                            checkout scm
+
 
                             script {
                                 remoteWorkspace = env.WORKSPACE
