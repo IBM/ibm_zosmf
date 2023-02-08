@@ -47,6 +47,7 @@ pipeline {
 
                             sh "env LC_ALL=en_US.UTF-8"
                             sh "export LC_ALL=en_US.UTF-8"
+                            sh "locale"
                             sh 'ansible --version'
                             dir("/home/test/.ansible") {
                                 sh "pwd"
