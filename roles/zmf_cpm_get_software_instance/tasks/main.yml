@@ -16,8 +16,8 @@
   uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr?external-name={{ external_software_name }}"
     method: GET
-    user: "{{ zmf_user | trim  }}"
-    password: "{{ zmf_password | trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
@@ -41,8 +41,8 @@
   uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr/{{ instance_object_id }}"
     method: GET
-    user: "{{ zmf_user | trim  }}"
-    password: "{{ zmf_password | trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
