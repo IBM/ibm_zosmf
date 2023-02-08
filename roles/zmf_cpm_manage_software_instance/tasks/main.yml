@@ -21,8 +21,8 @@
         url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr/\
               {{ instance_record['registry-info']['object-id'] }}/actions/{{ instance_action_name }}"
         return_content: true
-        user: "{{ zmf_user| trim }}"
-        password: "{{ zmf_password| trim  }}"
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
           Host: "{{ zmf_host }}"
@@ -42,8 +42,8 @@
             /{{ instance_record['registry-info']['object-id'] }}\
             /actions/{{ action_results.json['action-id'] }}"
         return_content: true
-        user: "{{ zmf_user| trim }}"
-        password: "{{ zmf_password| trim  }}"
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
           Host: "{{ zmf_host }}"
@@ -66,8 +66,8 @@
       uri:
         url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr/{{ instance_record['registry-info']['object-id'] }}"
         method: GET
-        user: "{{ zmf_user | trim  }}"
-        password: "{{ zmf_password | trim  }}"
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
           Host: "{{ zmf_host }}"

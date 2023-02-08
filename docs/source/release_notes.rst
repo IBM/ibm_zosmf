@@ -1,11 +1,46 @@
 .. ...........................................................................
-.. © Copyright IBM Corporation 2021                                          .
+.. © Copyright IBM Corporation 2023                                          .
 .. ...........................................................................
 
 ========
 Releases
 ========
 
+
+Version 1.3.0
+=============
+
+Notes
+-----
+
+* Added a new z/OSMF Software Management role `zmf_swmgmt_identify_missing_critical_updates`_ to determine if a software
+  instance is missing software updates to resolve PE PTFs, HIPER fixes, or other exception SYSMODs identified by ERROR
+  HOLDDATA.  It also helps you identify the SYSMODs that resolve those exceptions.
+* Added a new z/OSMF Software Management role `zmf_swmgmt_identify_missing_fixcat_updates`_ to determine if a software
+  instance is missing updates for fix categories that might be applicable to the software instance.  It also helps you
+  identify the SYSMODs that resolve the missing updates.
+* Added a new z/OSMF Software Management role `zmf_swmgmt_search_software_updates`_ to search a software instance for one
+  or more software updates  to determine which updates are installed or updates that need to be installed.
+
+* New roles
+
+  * `zmf_swmgmt_identify_missing_critical_updates`_
+  * `zmf_swmgmt_identify_missing_fixcat_updates`_
+  * `zmf_swmgmt_search_software_updates`_
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
+Reference
+---------
+
+* The new software management roles only work with z/OSMF V2R5 and above with the APAR PH47050 installed.
+* The new software management roles require proper input values and users who will use these roles should be provided
+  appropriate access on z/OS system.
 
 Version 1.2.1
 =============
@@ -29,7 +64,7 @@ Notes
 -----
 
 * Updated module `zmf_sca`_ for SAF based z/OS security automation, which adds support for provisioning security requirements.
-* The updated module zmf_sca is based on the REST API of the z/OSMF Security Configuration Assistant (SCA) with APAR PH47746.
+* The updated module `zmf_sca`_ is based on the REST API of the z/OSMF Security Configuration Assistant (SCA) with APAR PH47746.
   SCA supports the json format of the security descriptor file. This file can be used to document security requirements
   by function or by product. With the security descriptor file that is easy to create,
   SCA is able to display and automatically provision security requirements in a flexible granularity,
@@ -47,9 +82,9 @@ Availability
 Reference
 ---------
 
-* The updated module zmf_sca requires that z/OSMF SCA is configured properly.
+* The updated module `zmf_sca`_ requires that z/OSMF SCA is configured properly.
   For the required configuration of z/OSMF SCA, please refer to `z/OSMF SCA Configuration`_
-* The updated module zmf_sca only works with z/OSMF V2R4 and above with the APAR PH47746 installed.
+* The updated module `zmf_sca`_ only works with z/OSMF V2R4 and above with the APAR PH47746 installed.
 
 Version 1.1.0
 =============
@@ -58,22 +93,32 @@ Notes
 -----
 
 * Added a new module `zmf_sca`_ for SAF based z/OS security automation, which starts with the security validation.
-* The new module zmf_sca is based on the REST API of the z/OSMF Security Configuration Assistant (SCA).
+* The new module `zmf_sca`_ is based on the REST API of the z/OSMF Security Configuration Assistant (SCA).
   SCA supports the json format of the security descriptor file. This file can be used to document security requirements
   by function or by product. With the security descriptor file that is easy to create,
   SCA is able to display and automatically validate security requirements in a flexible granularity,
   either by individual requirement, by function or by product. SCA is based on the SAF interface,
   therefore it supports all SAF based security products in most cases. To learn more about z/OSMF SCA, please refer to
   `SCA blog`_ and the `SCA demo`_ in IBM MediaCenter.
-* The new module zmf_sca can be used in use cases like security validation, security audit, etc.
-* Added a new cloud provisioning and management (CP&M) role zmf_cpm_list_software_templates to obtain list of published
+* The new module `zmf_sca`_ can be used in use cases like security validation, security audit, etc.
+* Added a new cloud provisioning and management (CP&M) role `zmf_cpm_list_software_templates`_ to obtain list of published
   software templates that can be provisioned by user who is requesting to obtain the list.
   List of templates is saved in a file system and contains detailed information about each software template.
-* Added a new CP&M role zmf_cpm_create_software_instance to create a software
+* Added a new CP&M role `zmf_cpm_create_software_instance`_ to create a software
   instance in z/OSMF CP&M software instance registry. A json file with various properties for the instance can
   be provided to save instance specific properties in the registry.
-* Added a new CP&M role zmf_cpm_get_software_instance to obtain a specific software instance from the z/OSMF CP&M
+* Added a new CP&M role `zmf_cpm_get_software_instance`_ to obtain a specific software instance from the z/OSMF CP&M
   software instance registry. Retrieved software instance along with associated properties is saved in a file system.
+
+* New modules
+
+  * `zmf_sca`_
+
+* New roles
+
+  * `zmf_cpm_list_software_templates`_ 
+  * `zmf_cpm_create_software_instance`_ 
+  * `zmf_cpm_get_software_instance`_ 
 
 Availability
 ------------
@@ -85,9 +130,9 @@ Availability
 Reference
 ---------
 
-* The new module zmf_sca requires that z/OSMF SCA is configured properly.
+* The new module `zmf_sca`_ requires that z/OSMF SCA is configured properly.
   For the required configuration of z/OSMF SCA, please refer to `z/OSMF SCA Configuration`_
-* The new module zmf_sca only works with z/OSMF V2R4 and above with the APAR PH41248 installed.
+* The new module `zmf_sca`_ only works with z/OSMF V2R4 and above with the APAR PH41248 installed.
 * The new cloud provisioning and management roles requires z/OSMF cloud provisioning and management
   configured properly and users who will use these roles should be provided appropriate access on
   z/OS system.
@@ -130,8 +175,7 @@ Reference
 
 * Supported by `z/OS V2R3`_ or later.
 * Supported by `z/OS Management Facility`_ V2R3 or later.
-* Module zmf_authenticate is supported by z/OSMF APAR PH12143 (PTF UI66511 for V2R3, PTF UI66512 for V2R4).
-
+* Module `zmf_authenticate`_ is supported by z/OSMF APAR PH12143 (PTF UI66511 for V2R3, PTF UI66512 for V2R4).
 
 .. .............................................................................
 .. Global Links
@@ -157,6 +201,24 @@ Reference
 
 .. _zmf_cpm_remove_software_instance:
    roles/zmf_cpm_remove_software_instance.html
+
+.. _zmf_cpm_list_software_templates:
+   roles/zmf_cpm_list_software_templates.html
+
+.. _zmf_cpm_create_software_instance:
+   roles/zmf_cpm_create_software_instance.html
+
+.. _zmf_cpm_get_software_instance:
+   roles/zmf_cpm_get_software_instance.html
+
+.. _zmf_swmgmt_identify_missing_critical_updates:
+   roles/zmf_swmgmt_identify_missing_critical_updates.html
+
+.. _zmf_swmgmt_identify_missing_fixcat_updates:
+   roles/zmf_swmgmt_identify_missing_fixcat_updates.html
+
+.. _zmf_swmgmt_search_software_updates:
+   roles/zmf_swmgmt_search_software_updates.html
 
 .. _Automation Hub:
    https://www.ansible.com/products/automation-hub

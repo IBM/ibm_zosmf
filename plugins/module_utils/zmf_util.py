@@ -117,7 +117,14 @@ def handle_request(module, session, method, url, params=None, rcode=200,
     try:
         if method == 'get':
             # convert params dict to string and append it to the URL
-            response = session.get(url + '?' + "&".join(["=".join([key, str(val)]) for key, val in params.items()]),
+            try:
+                import urllib.parse as urllib
+            except Exception:
+                import urllib
+
+            encoded_url = url + '?' + "&".join(["=".join([key, urllib.quote(str(val))]) for key, val in params.items()])
+            # response = session.get(url + '?' + "&".join(["=".join([key, str(val)]) for key, val in params.items()]),
+            response = session.get(encoded_url,
                                    headers=headers, validate_certs=False, timeout=timeout)
         elif method == 'put':
             if body is not None:
@@ -139,40 +146,44 @@ def handle_request(module, session, method, url, params=None, rcode=200,
             response = session.delete(url, headers=headers, validate_certs=False,
                                       timeout=timeout)
     except Exception as ex:
-        if 'status' in dir(ex) and ex.status is not None:
+        if ('status' in dir(ex) and ex.status is not None) or ('code' in dir(ex) and ex.code is not None):
+            ex_status = None
+            if 'status' in dir(ex) and ex.status is not None:
+                ex_status = ex.status
+            elif 'code' in dir(ex) and ex.code is not None:
+                ex_status = ex.code
             # In v2r3, response content is a string which will cause error in json.loads.
-            if ex.status == 404:
-                return 'HTTP request error: ' + str(ex.status)
-
-            content = ex.read()
-            if content:
-                response_content = json.loads(content)
-                if 'messageText' in response_content:
-                    return 'HTTP request error: ' + str(ex.status) + ' : ' \
-                           + response_content['messageText']
-                elif 'errorMsg' in response_content:
-                    return 'HTTP request error: ' + str(ex.status) + ' : ' \
-                           + response_content['errorMsg']
-                elif 'return-code' in response_content:
-                    return 'HTTP request error: ' + str(ex.status) \
-                           + ' : return-code=' \
-                           + str(response_content['return-code']) \
-                           + ' reason-code=' + str(response_content['reason-code']) \
-                           + ' reason=' + response_content['reason']
-                elif 'returnCode' in response_content:
-                    return 'HTTP request error: ' + str(ex.status) \
-                           + ' : return-code=' \
-                           + str(response_content['returnCode']) \
-                           + ' reason-code=' + str(response_content['reasonCode']) \
-                           + ' reason=' + response_content['message']
+            try:
+                content = ex.read()
+                if content:
+                    response_content = json.loads(content)
+                    if 'messageText' in response_content:
+                        return 'HTTP request error: ' + str(ex_status) + ' : ' \
+                            + response_content['messageText']
+                    elif 'errorMsg' in response_content:
+                        return 'HTTP request error: ' + str(ex_status) + ' : ' \
+                            + response_content['errorMsg']
+                    elif 'return-code' in response_content:
+                        return 'HTTP request error: ' + str(ex_status) \
+                            + ' : return-code=' \
+                            + str(response_content['return-code']) \
+                            + ' reason-code=' + str(response_content['reason-code']) \
+                            + ' reason=' + response_content['reason']
+                    elif 'returnCode' in response_content:
+                        return 'HTTP request error: ' + str(ex_status) \
+                            + ' : return-code=' \
+                            + str(response_content['returnCode']) \
+                            + ' reason-code=' + str(response_content['reasonCode']) \
+                            + ' reason=' + response_content['message']
+                    else:
+                        return content.decode()
                 else:
-                    return content.decode()
-            else:
-                return 'HTTP request error: ' + str(ex.status) + ' : ' \
-                       + ex.reason
-
+                    return 'HTTP request error: ' + str(ex_status) + ' : ' \
+                        + ex.reason
+            except Exception:
+                return 'HTTP request error, status code: ' + str(ex_status)
         else:
-            module.fail_json(msg='HTTP request error: ' + repr(ex))
+            module.fail_json(msg='HTTP request error, ex: ' + repr(ex))
     else:
         # in python2, addinfourl instance has no attribute 'status'
         if 'status' in dir(response):
@@ -199,7 +210,7 @@ def handle_request(module, session, method, url, params=None, rcode=200,
             else:
                 return response_content
         else:
-            return 'HTTP request error: ' + str(response_code)
+            return 'HTTP request error, response_code: ' + str(response_code)
 
 
 def handle_request_raw(module, session, method, url, params=None, header=None,

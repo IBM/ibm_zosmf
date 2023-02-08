@@ -1,5 +1,4 @@
 skip_list:
   - experimental
-  - 'fqcn-builtins'
-  - var-spacing
-
+  - name[template]
+  - fqcn[action-core]

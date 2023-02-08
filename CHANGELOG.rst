@@ -4,6 +4,16 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
+v1.3.0
+======
+
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates - Role identifies missing critical updates
+- ibm.ibm_zosmf.zmf_swmgmt_identify_missing_fixcat_updates - Role identifies missing fixcat updates
+- ibm.ibm_zosmf.zmf_swmgmt_search_software_updates - Role searches for software updates
 
 v1.2.1
 ======
