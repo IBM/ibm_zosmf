@@ -9,7 +9,7 @@
 # PLAY #1: Identify missing critical software updates for a software instance.        #
 #######################################################################################
 - name: Identify Missing Critical Software Updates for a Software Instance
-  hosts: missing_critical_report
+  hosts: swmgmt
   gather_facts: false
   collections:
     - ibm.ibm_zosmf
@@ -22,7 +22,7 @@
 # PLAY #2: Identify missing fixcat software updates for a software instance.        #
 #####################################################################################
 - name: Identify Missing Fixcat Software Updates for a Software Instance
-  hosts: missing_fixcat_report
+  hosts: swmgmt
   gather_facts: false
   collections:
     - ibm.ibm_zosmf
@@ -35,7 +35,7 @@
 # PLAY #3: Search a software instance for software updates.                         #
 #####################################################################################
 - name: Search a Software Instance for Software Updates
-  hosts: software_update_search_report
+  hosts: swmgmt
   gather_facts: false
   collections:
     - ibm.ibm_zosmf
