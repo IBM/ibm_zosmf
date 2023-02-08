@@ -94,6 +94,11 @@
     software_update_search_request_body: '{"updates": {{ updates }}}'
   when: remote_zmf_user is not defined and remote_zmf_password is not defined and proxy_zmf_user is not defined and proxy_zmf_password is not defined
 
+- name: "Set the zmf_port if specified"
+  set_fact:
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
+  when: zmf_port is defined
+
 ########################################################################################
 # URI MODULE #1: Start a software update search async request for a software instance. #
 ########################################################################################

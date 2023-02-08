@@ -89,6 +89,11 @@
  "zosmfpw":"{{ remote_zmf_password }}", "proxyuid":"{{ proxy_zmf_user }}", "proxypw":"{{ proxy_zmf_password }}"}'
   when: remote_zmf_user is defined and remote_zmf_password is defined and proxy_zmf_user is defined and proxy_zmf_password is defined
 
+- name: "Set the zmf_port if specified"
+  set_fact:
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
+  when: zmf_port is defined
+
 ########################################################################################
 # URI MODULE #1: Start a missing fixcat updates async request for a software instance. #
 ########################################################################################
