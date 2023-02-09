@@ -45,7 +45,7 @@ pipeline {
 
                             checkout scm
 
-                            sh '/bin/bash -c -l ansible --version'
+                            sh '/bin/bash -c -l "ansible --version"'
                             dir("/home/test/.ansible") {
                                 sh "pwd"
                                 sh "rm -rf *"
