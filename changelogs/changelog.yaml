@@ -59,3 +59,32 @@ releases:
       major_changes:
       - Removed dependency on Requests library for Python on the control node.
     release_date: '2022-08-31'
+  1.3.0:
+    changes:
+      major_changes:
+      - Added new roles for z/OSMF Software Management
+    objects:
+      role:
+      - description: Role to determine if a software instance is missing critical
+         software updates
+        name: zmf_swmgmt_identify_missing_critical_updates
+        namespace: null
+      - description: Role to determine if a software instance is missing updates
+         for fix categories
+        name: zmf_swmgmt_identify_missing_fixcat_updates
+        namespace: null
+      - description: Role to to search a software instance for one
+         or more software updates
+        name: zmf_swmgmt_search_software_updates
+        namespace: null
+    release_date: '2023-02-11'
+  1.4.0:
+    changes:
+      major_changes:
+      - Added new roles for z/OS Management Services Catalog
+    objects:
+      role:
+      - description: Role runs a z/OS Management Service
+        name: zmf_zmsc_run_management_service
+        namespace: null
+    release_date: '2023-xx-yy'

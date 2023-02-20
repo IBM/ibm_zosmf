@@ -96,6 +96,17 @@ Review the details of the dependencies before you proceed to install the
    * role: `zmf_swmgmt_identify_missing_fixcat_updates`_
    * role: `zmf_swmgmt_search_software_updates`_
 
+* `z/OS Management Services Catalog`_ (Optional)
+
+   z/OS Management Services Catalog (zMSC) can be used to create,
+   manage and run z/OS System Management Services.
+   To interact with zMSC in your playbook, it requires you to set up 
+   z/OS Management Services Catalog properly in z/OS managed nodes.
+   
+   This dependency is only required for using the following roles:
+
+   * role: `zmf_zmsc_run_management_service`_
+
 .. _z/OS:
    https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3/en/homepage.html
 .. _z/OSMF server:
@@ -132,3 +143,7 @@ Review the details of the dependencies before you proceed to install the
    roles/zmf_swmgmt_identify_missing_fixcat_updates.html
 .. _zmf_swmgmt_search_software_updates:
    roles/zmf_swmgmt_search_software_updates.html
+.. _z/OS Management Services Catalog:
+   https://www.ibm.com/support/z-content-solutions/management-services/
+.. _zmf_zmsc_run_management_service:
+   roles/zmf_zmsc_run_management_service.html
