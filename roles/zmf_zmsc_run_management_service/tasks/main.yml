@@ -22,33 +22,41 @@
     input_vars: {null}
   when: input_vars is not defined
 
-# Support input_vars to be provided via playbook.
-# If input_vars isn't set then set default below.
+# Make sure that required inputs are provided
 
 - name: Set category_name as fact
   set_fact:
     category_name: ""
   when: category_name is not defined
 
-# Support input_vars to be provided via playbook.
-# If input_vars isn't set then set default below.
+- name: Validate that category_name is provided
+  fail:
+    msg: "Category name is required"
+  when: not category_name
 
+- name: Set catalog_service_name as fact
+  set_fact:
+    catalog_service_name: ""
+  when: catalog_service_name is not defined
+
+- name: Validate that catalog_service_name is provided
+  fail:
+    msg: "Service name is required"
+  when: not catalog_service_name
+
+# Support change_record_number as optional input
 - name: Set change_record_number as fact
   set_fact:
     change_record_number: null
   when: change_record_number is not defined
 
-# Support input_vars to be provided via playbook.
-# If input_vars isn't set then set default below.
-
+# Support system_name as optional input
 - name: Set system_name as fact
   set_fact:
     system_name: null
   when: system_name is not defined
 
-# Support input_vars to be provided via playbook.
-# If input_vars isn't set then set default below.
-
+# Support job_statement as optional input
 - name: Set job_statement as fact
   set_fact:
     job_statement: null
@@ -82,7 +90,6 @@
       set_fact:
         service_object_id: "{{ service_summary.json[0].objectId }}"
 
-
     # Build request body parameters for create service instance API
 
     - name: Set service_instance_create_body
@@ -95,19 +102,6 @@
           "siChangeRecord": "{{ change_record_number }}",
           "siRunAutomatically":true
           }'
-
-# TODO: Remove populate body and PUT API call once create is enhanced to support siInputs
-
-# - name: Set service_instance_populate_body as fact
-#   set_fact:
-#       service_instance_populate_body: '{
-#           "siInputs":{{ input_vars }},
-#           "siTargetSystem": "{{ system_name }}",
-#           "siChangeRecord": "{{ change_record_number }}",
-#           "siRunAutomatically":true
-#           }'
-
-# Invoke API to create management service instance
 
 - name: Create Management Service Instance
   uri:
@@ -130,29 +124,6 @@
 - name: Set service_instance_object_id as fact
   set_fact:
     service_instance_object_id: "{{ create_service_instance_results.json['objectId'] }}"
-
-#
-# TODO: Remove following task once create is enhanced to support siInputs
-#
-# - name: Populate Management Service Instance with input
-#   uri:
-#     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances/{{ service_instance_object_id }}"
-#     return_content: true
-#     user: "{{ zmf_user| trim }}"
-#     password: "{{ zmf_password| trim  }}"
-#     force_basic_auth: true
-#     headers:
-#       Host: "{{ zmf_host }}"
-#       Origin: "https://{{ zmf_host }}"
-#       referer: "https://{{ zmf_host }}"
-#     method: PUT
-#     status_code: "204"
-#     validate_certs: false
-#     body_format: json
-#     body: "{{ service_instance_populate_body }}"
-#   delegate_to: localhost
-
-# Invoke API to submit management service instance
 
 - name: Submit Management Service Instance
   uri:
