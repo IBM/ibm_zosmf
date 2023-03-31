@@ -42,17 +42,16 @@ tags:
   - zos_management_facility
   - zos_workflow
   - zosmf_workflow
-  - cpm
   - cloud_provisioning
   - cics_provisioning_template
   - db2_provisioning_template
   - mq_provisioning_template
   - liberty_provisioning_template
-  - was_provisioning_template
   - zosconnect_provisioning_template
   - sca
   - security
   - security_configuration_assistant
+  - z/OS_software_update
   - z/OS_management_services_catalog(zMSC)
 
 # The URL of the originating SCM repository
