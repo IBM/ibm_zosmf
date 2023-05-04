@@ -4,6 +4,15 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
+v1.4.0
+======
+
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_zmsc_run_management_service - Role runs a z/OS management service 
+
 v1.3.0
 ======
 
