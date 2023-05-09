@@ -22,6 +22,7 @@ Refer to RedHat Ansible Certified Content documentation for more on the
 
 .. _controllers dependencies:
    https://ibm.github.io/z_ansible_collections_doc/requirements/requirements.html#control-node
+
 .. ...........................................................................
 .. © Copyright IBM Corporation 2021                                          .
 .. ...........................................................................
@@ -31,6 +32,7 @@ Control node
 
 When using the **IBM z/OS Management Facility (z/OSMF) collection**, there
 is no additional requirements for the control node.
+
 .. ...........................................................................
 .. © Copyright IBM Corporation 2023                                          .
 .. ...........................................................................
