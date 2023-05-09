@@ -14,6 +14,7 @@ Notes
 
 * Added a new z/OSMF Management Services Catalog role `zmf_zmsc_run_management_service`_ to run a z/OS management service
   published in B(z/OS Management Services Catalog).
+* Updated module `zmf_workflow` to return the failed step if the workflow is not completed.
 
 * New roles
 

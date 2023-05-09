@@ -7,6 +7,10 @@ Ibm.Ibm_Zosmf Release Notes
 v1.4.0
 ======
 
+Minor Changes
+-------------
+
+- Updated module `zmf_workflow` which returns the failed step if the workflow is not completed.
 
 New Roles
 ---------
@@ -15,7 +19,6 @@ New Roles
 
 v1.3.0
 ======
-
 
 New Roles
 ---------

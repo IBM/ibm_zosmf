@@ -82,6 +82,9 @@ releases:
     changes:
       major_changes:
       - Added new roles for z/OS Management Services Catalog
+      minor_changes:
+      - Updated module `zmf_workflow` which returns the failed step if the 
+        workflow is not completed.
     objects:
       role:
       - description: Role runs a z/OS Management Service
