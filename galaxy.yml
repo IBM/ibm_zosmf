@@ -51,8 +51,8 @@ tags:
   - sca
   - security
   - security_configuration_assistant
-  - z/OS_software_update
-  - z/OS_management_services_catalog(zMSC)
+  - zos_software_update
+  - zos_management_services_catalog
 
 # The URL of the originating SCM repository
 repository: https://github.com/IBM/ibm_zosmf

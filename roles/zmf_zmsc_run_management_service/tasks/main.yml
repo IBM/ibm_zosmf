@@ -68,8 +68,8 @@
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/\
          catalog-services?serviceName={{ catalog_service_name | urlencode }}\
          &categoryName={{ category_name | urlencode }}&summary=true"
-    user: "{{ zmf_user| trim }}"
-    password: "{{ zmf_password| trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim  }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
@@ -107,8 +107,8 @@
   uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances"
     return_content: true
-    user: "{{ zmf_user| trim }}"
-    password: "{{ zmf_password| trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim  }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"
@@ -129,8 +129,8 @@
   uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances/{{ service_instance_object_id }}/actions/submit"
     return_content: true
-    user: "{{ zmf_user| trim }}"
-    password: "{{ zmf_password| trim  }}"
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim  }}"
     force_basic_auth: true
     headers:
       Host: "{{ zmf_host }}"

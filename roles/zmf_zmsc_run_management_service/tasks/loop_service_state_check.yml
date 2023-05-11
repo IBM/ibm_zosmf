@@ -4,7 +4,7 @@
 ---
 - name: Examining service progress
   block:
-    - name: pause
+    - name: Pause
       pause:
         prompt: "Waiting {{ api_polling_interval_seconds }} seconds before next polling workflow progress status"
         seconds: "{{ api_polling_interval_seconds }}"
@@ -12,8 +12,8 @@
     - name: Retrieve management service instance
       uri:
         url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances/{{ instance_object_id }}"
-        user: "{{ zmf_user| trim  }}"
-        password: "{{ zmf_password| trim  }}"
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
           Host: "{{ zmf_host }}"
@@ -39,7 +39,7 @@
 
     - name: Set the retry count for verification progress
       set_fact:
-        retry_count: "{{ 1 if retry_count is undefined else retry_count|int + 1 }}"
+        retry_count: "{{ 1 if retry_count is undefined else retry_count | int + 1 }}"
         max_retry: "{{ api_polling_retry_count }}"
 
     - name: Display current polling count
@@ -59,6 +59,7 @@
         msg: "Reached max retry limit {{ api_polling_retry_count }} while workflow still not at 100% complete, aborting..."
       when: retry_count|int == max_retry
 
-    - include_tasks: loop_service_state_check.yml
+    - name: Include tasks
+      include_tasks: loop_service_state_check.yml
       when:
         - results.json.siStatus != "completed"
