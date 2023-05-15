@@ -62,15 +62,15 @@ pipeline {
                                 echo "Remote workspace is ${remoteWorkspace} on ${SSH_PORT}"
 
                                 dir("${remoteWorkspace}") {
-                                        if (fileExists('ibm-ibm_zosmf-1.3.0.tar.gz')) {
-                                                echo "ibm-ibm_zosmf-1.3.0.tar.gz existed on ${SSH_PORT}"
-                                                sh 'rm ibm-ibm_zosmf-1.3.0.tar.gz'
+                                        if (fileExists('ibm-ibm_zosmf-1.4.0.tar.gz')) {
+                                                echo "ibm-ibm_zosmf-1.4.0.tar.gz existed on ${SSH_PORT}"
+                                                sh 'rm ibm-ibm_zosmf-1.4.0.tar.gz'
                                                 sh 'ansible-galaxy collection build --force'
                                         } else {
                                                 sh 'ansible-galaxy collection build --force'
                                         }
                                         sh "pwd"
-                                        sh 'ansible-galaxy collection install ibm-ibm_zosmf-1.3.0.tar.gz --force'
+                                        sh 'ansible-galaxy collection install ibm-ibm_zosmf-1.4.0.tar.gz --force'
                                 }
                             }
                         }
@@ -82,20 +82,13 @@ pipeline {
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf") {
                                 sh "pwd"
                                 sh 'ansible-test sanity'
-                                sh 'ansible-lint roles/zmf_workflow_complete'
-                                sh 'ansible-lint roles/zmf_cpm_manage_software_instance'
-                                sh 'ansible-lint roles/zmf_cpm_provision_software_service'
-                                sh 'ansible-lint roles/zmf_cpm_remove_software_instance'
-                                sh 'ansible-lint roles/zmf_swmgmt_search_software_updates'
-                                sh 'ansible-lint roles/zmf_swmgmt_identify_missing_fixcat_updates'
-                                sh 'ansible-lint roles/zmf_swmgmt_identify_missing_critical_updates'
+                                sh 'ansible-lint plugins'
+                                sh 'ansible-lint roles'
                                 sh 'bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/'
                                 }
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
                                 sh "cp -p /home/test/ansible-tmp/P00.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P00.yml"
                                 sh "cp -p /home/test/ansible-tmp/P01.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P01.yml"
-                                sh "cp -p /home/test/ansible-tmp/hosts /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/hosts"
-                                sh "cp -p /home/test/ansible-tmp/swmgmt.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/group_vars/swmgmt.yml"
                             }
                             echo "SCA BVT on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
@@ -112,6 +105,10 @@ pipeline {
                             echo "SM BVT on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
                                 sh 'ansible-playbook software_management_reports_CICDtest1.yml'
+                            }
+                            echo "ZMSC BVT on ${SSH_PORT}"
+                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
+                                sh 'ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml'
                             }
                             echo "CICD test successfully on ${SSH_PORT}"
                         }

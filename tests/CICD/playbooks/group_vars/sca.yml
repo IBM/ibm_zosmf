@@ -20,3 +20,7 @@
 # target_userid: Target user or group id to be validated
 # path: Path of the remote security requirement file
 # path_local: Path of the local security requirement file
+
+target_userid: ibmuser
+path: /global/zosmf/IZUDFLT0/data/sca_2_failed.json
+path_local: sca_1_passed.json
