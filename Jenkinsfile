@@ -105,7 +105,7 @@ pipeline {
                             }
                             echo "ZMSC BVT on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
-                                sh 'ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml'
+                                sh '/bin/bash -c -l "ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml"'
                             }
                             echo "CICD test successfully on ${SSH_PORT}"
                         }
