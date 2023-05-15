@@ -4,9 +4,21 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
-v1.3.0
+v1.4.0
 ======
 
+Minor Changes
+-------------
+
+- Updated module `zmf_workflow` which returns the failed step if the workflow is not completed.
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_zmsc_run_management_service - Role runs a z/OS management service 
+
+v1.3.0
+======
 
 New Roles
 ---------

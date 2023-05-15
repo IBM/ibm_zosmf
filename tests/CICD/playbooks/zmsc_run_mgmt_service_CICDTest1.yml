@@ -1,0 +1,24 @@
+# Copyright (c) IBM Corporation 2021
+
+# This sample playbook demonstrates using roles `zmf_zmsc_run_management_service` to run
+# a sample management service published in z/OS Management Service Catalog 
+# Example:
+# ansible-playbook -i hosts zmsc_run_mgmt_service_CICDTest1.yml
+
+- name: Test zmf_zmsc_run_management_service role
+  hosts: cpm1
+  gather_facts: no
+  collections:
+      - ibm.ibm_zosmf
+  vars:
+    - name: instance_info_json_path #will store instance json information globally thru the playbook
+  tasks:
+    - include_role:
+        name: zmf_zmsc_run_management_service
+      vars:
+        system_name: "P01"
+        catalog_service_name: "List attributes of a RACF user ID"
+        category_name: "Sample services"
+      # change_record_number: "123"
+      # job_statement: "//HIRENA JOB (ACCTINFO),CLASS=A,MSGCLASS=0"
+        input_vars: '{"userID":"HIREN"}'

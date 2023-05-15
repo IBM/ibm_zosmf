@@ -50,7 +50,7 @@
 
 - name: Reset workflow_key if the existing workflow instance is deleted
   set_fact:
-    compare_result: {'workflow_key':'', 'completed':false}
+    compare_result: {'workflow_key':'', 'workflow_completed':false}
   when: ('skipped' not in delete_result) and (delete_result.deleted)
 
 - name: Create the workflow instance if not exist and start it
@@ -83,7 +83,7 @@
     workflow_key: "{{ compare_result.workflow_key | default() }}"
   delegate_to: localhost
   register: start_result
-  when: (force_complete) or ('completed' not in compare_result) or (not compare_result.completed)
+  when: (force_complete) or ('workflow_completed' not in compare_result) or (not compare_result.workflow_completed)
 
 - name: Periodically check status of the workflow instance and return final result
   ibm.ibm_zosmf.zmf_workflow:
@@ -97,7 +97,7 @@
     workflow_key: "{{ start_result.workflow_key | default(compare_result.workflow_key) }}"
   delegate_to: localhost
   register: result
-  until: (result is failed) or (not result.waiting)
+  until: (result is failed) or (not result.workflow_waiting)
   retries: "{{ complete_check_times }}"
   delay: "{{ complete_check_delay }}"
 
@@ -106,13 +106,14 @@
     final_result: "{{ final_result | combine({\
                    'workflow_name': result.workflow_name, \
                    'workflow_key': start_result.workflow_key | default(compare_result.workflow_key), \
-                   'completed': result.completed, \
+                   'workflow_completed': result.workflow_completed, \
                    'msg': result.message}) }}"
 
 - name: Fail if the workflow instance is not completed
   fail:
     msg: "{{ result.message }}"
-  when: not result.completed
+  when: not result.workflow_completed
 
 - name: Return final_result
-  debug: var=final_result
+  debug:
+    var: "{{ final_result }}"

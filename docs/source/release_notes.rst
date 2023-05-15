@@ -6,6 +6,32 @@
 Releases
 ========
 
+Version 1.4.0
+=============
+
+Notes
+-----
+
+* Added a new z/OSMF Management Services Catalog role `zmf_zmsc_run_management_service`_ to run a z/OS management service
+  published in B(z/OS Management Services Catalog).
+* Updated module `zmf_workflow` to return the failed step if the workflow is not completed.
+
+* New roles
+
+  * `zmf_zmsc_run_management_service`_
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
+Reference
+---------
+
+* The new z/OS Management Services Catalog role `zmf_zmsc_run_management_service`_ works with z/OSMF V2R4
+  and above with the APAR PH52813 installed.
 
 Version 1.3.0
 =============
@@ -219,6 +245,9 @@ Reference
 
 .. _zmf_swmgmt_search_software_updates:
    roles/zmf_swmgmt_search_software_updates.html
+
+.. _zmf_zmsc_run_management_service:
+   roles/zmf_zmsc_run_management_service.html
 
 .. _Automation Hub:
    https://www.ansible.com/products/automation-hub

@@ -146,31 +146,32 @@ options:
             - >
               If I(state=started), starts the workflow instance.
                   - If I(workflow_key) is specified, finds the workflow instance and starts it.
-                  - If I(workflow_key) is not specified, checks if workflow exists by I(workflow_name),
+                  - If I(workflow_key) is not specified, checks if workflow exists by I(workflow_name):
+
                       - If exists, starts the workflow instance.
                       - If not exist, creates a new workflow instance and starts it.
-            - If I(state=deleted), delete a workflow instance if it exists.
+            - >
+              If I(state=deleted), delete a workflow instance if it exists.
+                  - If I(workflow_key) is specified, delete the workflow instance.
+                  - If I(workflow_key) is not specified, checks if workflow exists by I(workflow_name)
+                    and delete the workflow instance if it exists.
             - >
               If I(state=check), check the status of a workflow.
-                  -
-                    If the status of the workflow is 'automation-in-progress', return message\:
-                    Workflow instance with key:{} is still in progress. Current step is {}.Percent complete is xx%.
+                  - If the status of the workflow is 'automation-in-progress', return message:
 
-                  -
-                    If the status of the workflow is 'complete', return message:
-                    Workflow instance with key:{} is is completed.
+                      - Workflow instance with key:{} is still in progress. Current step is: {}. Percent complete is xx%.
+                  - If the status of the workflow is 'complete', return message:
 
-                  -
-                    If the status of the workflow is not 'automation-in-progress' or 'complete', return message\:
+                      - Workflow instance with key:{} is is completed.
+                  - If the status of the workflow is not 'automation-in-progress' or 'complete', return message:
 
-                      - Workflow instance with key:{} is not completed\: No step is started.
-                      -
-                        Workflow instance with key:{} is not completed\: In step {}\:
+                      - Workflow instance with key:{} is not completed. No step is started.
+                      - Workflow instance with key:{} is not completed. Failed step is: {}.
                         You can manually complete this step in z/OSMF Workflows task,
                         and start this workflow instance again with next step name: {}
                         specified in argument: workflow_step_name.
-                      - Workflow instance with key:{} is not completed\:
-                        In step {}\: While one or more steps may be skipped.
+                      - Workflow instance with key:{} is not completed.
+                        Failed step is: {}. While one or more steps may be skipped.
         required: True
         type: str
         choices:
@@ -241,8 +242,7 @@ options:
         description:
             - Values of one or more workflow variables in JSON format.
             - >
-              For example, C({"user_to_list": "DEBUG1", "tsocmd_to_issue":
-              "TIME"})
+              For example, C({"user_to_list": "DEBUG1", "tsocmd_to_issue": "TIME"})
         required: False
         type: dict
         default: null
@@ -479,16 +479,15 @@ message:
           can use state=check to check its final status.
         sample5: >-
           Workflow instance named: ansible_sample_workflow_SY1 is still in
-          progress. Current step is 1.2 Step title. Percent complete
-          is 28%.
+          progress. Current step is: 1.2 Step title. Percent complete is 28%.
         sample6: >-
           Workflow instance named: ansible_sample_workflow_SY1 is completed.
         sample7: >-
           Workflow instance named: ansible_sample_workflow_SY1 is not
-          completed: No step is started.
+          completed. No step is started.
         sample8: >-
           Workflow instance named: ansible_sample_workflow_SY1 is not
-          completed: In step 1.2 Step title: IZUWF0145E: Automation
+          completed. Failed step is: 1.2 Step title. IZUWF0145E: Automation
           processing for the workflow `ansible_sample_workflow_SY1` stopped at
           step `Step title`. This step cannot be performed
           automatically. You can manually complete this step in z/OSMF
@@ -496,7 +495,7 @@ message:
           name: subStep3 specified in argument: workflow_step_name.
         sample9: >-
           Workflow instance named: ansible_sample_workflow_SY1 is not
-          completed: In step 1.2 Step title: IZUWF0162I: Automation
+          completed. Failed step is: 1.2 Step title. IZUWF0162I: Automation
           processing for workflow `ansible_sample_workflow_SY1` is complete.
           While one or more steps may be skipped.
         sample10: >-
@@ -522,7 +521,7 @@ same_workflow_instance:
           definition file, variables and properties.
     returned: on success when `state=existed`
     type: bool
-waiting:
+workflow_waiting:
     description:
         - >
           Indicate whether it needs to wait and check again because the
@@ -531,13 +530,21 @@ waiting:
           (the workflow is either completed or paused/failed at some step), return False.
     returned: on success when `state=check`
     type: bool
-completed:
+workflow_completed:
     description:
         - >
           Indicate whether the workflow is completed.
           Return True if the status of the workflow is 'complete'. Otherwise, return False.
     returned: on success when `state=existed/check`
     type: bool
+workflow_failed_step:
+    description:
+        - >
+          Indicate what the failed step is if the workflow is not completed,
+          including the step number, step name and step title.
+    returned: on success when `state=check`
+    type: dict
+    sample: {"step_number": "1.2", "step_name": "createInstanceDirectory", "step_title": "Create a new instance directory"}
 deleted:
     description: Indicate whether the workflow is deleted.
     returned: on success when `state=deleted`
@@ -776,7 +783,7 @@ def action_compare(module, argument_spec_mapping):
         workflow_key='',
         workflow_name=module.params['workflow_name'].strip(),
         same_workflow_instance=False,
-        completed=False,
+        workflow_completed=False,
         message=''
     )
     # create session
@@ -877,7 +884,7 @@ def action_compare(module, argument_spec_mapping):
             + ' with same definition file, variables and properties is found.'
     if (compare_result['same_workflow_instance'] is not False
             and response_retrieveP['statusName'] == 'complete'):
-        compare_result['completed'] = True
+        compare_result['workflow_completed'] = True
     compare_result['workflow_key'] = workflow_key
     module.exit_json(**compare_result)
 
@@ -1022,8 +1029,8 @@ def action_check(module):
         changed=False,
         workflow_key='',
         workflow_name='',
-        waiting=True,
-        completed=False,
+        workflow_waiting=True,
+        workflow_completed=False,
         message=''
     )
     # create session
@@ -1096,7 +1103,7 @@ def action_check(module):
                 step_status = response_retrieveP['automationStatus']
                 if (step_status is not None
                         and step_status['currentStepNumber'] is not None):
-                    current_step_message = ' Current step is ' \
+                    current_step_message = ' Current step is: ' \
                         + step_status['currentStepNumber'] + ' ' \
                         + step_status['currentStepTitle'] \
                         + '. Percent complete is ' \
@@ -1111,8 +1118,8 @@ def action_check(module):
                         + ' is still in progress.' + current_step_message
                 module.exit_json(**check_result)
             elif status == 'complete':
-                check_result['waiting'] = False
-                check_result['completed'] = True
+                check_result['workflow_waiting'] = False
+                check_result['workflow_completed'] = True
                 if check_by_key is True:
                     check_result['message'] = 'Workflow instance with key: ' \
                         + workflow_key + ' is completed.'
@@ -1123,23 +1130,23 @@ def action_check(module):
                 module.exit_json(**check_result)
             else:
                 step_status = response_retrieveP['automationStatus']
-                check_result['waiting'] = False
+                check_result['workflow_waiting'] = False
                 if step_status is None:
                     if check_by_key is True:
                         check_result['message'] = 'Workflow instance with ' \
                             + 'key: ' + workflow_key \
-                            + ' is not completed: No step is started.'
+                            + ' is not completed. No step is started.'
                     else:
                         check_result['message'] = 'Workflow instance named: ' \
                             + module.params['workflow_name'].strip() \
-                            + ' is not completed: No step is started.'
+                            + ' is not completed. No step is started.'
                 else:
                     current_step_message = ''
                     next_step_message = ''
                     if step_status['currentStepNumber'] is not None:
-                        current_step_message = 'In step ' \
+                        current_step_message = 'Failed step is: ' \
                             + step_status['currentStepNumber'] + ' ' \
-                            + step_status['currentStepTitle'] + ': '
+                            + step_status['currentStepTitle'] + '. '
                     # handle specific start issues
                     if (step_status['messageID'] == 'IZUWF0145E'
                             and step_status['currentStepNumber'] is not None):
@@ -1159,13 +1166,25 @@ def action_check(module):
                     if check_by_key is True:
                         check_result['message'] = 'Workflow instance with ' \
                             + 'key: ' + workflow_key \
-                            + ' is not completed: ' + current_step_message \
+                            + ' is not completed. ' + current_step_message \
                             + step_status['messageText'] + next_step_message
+                        if step_status['currentStepNumber'] is not None:
+                            check_result['workflow_failed_step'] = dict(
+                                step_number=step_status['currentStepNumber'],
+                                step_name=step_status['currentStepName'],
+                                step_title=step_status['currentStepTitle']
+                            )
                     else:
                         check_result['message'] = 'Workflow instance named: ' \
                             + module.params['workflow_name'].strip() \
-                            + ' is not completed: ' + current_step_message \
+                            + ' is not completed. ' + current_step_message \
                             + step_status['messageText'] + next_step_message
+                        if step_status['currentStepNumber'] is not None:
+                            check_result['workflow_failed_step'] = dict(
+                                step_number=step_status['currentStepNumber'],
+                                step_name=step_status['currentStepName'],
+                                step_title=step_status['currentStepTitle']
+                            )
                 module.exit_json(**check_result)
         else:
             if check_by_key is True:

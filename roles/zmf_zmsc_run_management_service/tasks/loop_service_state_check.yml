@@ -1,0 +1,65 @@
+# Copyright (c) IBM Corporation 2021
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+- name: Examining service progress
+  block:
+    - name: Pause
+      pause:
+        prompt: "Waiting {{ api_polling_interval_seconds }} seconds before next polling workflow progress status"
+        seconds: "{{ api_polling_interval_seconds }}"
+
+    - name: Retrieve management service instance
+      uri:
+        url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances/{{ instance_object_id }}"
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        method: GET
+        status_code: "200"
+        validate_certs: false
+      delegate_to: localhost
+      register: results
+      no_log: true
+
+    - name: Set service_instance_state as fact
+      set_fact:
+        service_instance_state: "{{ results.json.siStatus }}"
+
+    - name: Check if service instance failed
+      fail:
+        msg: "**** Service Instance Failed ****"
+      when: results.json.siStatus == "failed"
+
+- name: Repeat if service instance is not complete
+  block:
+
+    - name: Set the retry count for verification progress
+      set_fact:
+        retry_count: "{{ 1 if retry_count is undefined else retry_count | int + 1 }}"
+        max_retry: "{{ api_polling_retry_count }}"
+
+    - name: Display current polling count
+      debug:
+        msg: "Polling {{ retry_count }} of {{ api_polling_retry_count }} tries..."
+
+
+    - name: "Check service instance process (ignore the failure of this task), skip if complete"
+      debug:
+        msg: "Ignore and retry"
+      when:
+        - results.json.siStatus != "completed"
+
+  always:
+    - name: Fail if reached max polling count
+      fail:
+        msg: "Reached max retry limit {{ api_polling_retry_count }} while workflow still not at 100% complete, aborting..."
+      when: retry_count|int == max_retry
+
+    - name: Include tasks
+      include_tasks: loop_service_state_check.yml
+      when:
+        - results.json.siStatus != "completed"

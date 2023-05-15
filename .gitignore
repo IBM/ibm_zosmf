@@ -195,10 +195,11 @@ dmypy.json
 .vscode/settings.json
 
 # Development files
-hosts
+# hosts
 .ansible-test/
 .keep
 shell_exploits.txt
+tests/collections
 
 # changelog
 changelogs/.plugin-cache.yaml

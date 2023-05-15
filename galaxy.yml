@@ -7,7 +7,7 @@ namespace: ibm
 name: ibm_zosmf
 
 # The collection version
-version: 1.3.0
+version: 1.4.0
 
 # Collection README file
 readme: README.md
@@ -42,17 +42,17 @@ tags:
   - zos_management_facility
   - zos_workflow
   - zosmf_workflow
-  - cpm
   - cloud_provisioning
   - cics_provisioning_template
   - db2_provisioning_template
   - mq_provisioning_template
   - liberty_provisioning_template
-  - was_provisioning_template
   - zosconnect_provisioning_template
   - sca
   - security
   - security_configuration_assistant
+  - zos_software_update
+  - zos_management_services_catalog
 
 # The URL of the originating SCM repository
 repository: https://github.com/IBM/ibm_zosmf
