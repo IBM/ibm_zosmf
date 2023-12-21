@@ -68,6 +68,8 @@ pipeline {
                                         }
                                         sh "pwd"
                                         sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-1.4.1.tar.gz --force"'
+                                        sh 'cp tests/CICD/playbooks/*.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/'
+                                        sh 'cp tests/CICD/playbooks/group_vars/*.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/group_vars/'
                                 }
                             }
                         }
