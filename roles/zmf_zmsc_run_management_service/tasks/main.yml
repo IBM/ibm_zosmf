@@ -5,7 +5,7 @@
 # tasks file for zmf_zmsc_run_management_service
 
 - name: Instance record directory
-  include_tasks: instance_dir_util.yml
+  ansible.builtin.include_tasks: instance_dir_util.yml
   run_once: true
 
 # This role performs following tasks :
@@ -18,53 +18,53 @@
 # Support input_vars to be provided via playbook.
 # If input_vars isn't set then set default below
 - name: Set input_vars as fact
-  set_fact:
+  ansible.builtin.set_fact:
     input_vars: {null}
   when: input_vars is not defined
 
 # Make sure that required inputs are provided
 
 - name: Set category_name as fact
-  set_fact:
+  ansible.builtin.set_fact:
     category_name: ""
   when: category_name is not defined
 
 - name: Validate that category_name is provided
-  fail:
+  ansible.builtin.fail:
     msg: "Category name is required"
   when: not category_name
 
 - name: Set catalog_service_name as fact
-  set_fact:
+  ansible.builtin.set_fact:
     catalog_service_name: ""
   when: catalog_service_name is not defined
 
 - name: Validate that catalog_service_name is provided
-  fail:
+  ansible.builtin.fail:
     msg: "Service name is required"
   when: not catalog_service_name
 
 # Support change_record_number as optional input
 - name: Set change_record_number as fact
-  set_fact:
+  ansible.builtin.set_fact:
     change_record_number: null
   when: change_record_number is not defined
 
 # Support system_name as optional input
 - name: Set system_name as fact
-  set_fact:
+  ansible.builtin.set_fact:
     system_name: null
   when: system_name is not defined
 
 # Support job_statement as optional input
 - name: Set job_statement as fact
-  set_fact:
+  ansible.builtin.set_fact:
     job_statement: null
   when: job_statement is not defined
 
 # Obtain service object ID using service name and category name
 - name: Obtain Catalog Service Id
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/\
          catalog-services?serviceName={{ catalog_service_name | urlencode }}\
          &categoryName={{ category_name | urlencode }}&summary=true"
@@ -87,13 +87,13 @@
 - name: Set parameters for create service instance API
   block:
     - name: Set service object id
-      set_fact:
+      ansible.builtin.set_fact:
         service_object_id: "{{ service_summary.json[0].objectId }}"
 
     # Build request body parameters for create service instance API
 
     - name: Set service_instance_create_body
-      set_fact:
+      ansible.builtin.set_fact:
         service_instance_create_body: '{
           "siCatalogServiceId": "{{ service_object_id }}",
           "siInputs": {{ input_vars }},
@@ -104,7 +104,7 @@
           }'
 
 - name: Create Management Service Instance
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances"
     return_content: true
     user: "{{ zmf_user | trim }}"
@@ -122,11 +122,11 @@
   register: create_service_instance_results
 
 - name: Set service_instance_object_id as fact
-  set_fact:
+  ansible.builtin.set_fact:
     service_instance_object_id: "{{ create_service_instance_results.json['objectId'] }}"
 
 - name: Submit Management Service Instance
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances/{{ service_instance_object_id }}/actions/submit"
     return_content: true
     user: "{{ zmf_user | trim }}"
@@ -143,14 +143,14 @@
   register: submitted_service_results
 
 - name: Write submitted service instance information to disk
-  copy:
+  ansible.builtin.copy:
     content: "{{ submitted_service_results.json | to_nice_json(indent=2) }}"
     dest: "{{ instance_record_dir }}/{{ inventory_hostname }}/{{ catalog_service_name }}-{{ submitted_service_results.json['objectId'] }}.json"
     mode: '0644'
   delegate_to: localhost
 
 - name: Display instance record file path
-  debug:
+  ansible.builtin.debug:
     msg: "Instance record saved at:\
          {{ instance_record_dir }}/{{ inventory_hostname }}/{{ catalog_service_name }}-{{ submitted_service_results.json['objectId'] }}.json"
 
@@ -161,16 +161,16 @@
 # {{max_retry}} -> max retry count before task exit with failing status
 ##############################################################################
 - name: Monitor Service Instance Progress Section
-  include_tasks: loop_service_state_check.yml
+  ansible.builtin.include_tasks: loop_service_state_check.yml
   vars:
     instance_object_id: "{{ service_instance_object_id }}"
 
 - name: Set full_instance_json as fact
-  set_fact:
+  ansible.builtin.set_fact:
     full_instance_json: ""
 
 - name: Get completed service instance information
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances/{{ service_instance_object_id }}"
     method: GET
     user: "{{ zmf_user | trim }}"
@@ -188,20 +188,20 @@
 - name: Update service instance information after service instance completes
   block:
     - name: Update completed service instance information to local file
-      copy:
+      ansible.builtin.copy:
         content: '{ "instance-info" : {{ full_instance_json.json | default("") | to_nice_json(indent=2) }}}'
         dest: "{{ instance_record_dir }}/{{ inventory_hostname }}/{{ catalog_service_name }}-{{ submitted_service_results.json['objectId'] }}.json"
         mode: '0644'
       delegate_to: localhost
 
     - name: Set variable for service instance json file path
-      set_fact:
+      ansible.builtin.set_fact:
         zosmf_instance_info: "{{ full_instance_json.json }}"
         instance_info_json_path:
           "{{ instance_record_dir }}/{{ inventory_hostname }}/{{ catalog_service_name }}-{{ submitted_service_results.json['objectId'] }}.json"
 
 - name: Display service instance record file path
-  debug:
+  ansible.builtin.debug:
     msg: "Instance record saved at: \
        {{ instance_record_dir }}/{{ inventory_hostname }}/{{ catalog_service_name | urlencode }}-{{ submitted_service_results.json['objectId'] }}.json"
   run_once: true

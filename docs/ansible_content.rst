@@ -16,7 +16,7 @@ workflows, provisioning and managing z/OS middlewares/softwares, via z/OSMF
 RESTful services. 
 
 .. _ibm_zosmf:
-   https://galaxy.ansible.com/ibm/ibm_zosmf
+   https://galaxy.ansible.com/ui/repo/published/ibm/ibm_zosmf
    
 .. toctree::
    :maxdepth: 1

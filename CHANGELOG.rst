@@ -4,8 +4,22 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
+v1.4.1
+======
+
+Minor Changes
+-------------
+
+- Documentation updates
+- Fixed ansible-lint issues
+
 v1.4.0
 ======
+
+Major Changes
+-------------
+
+- Added new roles for z/OS Management Services Catalog
 
 Minor Changes
 -------------
@@ -19,6 +33,11 @@ New Roles
 
 v1.3.0
 ======
+
+Major Changes
+-------------
+
+- Added new roles for z/OSMF Software Management
 
 New Roles
 ---------

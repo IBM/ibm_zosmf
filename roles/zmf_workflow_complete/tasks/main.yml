@@ -3,7 +3,7 @@
 
 ---
 - name: Initialize final_result
-  set_fact:
+  ansible.builtin.set_fact:
     final_result: {'workflow_name': "{{ workflow_name }}"}
 
 - name: Check whether a workflow instance with the given name already exists
@@ -49,7 +49,7 @@
   when: (force_complete) or (compare_result.workflow_key and not compare_result.same_workflow_instance)
 
 - name: Reset workflow_key if the existing workflow instance is deleted
-  set_fact:
+  ansible.builtin.set_fact:
     compare_result: {'workflow_key':'', 'workflow_completed':false}
   when: ('skipped' not in delete_result) and (delete_result.deleted)
 
@@ -102,7 +102,7 @@
   delay: "{{ complete_check_delay }}"
 
 - name: Update final_result
-  set_fact:
+  ansible.builtin.set_fact:
     final_result: "{{ final_result | combine({\
                    'workflow_name': result.workflow_name, \
                    'workflow_key': start_result.workflow_key | default(compare_result.workflow_key), \
@@ -110,10 +110,10 @@
                    'msg': result.message}) }}"
 
 - name: Fail if the workflow instance is not completed
-  fail:
+  ansible.builtin.fail:
     msg: "{{ result.message }}"
   when: not result.workflow_completed
 
 - name: Return final_result
-  debug:
+  ansible.builtin.debug:
     var: "{{ final_result }}"

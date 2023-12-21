@@ -5,12 +5,12 @@
 - name: Examining service progress
   block:
     - name: Pause
-      pause:
+      ansible.builtin.pause:
         prompt: "Waiting {{ api_polling_interval_seconds }} seconds before next polling workflow progress status"
         seconds: "{{ api_polling_interval_seconds }}"
 
     - name: Retrieve management service instance
-      uri:
+      ansible.builtin.uri:
         url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/mgmt-services/rest/service-instances/{{ instance_object_id }}"
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -26,11 +26,11 @@
       no_log: true
 
     - name: Set service_instance_state as fact
-      set_fact:
+      ansible.builtin.set_fact:
         service_instance_state: "{{ results.json.siStatus }}"
 
     - name: Check if service instance failed
-      fail:
+      ansible.builtin.fail:
         msg: "**** Service Instance Failed ****"
       when: results.json.siStatus == "failed"
 
@@ -38,28 +38,28 @@
   block:
 
     - name: Set the retry count for verification progress
-      set_fact:
+      ansible.builtin.set_fact:
         retry_count: "{{ 1 if retry_count is undefined else retry_count | int + 1 }}"
         max_retry: "{{ api_polling_retry_count }}"
 
     - name: Display current polling count
-      debug:
+      ansible.builtin.debug:
         msg: "Polling {{ retry_count }} of {{ api_polling_retry_count }} tries..."
 
 
     - name: "Check service instance process (ignore the failure of this task), skip if complete"
-      debug:
+      ansible.builtin.debug:
         msg: "Ignore and retry"
       when:
         - results.json.siStatus != "completed"
 
   always:
     - name: Fail if reached max polling count
-      fail:
+      ansible.builtin.fail:
         msg: "Reached max retry limit {{ api_polling_retry_count }} while workflow still not at 100% complete, aborting..."
       when: retry_count|int == max_retry
 
     - name: Include tasks
-      include_tasks: loop_service_state_check.yml
+      ansible.builtin.include_tasks: loop_service_state_check.yml
       when:
         - results.json.siStatus != "completed"

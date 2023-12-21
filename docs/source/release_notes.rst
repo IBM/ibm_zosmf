@@ -6,6 +6,22 @@
 Releases
 ========
 
+Version 1.4.1
+=============
+
+Notes
+-----
+
+* Documentation updates
+* Fixed ansible-lint issues
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
 Version 1.4.0
 =============
 
@@ -253,7 +269,7 @@ Reference
    https://www.ansible.com/products/automation-hub
 
 .. _Galaxy:
-   https://galaxy.ansible.com/ibm/ibm_zosmf
+   https://galaxy.ansible.com/ui/repo/published/ibm/ibm_zosmf
 
 .. _GitHub:
    https://github.com/IBM/ibm_zosmf

@@ -7,7 +7,7 @@ namespace: ibm
 name: ibm_zosmf
 
 # The collection version
-version: 1.4.0
+version: 1.4.1
 
 # Collection README file
 readme: README.md
@@ -75,6 +75,6 @@ build_ignore:
   - docs
   - collections
   - venv
-#  - tests
+  - tests
   - .idea
   - meta/context

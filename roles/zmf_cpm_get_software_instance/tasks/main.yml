@@ -5,15 +5,15 @@
 # tasks file for zmf_cpm_get_software_instance
 
 - name: Instance record directory
-  include_tasks: instance_dir_util.yml
+  ansible.builtin.include_tasks: instance_dir_util.yml
   run_once: true
 
 - name: Set instance_data as fact
-  set_fact:
+  ansible.builtin.set_fact:
     instance_data: ""
 
 - name: Get software instance information
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr?external-name={{ external_software_name }}"
     method: GET
     user: "{{ zmf_user | trim }}"
@@ -29,16 +29,16 @@
   delegate_to: localhost
 
 - name: Set instance_object_id as fact
-  set_fact:
+  ansible.builtin.set_fact:
     instance_object_id: "{{ instance_data.json['scr-list'][0]['object-id'] }}"
 
 
 - name: Set full_instance_json as fact
-  set_fact:
+  ansible.builtin.set_fact:
     full_instance_json: ""
 
 - name: Get full software instance information
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr/{{ instance_object_id }}"
     method: GET
     user: "{{ zmf_user | trim }}"
@@ -56,7 +56,7 @@
 - name: Update instance information
   block:
     - name: Update fully provisioned instance information to local
-      copy:
+      ansible.builtin.copy:
         content: '{ "registry-info" : {{ full_instance_json.json | default("") | to_nice_json(indent=2) }}}'
         dest: "{{ instance_record_dir }}/{{ inventory_hostname }}/{{ external_software_name }}-\
                {{ full_instance_json.json['object-name'] }}.json"
@@ -64,13 +64,13 @@
       delegate_to: localhost
 
     - name: Set variable for instance json file path
-      set_fact:
+      ansible.builtin.set_fact:
         zosmf_instance_info: "{{ full_instance_json.json }}"
         instance_info_json_path: "{{ instance_record_dir }}/{{ inventory_hostname }}/{{ external_software_name }}-\
                                   {{ full_instance_json.json['object-name'] }}.json"
 
 - name: Display instance record file path
-  debug:
+  ansible.builtin.debug:
     msg: "Instance record saved at: {{ instance_record_dir }}/{{ inventory_hostname }}/{{ external_software_name }}-\
                {{ full_instance_json.json['object-name'] }}.json"
   run_once: true

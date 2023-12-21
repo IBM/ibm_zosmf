@@ -5,11 +5,11 @@
 # tasks file for zmf_cpm_list_software_templates
 
 - name: Instance record directory
-  include_tasks: instance_dir_util.yml
+  ansible.builtin.include_tasks: instance_dir_util.yml
   run_once: true
 
 - name: "List published provisioning templates"
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/psc/"
     user: "{{ zmf_user | trim }}"
     password: "{{ zmf_password | trim }}"
@@ -27,19 +27,19 @@
 - name: Update instance information
   block:
     - name: Update fully provisioned instance information to local
-      copy:
+      ansible.builtin.copy:
         content: '{{ list_results.json | default("") | to_nice_json(indent=2) }}'
         dest: "{{ instance_record_dir }}/{{ inventory_hostname }}/Published_Templates_List.json"
         mode: '0644'
       delegate_to: localhost
 
     - name: Set variable for template info json file path
-      set_fact:
+      ansible.builtin.set_fact:
         template_info_json_path: "{{ instance_record_dir }}/{{ inventory_hostname }}/\
                                   Published_Templates_List.json"
 
 - name: Display template record file path
-  debug:
+  ansible.builtin.debug:
     msg: "Published template list saved at:
      {{ instance_record_dir }}/{{ inventory_hostname }}/Published_Templates_List.json"
   run_once: true

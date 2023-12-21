@@ -22,7 +22,7 @@ The **IBM z/OSMF collection** is following the
 content.
 Collections will be developed in the open, and when content is ready
 for use it is released to
-[Ansible Galaxy](https://galaxy.ansible.com/ibm/ibm_zosmf) for community
+[Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/ibm/ibm_zosmf) for community
 adoption.
 Once contributors review community usage, feedback, and are satisfied with the
 content published, the collection will then be released to

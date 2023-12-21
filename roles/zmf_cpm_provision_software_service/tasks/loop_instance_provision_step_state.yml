@@ -5,12 +5,12 @@
 - name: Examining workflow progress status
   block:
     - name: Pause
-      pause:
+      ansible.builtin.pause:
         prompt: "Waiting {{ api_polling_interval_seconds }} seconds before next polling workflow progress status"
         seconds: "{{ api_polling_interval_seconds }}"
 
     - name: Retrieve provision step information
-      uri:
+      ansible.builtin.uri:
         url: "https://{{ zmf_host }}:{{ zmf_port }}/zosmf/provisioning/rest/1.0/scr/{{ instance_object_id }}"
         return_content: true
         user: "{{ zmf_user | trim }}"
@@ -27,13 +27,13 @@
       no_log: true
 
     - name: "Gather provision step information"
-      set_fact:
+      ansible.builtin.set_fact:
         current_step_name: "{{ results.json['workflow-current-step-name'] }}"
         current_step_number: "{{ results.json['workflow-current-step-number'] }}"
         total_step_number: "{{ results.json['workflow-total-steps'] }}"
 
     - name: "Check if provision failed"
-      fail:
+      ansible.builtin.fail:
         msg:
           - Provision Failed at - step <{{ current_step_name }}> ({{ current_step_number }} / {{ total_step_number }})
           - Reason - {{ results.json['workflow-message-text'] }}
@@ -43,16 +43,16 @@
   block:
 
     - name: Set the retry count for verification progress
-      set_fact:
+      ansible.builtin.set_fact:
         retry_count: "{{ 1 if retry_count is undefined else retry_count | int + 1 }}"
         max_retry: "{{ api_polling_retry_count }}"
 
     - name: Display current polling count
-      debug:
+      ansible.builtin.debug:
         msg: "Polling {{ retry_count }} of {{ api_polling_retry_count }} tries..."
 
     - name: "Gather provision API response"
-      set_fact:
+      ansible.builtin.set_fact:
         provision_current_state: "{{ 'being-provisioned' if results.json.state is undefined else results.json.state | string }}"
         provision_current_step_name: >-
                                   {{ 'Not available' if results.json['workflow-current-step-name'] is undefined
@@ -63,7 +63,7 @@
         provision_total_step: "{{ 1 if results.json['workflow-total-steps'] | int == 0 else results.json['workflow-total-steps'] | int }}"
 
     - name: Display current polling count
-      debug:
+      ansible.builtin.debug:
         msg:
           - "Current status: {{ provision_current_state }}"
           - "Step name: {{ provision_current_step_name }}"
@@ -72,18 +72,18 @@
         - provision_current_state != 'provisioned'
 
     - name: "Check over all provision process (ignore the failure of this task), skip if complete"
-      debug:
+      ansible.builtin.debug:
         msg: "Ignore and retry"
       when:
         - provision_current_state != 'provisioned'
 
   always:
     - name: "Failure exit on polling provision information"
-      fail:
+      ansible.builtin.fail:
         msg: "Reached max retry limit {{ api_polling_retry_count }} while workflow still not at 100% complete, aborting..."
       when: retry_count|int == max_retry
 
     - name: Include tasks
-      include_tasks: loop_instance_provision_step_state.yml
+      ansible.builtin.include_tasks: loop_instance_provision_step_state.yml
       when:
         - provision_current_state != 'provisioned'

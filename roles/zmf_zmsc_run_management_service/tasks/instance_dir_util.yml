@@ -4,18 +4,18 @@
 ---
 
 - name: Get instance record directory
-  stat:
+  ansible.builtin.stat:
     path: "{{ instance_record_dir }}/{{ inventory_hostname }}"
   connection: local
   register: target_dir
 
 - name: "Check {{ instance_record_dir }}/{{ inventory_hostname }} status"
-  debug:
+  ansible.builtin.debug:
     msg: "{{ instance_record_dir }}/{{ inventory_hostname }} exists"
   when: target_dir.stat.exists
 
 - name: "Create {{ instance_record_dir }}/{{ inventory_hostname }} when not exist"
-  file:
+  ansible.builtin.file:
     path: "{{ instance_record_dir }}/{{ inventory_hostname }}"
     state: directory
     mode: '0755'

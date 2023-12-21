@@ -32,7 +32,7 @@
         domain_name: 'default'
 
     - name: Save instance info file path
-      set_fact:
+      ansible.builtin.set_fact:
         instance_file_path: "{{ instance_info_json_path }}"
 
 #
@@ -78,24 +78,24 @@
         name: zmf_cpm_list_software_templates
 
     - name: Set templates as fact
-      set_fact:
+      ansible.builtin.set_fact:
         templates: null
 
     - name: Gather name of published templates and domains
       vars:
         template_info_json: "{{ lookup('file', template_info_json_path) }}"
 
-      set_fact:
+      ansible.builtin.set_fact:
         templates: "{{ item.name }}:{{ item['domain-name'] }}, {{ templates }}"
 
       loop: "{{ template_info_json['psc-list'] }}"
 
     - name: Display published templates
-      debug:
+      ansible.builtin.debug:
         msg: "Published Template:Domain are : {{ templates }}"
 
     - name: Clean instance record file
-      file:
+      ansible.builtin.file:
         state: absent
         path: "{{ template_info_json_path }}"
       delegate_to: localhost
@@ -122,7 +122,7 @@
         instance_state: "deprovisioned"
 
     - name: Save instance info file path
-      set_fact:
+      ansible.builtin.set_fact:
         instance_file_path: "{{ instance_info_json_path }}"
 #
 #   Test zmf_cpm_create_software_instance role
@@ -142,11 +142,11 @@
       vars:
         instance_info_json: "{{ lookup('file', instance_info_json_path) | from_json }}"
 
-      set_fact:
+      ansible.builtin.set_fact:
         PROV: "{{ instance_info_json['registry-info']['provider'] }}"
 
     - name: Display Provider
-      debug:
+      ansible.builtin.debug:
         msg: "Software instance provider is : {{ PROV }}"
 
 #   Cleanup software instance created in registry via
