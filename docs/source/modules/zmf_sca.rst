@@ -102,7 +102,7 @@ expected_result
  
 
 zmf_credential
-  Authentication credentials, returned by module :ref:`zmf_authenticate <zmf_authenticate_module>`, for successful authentication with the z/OSMF server.
+  Authentication credentials, returned by module **zmf_authenticate**, for successful authentication with the z/OSMF server.
 
 
   If *zmf_credential* is supplied, *zmf_host*, *zmf_port*, *zmf_user*, *zmf_password*, *zmf_crt* and *zmf_key* are ignored.

@@ -24,7 +24,7 @@
         path_of_security_requirements: "{{path_local}}" # Path of the local security requirement file
         target_userid: "{{target_userid}}" # Target user /group id to be validated
       register: result
-    - debug: var=result
+    - ansible.builtin.debug: var=result
 
     - name: Run security validation and expect no access to any items
       zmf_sca:
@@ -33,7 +33,7 @@
         expected_result: "all-failed" # Expect no access to any security resources mentioned in the security requirement file
         target_userid: "{{target_userid}}" # Target user or group id to be validated
       register: result
-    - debug: var=result
+    - ansible.builtin.debug: var=result
 
     - name: Run security requirements provision and expect all requirements are satisified
       zmf_sca:
@@ -43,4 +43,4 @@
         path_of_security_requirements: "{{path_local}}" # Path of the local security requirement file
         target_userid: "{{target_userid}}" # Target user or group id to be validated
       register: result
-    - debug: var=result
+    - ansible.builtin.debug: var=result

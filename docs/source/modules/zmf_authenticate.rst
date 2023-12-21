@@ -122,10 +122,10 @@ Examples
      vars_prompt:
        - name: zmf_user
          prompt: "Enter your zOSMF username"
-         private: no
+         private: false
        - name: zmf_password
          prompt: "Enter your zOSMF password"
-         private: yes
+         private: true
      tasks:
        - zmf_authenticate:
            zmf_host: "{{ zmf_host }}"

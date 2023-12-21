@@ -1,5 +1,11 @@
+exclude_paths:
+  - tests/
+  - docs/
 skip_list:
-  - experimental
   - name[template]
-  - fqcn[action-core]
-  - schema[meta] 
+  - schema[meta]
+  - var-naming[no-role-prefix]
+parseable: true
+quiet: false
+use_default_rules: true
+verbosity: 1

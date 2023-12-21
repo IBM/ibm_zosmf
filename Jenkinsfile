@@ -1,5 +1,3 @@
-def remoteWorkspace = ''
-
 pipeline {
 	agent none
 	
@@ -27,7 +25,7 @@ pipeline {
                 axes {
                     axis {
                         name 'SSH_PORT'
-                        values '22', '3335', '3339', '3338'
+                        values '3338' //'22', '3335', '3339', '3338'
                     }
                 }
                 agent {
@@ -59,15 +57,15 @@ pipeline {
                                 echo "Remote workspace is ${remoteWorkspace} on ${SSH_PORT}"
 
                                 dir("${remoteWorkspace}") {
-                                        if (fileExists('ibm-ibm_zosmf-1.4.0.tar.gz')) {
-                                                echo "ibm-ibm_zosmf-1.4.0.tar.gz existed on ${SSH_PORT}"
-                                                sh 'rm ibm-ibm_zosmf-1.4.0.tar.gz'
+                                        if (fileExists('ibm-ibm_zosmf-1.4.1.tar.gz')) {
+                                                echo "ibm-ibm_zosmf-1.4.1.tar.gz existed on ${SSH_PORT}"
+                                                sh 'rm ibm-ibm_zosmf-1.4.1.tar.gz'
                                                 sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
                                         } else {
                                                 sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
                                         }
                                         sh "pwd"
-                                        sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-1.4.0.tar.gz --force"'
+                                        sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-1.4.1.tar.gz --force"'
                                 }
                             }
                         }
@@ -81,11 +79,18 @@ pipeline {
                                 sh '/bin/bash -c -l "ansible-test sanity"'
                                 sh '/bin/bash -c -l "ansible-lint plugins"'
                                 sh '/bin/bash -c -l "ansible-lint roles"'
+                                sh '/bin/bash -c -l "ansible-lint --profile production"'
                                 sh '/bin/bash -c -l "bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/"'
-                                }
+                            }
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
                                 sh "cp -p /home/test/ansible-tmp/P00.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P00.yml"
                                 sh "cp -p /home/test/ansible-tmp/P01.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P01.yml"
+                                sh "cp -p /home/test/ansible-tmp/hosts /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/"
+                            }
+                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/group_vars") {
+                                sh "cp ${remoteWorkspace}/tests/CICD/playbooks/*.json /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/"
+                                sh "cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/"
+                                sh "cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/group_vars/"
                             }
                             echo "SCA BVT on ${SSH_PORT}"
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
