@@ -1,5 +1,3 @@
-def remoteWorkspace = ''
-
 pipeline {
 	agent none
 	
