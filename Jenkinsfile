@@ -59,15 +59,15 @@ pipeline {
                                 echo "Remote workspace is ${remoteWorkspace} on ${SSH_PORT}"
 
                                 dir("${remoteWorkspace}") {
-                                        if (fileExists('ibm-ibm_zosmf-1.4.0.tar.gz')) {
-                                                echo "ibm-ibm_zosmf-1.4.0.tar.gz existed on ${SSH_PORT}"
-                                                sh 'rm ibm-ibm_zosmf-1.4.0.tar.gz'
+                                        if (fileExists('ibm-ibm_zosmf-1.4.1.tar.gz')) {
+                                                echo "ibm-ibm_zosmf-1.4.1.tar.gz existed on ${SSH_PORT}"
+                                                sh 'rm ibm-ibm_zosmf-1.4.1.tar.gz'
                                                 sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
                                         } else {
                                                 sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
                                         }
                                         sh "pwd"
-                                        sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-1.4.0.tar.gz --force"'
+                                        sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-1.4.1.tar.gz --force"'
                                 }
                             }
                         }
