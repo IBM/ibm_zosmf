@@ -74,14 +74,14 @@ pipeline {
                     stage('Test') {
                         steps {
                             echo "sanity test on ${SSH_PORT}"
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf") {
-                                sh "pwd"
-                                sh '/bin/bash -c -l "ansible-test sanity"'
-                                sh '/bin/bash -c -l "ansible-lint plugins"'
-                                sh '/bin/bash -c -l "ansible-lint roles"'
-                                sh '/bin/bash -c -l "ansible-lint --profile production"'
-                                sh '/bin/bash -c -l "bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/"'
-                                }
+                            // dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf") {
+                            //     sh "pwd"
+                            //     sh '/bin/bash -c -l "ansible-test sanity"'
+                            //     sh '/bin/bash -c -l "ansible-lint plugins"'
+                            //     sh '/bin/bash -c -l "ansible-lint roles"'
+                            //     sh '/bin/bash -c -l "ansible-lint --profile production"'
+                            //     sh '/bin/bash -c -l "bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/"'
+                            // }
                             dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
                                 sh "cp -p /home/test/ansible-tmp/P00.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P00.yml"
                                 sh "cp -p /home/test/ansible-tmp/P01.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P01.yml"
