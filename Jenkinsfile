@@ -9,8 +9,8 @@ pipeline {
 		// only keep 15 builds to prevent disk usage from growing out of control
 		buildDiscarder(
 			logRotator(
-				daysToKeepStr: '15',
-				numToKeepStr: '15',
+				daysToKeepStr: '180',
+				numToKeepStr: '50',
 			)
 		)
 	}
