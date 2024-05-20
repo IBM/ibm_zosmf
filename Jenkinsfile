@@ -85,10 +85,13 @@ pipeline {
                                 pythonVersion = "python3.11"
                                 venvPath = "/home/test/venv/${pythonVersion}"
                                 echo "Venv is: ${venvPath}"
-                                sh """#!/bin/bash
+                                sh(script: """#!/bin/bash
+                                    echo 1=${venvPath}
                                     ${pythonVersion} -m venv ${venvPath}
+                                    echo 2=${venvPath}
                                     source ${venvPath}/bin/activate
-                                """
+                                    echo 3=${venvPath}
+                            	""")
                                 
                                 echo "Install:"
                                 sh '/bin/bash -c -l "pip install --upgrade pip"'
