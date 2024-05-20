@@ -49,6 +49,7 @@ pipeline {
                         which ansible
                     """)
                     
+                    echo "****************************************************************************"
                     echo "Check installed python:"
                     for(int i=0; i<pythonVersionList.size(); i++) {
                         pythonVersion = pythonVersionList[i]
@@ -61,6 +62,7 @@ pipeline {
                         """)
                     }
                     
+                    echo "****************************************************************************"
                     echo "Cleanup venv dir:"
                     venvDir = "/home/test/venv"
                     dir("${venvDir}") {
@@ -95,7 +97,7 @@ pipeline {
         stage('CICD-Test') {
             agent {
                 node {
-                    label "zmf-ansible-configuration-agent"
+                    label "zmf-ansible-configuration-ssh-22"
                     customWorkspace "workspace/${env.BRANCH_NAME}"
                 }
             }
