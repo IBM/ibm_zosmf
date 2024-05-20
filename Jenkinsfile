@@ -49,35 +49,27 @@ pipeline {
                             sh '/bin/bash -c -l "which python3.10"'
                             sh '/bin/bash -c -l "python3.11 --version"'
                             sh '/bin/bash -c -l "which python3.11"'
-
-                            script {
-                                pythonVersion = "python3.11"
-                                sh(script: """#!/bin/bash
-                                    ${pythonVersion} --version
-                            	""")
-                                sh '/bin/bash -c -l "\$pythonVersion --version"'
-                            }
                             
-                            echo "****************************************************************************\n****************************************************************************"
-                            echo "Build and install ansible collection:"
-                            checkout scm
+                            // echo "****************************************************************************\n****************************************************************************"
+                            // echo "Build and install ansible collection:"
+                            // checkout scm
                             
-                            script {
-                                ansibleCollection = "/home/test/.ansible"
-                                echo "Ansible collection is: ${ansibleCollection}"
-                                dir("${ansibleCollection}") {
-                                    sh "pwd"
-                                    sh "rm -rf *"
-                                }
+                            // script {
+                            //     ansibleCollection = "/home/test/.ansible"
+                            //     echo "Ansible collection is: ${ansibleCollection}"
+                            //     dir("${ansibleCollection}") {
+                            //         sh "pwd"
+                            //         sh "rm -rf *"
+                            //     }
                                 
-                                remoteWorkspace = env.WORKSPACE
-                                echo "Remote workspace is: ${remoteWorkspace}"
-                                dir("${remoteWorkspace}") {
-                                    sh "pwd"
-                                    sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
-                                    sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
-                                }
-                            }
+                            //     remoteWorkspace = env.WORKSPACE
+                            //     echo "Remote workspace is: ${remoteWorkspace}"
+                            //     dir("${remoteWorkspace}") {
+                            //         sh "pwd"
+                            //         sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
+                            //         sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
+                            //     }
+                            // }
                         }
                     }
                     
@@ -93,8 +85,10 @@ pipeline {
                                 pythonVersion = "python3.11"
                                 venvPath = "/home/test/venv/${pythonVersion}"
                                 echo "Venv is: ${venvPath}"
-                                sh '/bin/bash -c -l "$pythonVersion -m venv $venvPath"'
-                                sh '/bin/bash -c -l "source $venvPath/bin/activate"'
+                                sh """#!/bin/bash
+                                    ${pythonVersion} -m venv ${venvPath}
+                                    source ${venvPath}/bin/activate
+                                """
                                 
                                 echo "Install:"
                                 sh '/bin/bash -c -l "pip install --upgrade pip"'
@@ -118,34 +112,42 @@ pipeline {
                                 ansiblePath = "${venvPath}/.ansible"
                                 dir("${remoteWorkspace}") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-galaxy collection build --force"'
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz -p $ansiblePath/collections --force"'
+                                    sh """#!/bin/bash
+                                        ${venvPath}/bin/ansible-galaxy collection build --force
+                                        ${venvPath}/bin/ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz -p ${ansiblePath}/collections --force
+                                    """
                                 }
                                 
                                 echo "****************************************************************************"
                                 echo "Run sanity test:"
                                 dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-test --version"'
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-test sanity"'
+                                    sh """#!/bin/bash
+                                        ${venvPath}/bin/ansible-test --version
+                                        ${venvPath}/bin/ansible-test sanity
+                                    """
                                 }
                                 
                                 echo "****************************************************************************"
                                 echo "Run ansible-lint:"
                                 dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint --version"'
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint plugins"'
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint roles"'
-                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint --profile production"'
+                                    sh """#!/bin/bash
+                                        ${venvPath}/bin/ansible-lint --version
+                                        ${venvPath}/bin/ansible-lint plugins
+                                        ${venvPath}/bin/ansible-lint roles
+                                        ${venvPath}/bin/ansible-lint --profile production
+                                    """
                                 }
                                 
                                 echo "****************************************************************************"
                                 echo "Run bandit scan:"
                                 dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "$venvPath/bin/bandit --version"'
-                                    sh '/bin/bash -c -l "$venvPath/bin/bandit -r plugins"'
+                                    sh """#!/bin/bash
+                                        ${venvPath}/bin/bandit --version
+                                        ${venvPath}/bin/bandit -r plugins
+                                    """
                                 }
                                 
                                 echo "****************************************************************************"
