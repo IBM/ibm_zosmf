@@ -50,26 +50,26 @@ pipeline {
                             sh '/bin/bash -c -l "python3.11 --version"'
                             sh '/bin/bash -c -l "which python3.11"'
                             
-                            // echo "****************************************************************************\n****************************************************************************"
-                            // echo "Build and install ansible collection:"
-                            // checkout scm
+                            echo "****************************************************************************\n****************************************************************************"
+                            echo "Build and install ansible collection:"
+                            checkout scm
                             
-                            // script {
-                            //     ansibleCollection = "/home/test/.ansible"
-                            //     echo "Ansible collection is: ${ansibleCollection}"
-                            //     dir("${ansibleCollection}") {
-                            //         sh "pwd"
-                            //         sh "rm -rf *"
-                            //     }
+                            script {
+                                ansibleCollection = "/home/test/.ansible"
+                                echo "Ansible collection is: ${ansibleCollection}"
+                                dir("${ansibleCollection}") {
+                                    sh "pwd"
+                                    sh "rm -rf *"
+                                }
                                 
-                            //     remoteWorkspace = env.WORKSPACE
-                            //     echo "Remote workspace is: ${remoteWorkspace}"
-                            //     dir("${remoteWorkspace}") {
-                            //         sh "pwd"
-                            //         sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
-                            //         sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
-                            //     }
-                            // }
+                                remoteWorkspace = env.WORKSPACE
+                                echo "Remote workspace is: ${remoteWorkspace}"
+                                dir("${remoteWorkspace}") {
+                                    sh "pwd"
+                                    sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
+                                    sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
+                                }
+                            }
                         }
                     }
                     
@@ -86,11 +86,24 @@ pipeline {
                                 venvPath = "/home/test/venv/${pythonVersion}"
                                 echo "Venv is: ${venvPath}"
                                 sh(script: """#!/bin/bash
-                                    echo 1=${venvPath}
+                                    echo 'create venv:'
                                     ${pythonVersion} -m venv ${venvPath}
-                                    echo 2=${venvPath}
+                                    echo 'activate:'
                                     source ${venvPath}/bin/activate
-                                    echo 3=${venvPath}
+                                    echo 'install:'
+                                    pip install --upgrade pip
+                                    pip install ansible
+                                    pip install ansible-lint
+                                    echo 'check:'
+                                    python --version
+                                    which python
+                                    ansible --version
+                                    which ansible
+                                    echo 'test':
+                                    cd /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf
+                                    pwd
+                                    ${venvPath}/bin/ansible-lint --version
+                                    ${venvPath}/bin/ansible-lint plugins
                             	""")
                                 
                                 echo "Install:"
