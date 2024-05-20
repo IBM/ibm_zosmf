@@ -50,16 +50,16 @@ pipeline {
                     """)
                     
                     echo "Check installed python:"
-                    sh(script: """#!/bin/bash
-                        for pythonVersion in ${pythonVersionList}
-                        do 
-                            echo '==> $pythonVersion --version'
-                            $pythonVersion --version
+                    for(int i=0; i<pythonVersionList.size(); i++) {
+                        pythonVersion = pythonVersionList[i]
+                        sh(script: """#!/bin/bash
+                            echo '==> ${pythonVersion} --version'
+                            ${pythonVersion} --version
                             
-                            echo '==> which $pythonVersion
-                            which $pythonVersion
-                        done
-                    """)
+                            echo '==> which ${pythonVersion}'
+                            which ${pythonVersion}
+                        """)
+                    }
                     
                     echo "Cleanup venv dir:"
                     venvDir = "/home/test/venv"
