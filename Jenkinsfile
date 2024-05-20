@@ -1,3 +1,6 @@
+def pythonVersionList = ["python3.9", "python3.10", "python3.11"]
+def ansibleVersionList = []
+
 pipeline {
 	agent none
 	
@@ -14,160 +17,150 @@ pipeline {
 			)
 		)
 	}
-
+    
 	stages {
-        stage('CICD') {
-            matrix {
-                // 22 - local (python=3.9.18, ansible-core=2.15.11)
-                axes {
-                    axis {
-                        name 'SSH_PORT'
-                        values '22'
-                    }
+        stage('CICD-Build') {
+            agent {
+                node {
+                    label "zmf-ansible-configuration-agent"
+                    customWorkspace "workspace/${env.BRANCH_NAME}"
                 }
-                agent {
-                    node {
-                        label "zmf-ansible-configuration-ssh-${SSH_PORT}"
-                        customWorkspace "workspace/${env.BRANCH_NAME}"
-                    }
+            }
+            
+            steps {
+                echo "****************************************************************************\n****************************************************************************"
+                echo "Check local env:"
+                sh(script: """#!/bin/bash
+                    echo '==> pwd'
+                    pwd
+                    
+                    echo '==> python --version'
+                    python --version
+                    
+                    echo '==> which python'
+                    which python
+                    
+                    echo '==> ansible --version'
+                    ansible --version
+                    
+                    echo '==> which ansible'
+                    which ansible
+                """)
+                
+                echo "Check installed python:"
+                sh(script: """#!/bin/bash
+                    for pythonVersion in ${pythonVersionList}
+                    do 
+                        echo '==> ${pythonVersion} --version'
+                        ${pythonVersion} --version
+                        
+                        echo '==> which ${pythonVersion}'
+                        which ${pythonVersion}
+                    done
+                """)
+                
+                echo "Cleanup venv dir:"
+                venvDir = "/home/test/venv"
+                dir("${venvDir}") {
+                    sh "pwd"
+                    sh "rm -rf *"
                 }
-                stages {
-                    stage('Build') {
-                        steps {
-                            echo "****************************************************************************\n****************************************************************************"
-                            echo "Check local env:"
-                            sh "pwd"
-                            sh '/bin/bash -c -l "python --version"'
-                            sh '/bin/bash -c -l "which python"'
-                            sh '/bin/bash -c -l "ansible --version"'
-                            sh '/bin/bash -c -l "which ansible"'
-                            
-                            echo "Check installed python:"
-                            sh '/bin/bash -c -l "python3.9 --version"'
-                            sh '/bin/bash -c -l "which python3.9"'
-                            sh '/bin/bash -c -l "python3.10 --version"'
-                            sh '/bin/bash -c -l "which python3.10"'
-                            sh '/bin/bash -c -l "python3.11 --version"'
-                            sh '/bin/bash -c -l "which python3.11"'
-                            
-                            echo "****************************************************************************\n****************************************************************************"
-                            echo "Build and install ansible collection:"
-                            checkout scm
-                            
-                            script {
-                                ansibleCollection = "/home/test/.ansible"
-                                echo "Ansible collection is: ${ansibleCollection}"
-                                dir("${ansibleCollection}") {
-                                    sh "pwd"
-                                    sh "rm -rf *"
-                                }
-                                
-                                remoteWorkspace = env.WORKSPACE
-                                echo "Remote workspace is: ${remoteWorkspace}"
-                                dir("${remoteWorkspace}") {
-                                    sh "pwd"
-                                    sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
-                                    sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
-                                }
-                            }
-                        }
+                
+                echo "****************************************************************************\n****************************************************************************"
+                echo "Build and install ansible collection:"
+                checkout scm
+                
+                script {
+                    ansibleCollection = "/home/test/.ansible"
+                    echo "Ansible collection is: ${ansibleCollection}"
+                    dir("${ansibleCollection}") {
+                        sh "pwd"
+                        sh "rm -rf *"
                     }
                     
-                    stage('Test-python3.11') {
-                        steps {
-                            echo "****************************************************************************\n****************************************************************************"
-                            echo "Test:"
-                            
-                            script {
-                                echo "****************************************************************************"
-                                echo "Setup venv:"
+                    remoteWorkspace = env.WORKSPACE
+                    echo "Remote workspace is: ${remoteWorkspace}"
+                    dir("${remoteWorkspace}") {
+                        sh "pwd"
+                        sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
+                        sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
+                    }
+                }
+            }
+        }
+        
+        stage('CICD-Test') {
+            agent {
+                node {
+                    label "zmf-ansible-configuration-agent"
+                    customWorkspace "workspace/${env.BRANCH_NAME}"
+                }
+            }
+            
+            steps {
+                script {
+                    for(int i=0; i<pythonVersionList.size(); i++) {
+                        stage('Test-' + pythonVersionList[i]) {
+                            steps {
+                                echo "****************************************************************************\n****************************************************************************"
+                                echo "Test on venv ${pythonVersionList[i]}:"
                                 
-                                pythonVersion = "python3.11"
-                                venvPath = "/home/test/venv/${pythonVersion}"
-                                echo "Venv is: ${venvPath}"
-                                sh(script: """#!/bin/bash
-                                    echo 'create venv:'
-                                    ${pythonVersion} -m venv ${venvPath}
-                                    echo 'activate:'
-                                    source ${venvPath}/bin/activate
-                                    echo 'install:'
-                                    pip install --upgrade pip
-                                    pip install ansible
-                                    pip install ansible-lint
-                                    echo 'check:'
-                                    python --version
-                                    which python
-                                    ansible --version
-                                    which ansible
-                                    echo 'test':
-                                    cd /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf
-                                    pwd
-                                    ${venvPath}/bin/ansible-lint --version
-                                    ${venvPath}/bin/ansible-lint plugins
-                            	""")
-                                
-                                echo "Install:"
-                                sh '/bin/bash -c -l "pip install --upgrade pip"'
-                                sh '/bin/bash -c -l "pip install ansible"'
-                                sh '/bin/bash -c -l "pip install ansible-lint"'
-                                sh '/bin/bash -c -l "pip install flake8"'
-                                sh '/bin/bash -c -l "pip install pylint"'
-                                sh '/bin/bash -c -l "pip install voluptuous"'
-                                sh '/bin/bash -c -l "pip install yamllint"'
-                                sh '/bin/bash -c -l "pip install rstcheck"'
-                                sh '/bin/bash -c -l "pip install bandit"'
-                                
-                                echo "Check:"
-                                sh '/bin/bash -c -l "python --version"'
-                                sh '/bin/bash -c -l "which python"'
-                                sh '/bin/bash -c -l "ansible --version"'
-                                sh '/bin/bash -c -l "which ansible"'
-                                
-                                echo "****************************************************************************"
-                                echo "Install ansible collection:"
-                                ansiblePath = "${venvPath}/.ansible"
-                                dir("${remoteWorkspace}") {
-                                    sh "pwd"
-                                    sh """#!/bin/bash
-                                        ${venvPath}/bin/ansible-galaxy collection build --force
-                                        ${venvPath}/bin/ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz -p ${ansiblePath}/collections --force
-                                    """
-                                }
-                                
-                                echo "****************************************************************************"
-                                echo "Run sanity test:"
-                                dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
-                                    sh "pwd"
-                                    sh """#!/bin/bash
+                                script {
+                                    pythonVersion = pythonVersionList[i]
+                                    venvPath = "${venvDir}/${pythonVersion}"
+                                    sh(script: """#!/bin/bash
+                                        echo "****************************************************************************"
+                                        echo "Setup venv: ${venvPath}"
+                                        
+                                        echo '==> create'
+                                        ${pythonVersion} -m venv ${venvPath}
+                                        
+                                        echo '==> activate'
+                                        source ${venvPath}/bin/activate
+                                        
+                                        echo '==> install'
+                                        pip install --upgrade pip
+                                        pip install ansible
+                                        pip install ansible-lint
+                                        pip install flake8
+                                        pip install pylint
+                                        pip install voluptuous
+                                        pip install yamllint
+                                        pip install rstcheck
+                                        pip install bandit
+                                        
+                                        echo '==> check'
+                                        python --version
+                                        which python
+                                        ansible --version
+                                        which ansible
+                                        cd ${ansibleCollection}/collections/ansible_collections/ibm/ibm_zosmf
+                                        pwd
+                                        
+                                        echo "****************************************************************************"
+                                        echo "Run sanity test:"
+                                        
                                         ${venvPath}/bin/ansible-test --version
                                         ${venvPath}/bin/ansible-test sanity
-                                    """
-                                }
-                                
-                                echo "****************************************************************************"
-                                echo "Run ansible-lint:"
-                                dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
-                                    sh "pwd"
-                                    sh """#!/bin/bash
+                                        
+                                        echo "****************************************************************************"
+                                        echo "Run ansible-lint:"
+                                        
                                         ${venvPath}/bin/ansible-lint --version
                                         ${venvPath}/bin/ansible-lint plugins
                                         ${venvPath}/bin/ansible-lint roles
                                         ${venvPath}/bin/ansible-lint --profile production
-                                    """
-                                }
-                                
-                                echo "****************************************************************************"
-                                echo "Run bandit scan:"
-                                dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
-                                    sh "pwd"
-                                    sh """#!/bin/bash
+                                        
+                                        echo "****************************************************************************"
+                                        echo "Run bandit scan:"
+                                        
                                         ${venvPath}/bin/bandit --version
                                         ${venvPath}/bin/bandit -r plugins
-                                    """
+                                        
+                                        echo "****************************************************************************"
+                                        echo "Run BVT:"
+                                    """)
                                 }
-                                
-                                echo "****************************************************************************"
-                                echo "Run BVT:"
                             }
                         }
                     }
