@@ -85,8 +85,8 @@ pipeline {
                                 pythonVersion = "python3.11"
                                 venvPath = "/home/test/venv/${pythonVersion}"
                                 echo "Venv is: ${venvPath}"
-                                sh '/bin/bash -c -l "${pythonVersion} -m venv ${venvPath}"'
-                                sh '/bin/bash -c -l "source ${venvPath}/bin/activate"'
+                                sh '/bin/bash -c -l "$pythonVersion -m venv $venvPath"'
+                                sh '/bin/bash -c -l "source $venvPath/bin/activate"'
                                 
                                 echo "Install:"
                                 sh '/bin/bash -c -l "pip install --upgrade pip"'
@@ -110,34 +110,34 @@ pipeline {
                                 ansiblePath = "${venvPath}/.ansible"
                                 dir("${remoteWorkspace}") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-galaxy collection build --force"'
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz -p ${ansiblePath}/collections --force"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-galaxy collection build --force"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz -p $ansiblePath/collections --force"'
                                 }
                                 
                                 echo "****************************************************************************"
                                 echo "Run sanity test:"
                                 dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-test --version"'
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-test sanity"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-test --version"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-test sanity"'
                                 }
                                 
                                 echo "****************************************************************************"
                                 echo "Run ansible-lint:"
                                 dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-lint --version"'
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-lint plugins"'
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-lint roles"'
-                                    sh '/bin/bash -c -l "${venvPath}/bin/ansible-lint --profile production"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint --version"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint plugins"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint roles"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/ansible-lint --profile production"'
                                 }
                                 
                                 echo "****************************************************************************"
                                 echo "Run bandit scan:"
                                 dir("${ansiblePath}/collections/ansible_collections/ibm/ibm_zosmf") {
                                     sh "pwd"
-                                    sh '/bin/bash -c -l "${venvPath}/bin/bandit --version"'
-                                    sh '/bin/bash -c -l "${venvPath}/bin/bandit -r plugins"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/bandit --version"'
+                                    sh '/bin/bash -c -l "$venvPath/bin/bandit -r plugins"'
                                 }
                                 
                                 echo "****************************************************************************"
