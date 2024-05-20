@@ -30,40 +30,43 @@ pipeline {
             steps {
                 echo "****************************************************************************\n****************************************************************************"
                 echo "Check local env:"
-                sh(script: """#!/bin/bash
-                    echo '==> pwd'
-                    pwd
-                    
-                    echo '==> python --version'
-                    python --version
-                    
-                    echo '==> which python'
-                    which python
-                    
-                    echo '==> ansible --version'
-                    ansible --version
-                    
-                    echo '==> which ansible'
-                    which ansible
-                """)
-                
-                echo "Check installed python:"
-                sh(script: """#!/bin/bash
-                    for pythonVersion in ${pythonVersionList}
-                    do 
-                        echo '==> ${pythonVersion} --version'
-                        ${pythonVersion} --version
+
+                script {
+                    sh(script: """#!/bin/bash
+                        echo '==> pwd'
+                        pwd
                         
-                        echo '==> which ${pythonVersion}'
-                        which ${pythonVersion}
-                    done
-                """)
-                
-                echo "Cleanup venv dir:"
-                venvDir = "/home/test/venv"
-                dir("${venvDir}") {
-                    sh "pwd"
-                    sh "rm -rf *"
+                        echo '==> python --version'
+                        python --version
+                        
+                        echo '==> which python'
+                        which python
+                        
+                        echo '==> ansible --version'
+                        ansible --version
+                        
+                        echo '==> which ansible'
+                        which ansible
+                    """)
+                    
+                    echo "Check installed python:"
+                    sh(script: """#!/bin/bash
+                        for pythonVersion in ${pythonVersionList}
+                        do 
+                            echo '==> ${pythonVersion} --version'
+                            ${pythonVersion} --version
+                            
+                            echo '==> which ${pythonVersion}'
+                            which ${pythonVersion}
+                        done
+                    """)
+                    
+                    echo "Cleanup venv dir:"
+                    venvDir = "/home/test/venv"
+                    dir("${venvDir}") {
+                        sh "pwd"
+                        sh "rm -rf *"
+                    }
                 }
                 
                 echo "****************************************************************************\n****************************************************************************"
