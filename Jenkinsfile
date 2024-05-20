@@ -53,11 +53,11 @@ pipeline {
                     sh(script: """#!/bin/bash
                         for pythonVersion in ${pythonVersionList}
                         do 
-                            echo '==> ${pythonVersion} --version'
-                            ${pythonVersion} --version
+                            echo '==> $pythonVersion --version'
+                            $pythonVersion --version
                             
-                            echo '==> which ${pythonVersion}'
-                            which ${pythonVersion}
+                            echo '==> which $pythonVersion
+                            which $pythonVersion
                         done
                     """)
                     
