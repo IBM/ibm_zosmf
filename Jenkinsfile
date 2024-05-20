@@ -49,6 +49,14 @@ pipeline {
                             sh '/bin/bash -c -l "which python3.10"'
                             sh '/bin/bash -c -l "python3.11 --version"'
                             sh '/bin/bash -c -l "which python3.11"'
+
+                            script {
+                                pythonVersion = "python3.11"
+                                sh(script: """#!/bin/bash
+                                    ${pythonVersion} --version
+                            	""")
+                                sh '/bin/bash -c -l "\$pythonVersion --version"'
+                            }
                             
                             echo "****************************************************************************\n****************************************************************************"
                             echo "Build and install ansible collection:"
