@@ -106,94 +106,118 @@ pipeline {
                 script {
                     for(int i=0; i<pythonVersionList.size(); i++) {
                         stage('Test-' + pythonVersionList[i]) {
-                            // steps {
-                                echo "****************************************************************************\n****************************************************************************"
-                                echo "*** Test on venv ${pythonVersionList[i]}:"
-                                
-                                script {
-                                    pythonVersion = pythonVersionList[i]
-                                    ansibleVersion = ansibleVersionList[i]
-                                    venvPath = "${venvDir}/${pythonVersion}"
-                                    sh(script: """#!/bin/bash
-                                        echo "****************************************************************************"
-                                        echo "*** Setup venv: ${venvPath}"
-                                        
-                                        echo '*** create:'
-                                        echo '==> ${pythonVersion} -m venv ${venvPath}'
-                                        ${pythonVersion} -m venv ${venvPath}
-                                        
-                                        echo '*** activate:'
-                                        echo '==> source ${venvPath}/bin/activate'
-                                        source ${venvPath}/bin/activate
-                                        
-                                        echo '*** install:'
-                                        echo '==> pip install --upgrade pip'
-                                        pip install --upgrade pip
-                                        echo '==> pip install ansible==${ansibleVersion}'
-                                        pip install ansible==${ansibleVersion}
-                                        echo '==> pip install ansible-lint'
-                                        pip install ansible-lint
-                                        echo '==> pip install flake8'
-                                        pip install flake8
-                                        echo '==> pip install pylint'
-                                        pip install pylint
-                                        echo '==> pip install voluptuous'
-                                        pip install voluptuous
-                                        echo '==> pip install yamllint'
-                                        pip install yamllint
-                                        echo '==> pip install rstcheck'
-                                        pip install rstcheck
-                                        echo '==> pip install sqlite3'
-                                        pip install sqlite3
-                                        echo '==> pip install bandit'
-                                        pip install bandit
-                                        
-                                        echo '*** check:'
-                                        echo '==> python --version'
-                                        python --version
-                                        echo '==> which python'
-                                        which python
-                                        echo '==> ansible --version'
-                                        ansible --version
-                                        echo '==> which ansible'
-                                        which ansible
-                                        cd ${ansibleCollection}/collections/ansible_collections/ibm/ibm_zosmf
-                                        echo '==> pwd'
-                                        pwd
-                                        
-                                        echo "****************************************************************************"
-                                        echo "*** Run sanity test:"
-                                        
-                                        echo '==> ${venvPath}/bin/ansible-test --version'
-                                        ${venvPath}/bin/ansible-test --version
-                                        echo '==> ${venvPath}/bin/ansible-test sanity'
-                                        ${venvPath}/bin/ansible-test sanity
-                                        
-                                        echo "****************************************************************************"
-                                        echo "*** Run ansible-lint:"
-                                        
-                                        echo '==> ${venvPath}/bin/ansible-lint --version'
-                                        ${venvPath}/bin/ansible-lint --version
-                                        echo '==> ${venvPath}/bin/ansible-lint plugins'
-                                        ${venvPath}/bin/ansible-lint plugins
-                                        echo '==> ${venvPath}/bin/ansible-lint roles'
-                                        ${venvPath}/bin/ansible-lint roles
-                                        echo '==> ${venvPath}/bin/ansible-lint --profile production'
-                                        ${venvPath}/bin/ansible-lint --profile production
-                                        
-                                        echo "****************************************************************************"
-                                        echo "*** Run bandit scan:"
-                                        
-                                        echo '==> ${venvPath}/bin/bandit --version'
-                                        ${venvPath}/bin/bandit --version
-                                        echo '==> ${venvPath}/bin/bandit -r plugins'
-                                        ${venvPath}/bin/bandit -r plugins
-                                        
-                                        echo "****************************************************************************"
-                                        echo "*** Run BVT:"
-                                    """)
-                                }
-                            // }
+                            echo "****************************************************************************\n****************************************************************************"
+                            echo "*** Test on venv ${pythonVersionList[i]}:"
+                            
+                            script {
+                                pythonVersion = pythonVersionList[i]
+                                ansibleVersion = ansibleVersionList[i]
+                                venvPath = "${venvDir}/${pythonVersion}"
+                                sh(script: """#!/bin/bash
+                                    echo "****************************************************************************"
+                                    echo "*** Setup venv: ${venvPath}"
+                                    
+                                    echo '*** create:'
+                                    echo '==> ${pythonVersion} -m venv ${venvPath}'
+                                    ${pythonVersion} -m venv ${venvPath}
+                                    
+                                    echo '*** activate:'
+                                    echo '==> source ${venvPath}/bin/activate'
+                                    source ${venvPath}/bin/activate
+                                    
+                                    echo '*** install:'
+                                    echo '==> pip install --upgrade pip'
+                                    pip install --upgrade pip
+                                    echo '==> pip install ansible==${ansibleVersion}'
+                                    pip install ansible==${ansibleVersion}
+                                    echo '==> pip install ansible-lint'
+                                    pip install ansible-lint
+                                    echo '==> pip install flake8'
+                                    pip install flake8
+                                    echo '==> pip install pylint'
+                                    pip install pylint
+                                    echo '==> pip install voluptuous'
+                                    pip install voluptuous
+                                    echo '==> pip install yamllint'
+                                    pip install yamllint
+                                    echo '==> pip install rstcheck'
+                                    pip install rstcheck
+                                    echo '==> pip install bandit'
+                                    pip install bandit
+                                    
+                                    echo '*** check:'
+                                    echo '==> python --version'
+                                    python --version
+                                    echo '==> which python'
+                                    which python
+                                    echo '==> ansible --version'
+                                    ansible --version
+                                    echo '==> which ansible'
+                                    which ansible
+                                    cd ${ansibleCollection}/collections/ansible_collections/ibm/ibm_zosmf
+                                    echo '==> pwd'
+                                    pwd
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run sanity test:"
+                                    
+                                    echo '==> ${venvPath}/bin/ansible-test --version'
+                                    ${venvPath}/bin/ansible-test --version
+                                    echo '==> ${venvPath}/bin/ansible-test sanity'
+                                    ${venvPath}/bin/ansible-test sanity
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run ansible-lint:"
+                                    
+                                    echo '==> ${venvPath}/bin/ansible-lint --version'
+                                    ${venvPath}/bin/ansible-lint --version
+                                    echo '==> ${venvPath}/bin/ansible-lint plugins'
+                                    ${venvPath}/bin/ansible-lint plugins
+                                    echo '==> ${venvPath}/bin/ansible-lint roles'
+                                    ${venvPath}/bin/ansible-lint roles
+                                    echo '==> ${venvPath}/bin/ansible-lint --profile production'
+                                    ${venvPath}/bin/ansible-lint --profile production
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run bandit scan:"
+                                    
+                                    echo '==> ${venvPath}/bin/bandit --version'
+                                    ${venvPath}/bin/bandit --version
+                                    echo '==> ${venvPath}/bin/bandit -r plugins'
+                                    ${venvPath}/bin/bandit -r plugins
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run BVT:"
+                                    
+                                    echo '==> cp'
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/*.json tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/hosts tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars/
+                                    cp -p /home/test/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
+                                    cp -p /home/test/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P00.yml
+                                    cd tests/CICD/playbooks
+                                    echo '==> pwd'
+                                    pwd
+                                    
+                                    echo '*** Workflow BVT:'
+                                    ${venvPath}/bin/ansible-playbook workflow_complete_CICDtest1.yml
+                                    echo '*** CPM BVT:'
+                                    ${venvPath}/bin/ansible-playbook cpm_complete_CICDtest1.yml
+                                    echo '*** SCA BVT:'
+                                    ${venvPath}/bin/ansible-playbook sca_CICDtest1.yml
+                                    echo '*** ZMSC BVT:'
+                                    ${venvPath}/bin/ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml
+                                    echo '*** SM BVT:'
+                                    ${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml
+                                    
+                                    echo "****************************************************************************"
+                                    echo '*** Test done:'
+                                    echo '==> deactivate'
+                                    deactivate
+                                """) 
+                            }
                         }
                     }
                 }
