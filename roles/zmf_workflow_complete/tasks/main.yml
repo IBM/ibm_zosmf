@@ -115,5 +115,4 @@
   when: not result.workflow_completed
 
 - name: Return final_result
-  ansible.builtin.debug:
-    var: "{{ final_result }}"
+  ansible.builtin.debug: var=final_result
