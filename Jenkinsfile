@@ -189,6 +189,11 @@ pipeline {
                                     echo "****************************************************************************"
                                     echo "*** Run BVT:"
                                     
+                                    echo '==> mkdir'
+                                    mkdir tests/CICD
+                                    mkdir tests/CICD/playbooks
+                                    mkdir tests/CICD/playbooks/group_vars
+                                    mkdir tests/CICD/playbooks/host_vars
                                     echo '==> cp'
                                     cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml tests/CICD/playbooks/
                                     cp ${remoteWorkspace}/tests/CICD/playbooks/*.json tests/CICD/playbooks/
@@ -196,7 +201,7 @@ pipeline {
                                     cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks/
                                     cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars/
                                     cp -p /home/test/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
-                                    cp -p /home/test/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P00.yml
+                                    cp -p /home/test/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P01.yml
                                     cd tests/CICD/playbooks
                                     echo '==> pwd'
                                     pwd
