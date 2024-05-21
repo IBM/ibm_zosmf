@@ -106,7 +106,7 @@ pipeline {
                 script {
                     for(int i=0; i<pythonVersionList.size(); i++) {
                         stage('Test-' + pythonVersionList[i]) {
-                            steps {
+                            // steps {
                                 echo "****************************************************************************\n****************************************************************************"
                                 echo "Test on venv ${pythonVersionList[i]}:"
                                 
@@ -166,7 +166,7 @@ pipeline {
                                         echo "Run BVT:"
                                     """)
                                 }
-                            }
+                            // }
                         }
                     }
                 }
