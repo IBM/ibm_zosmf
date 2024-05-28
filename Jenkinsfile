@@ -87,6 +87,7 @@ pipeline {
                     echo "Remote workspace is: ${remoteWorkspace}"
                     dir("${remoteWorkspace}") {
                         sh "pwd"
+                        sh "rm ibm-ibm_zosmf-*.tar.gz"
                         sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
                         sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
                     }
