@@ -97,3 +97,9 @@ releases:
         - Documentation updates
         - Fixed ansible-lint issues
     release_date: '2023-12-21'
+  1.4.2:
+    changes:
+      minor_changes:
+        - The README has been updated with a new template.
+        - Fixed role `zmf_workflow_complete` which previously failed to return final_result.
+    release_date: '2024-06-01'
