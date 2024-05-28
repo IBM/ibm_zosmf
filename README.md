@@ -84,8 +84,8 @@ All releases will meet the following test criteria:
 * 100% success for [ansible-lint](https://ansible.readthedocs.io/projects/lint/) allowing only false positives.
 
 This release of the collection was tested with following dependencies:
-* ansible-core v2.14.x, v2.15.x, v2.16.x
-* Python 3.9.x, 3.10.x, 3.11.x
+* ansible-core v2.15.x, v2.16.x
+* Python 3.10.x, 3.11.x
 * z/OS 3.1
 
 Review the [release notes](https://ibm.github.io/z_ansible_collections_doc/ibm_zosmf/docs/source/release_notes.html) for the details of this release.
