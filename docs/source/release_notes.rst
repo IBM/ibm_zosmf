@@ -6,6 +6,22 @@
 Releases
 ========
 
+Version 1.4.2
+=============
+
+Notes
+-----
+
+* The README has been updated with a new template.
+* Fixed role `zmf_workflow_complete` which previously failed to return final_result.
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
 Version 1.4.1
 =============
 

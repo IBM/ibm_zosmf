@@ -1,3 +1,6 @@
+def pythonVersionList = ["python3.10", "python3.11"]
+def ansibleVersionList = ["8.7.0", "9.5.1"] // (ansible-core) ["2.15.12", "2.16.6"]
+
 pipeline {
 	agent none
 	
@@ -9,110 +12,218 @@ pipeline {
 		// only keep 15 builds to prevent disk usage from growing out of control
 		buildDiscarder(
 			logRotator(
-				daysToKeepStr: '15',
-				numToKeepStr: '15',
+				daysToKeepStr: '180',
+				numToKeepStr: '50',
 			)
 		)
 	}
-
+    
 	stages {
-        stage('BuildAndTest') {
-            matrix {
-            // 22 - ansible2.12 + python3.8
-            // 3335 - ansible2.9 + python2.7
-            // 3339 - ansible2.13.1 + python3.9.13
-            // 3338 - ansible2.14.2 + python3.9.16
-                axes {
-                    axis {
-                        name 'SSH_PORT'
-                        values '3338' //'22', '3335', '3339', '3338'
+        stage('CICD-Build') {
+            agent {
+                node {
+                    label "zmf-ansible-configuration-ssh-22"
+                    customWorkspace "workspace/${env.BRANCH_NAME}"
+                }
+            }
+            
+            steps {
+                echo "****************************************************************************\n****************************************************************************"
+                echo "*** Check local env:"
+                
+                script {
+                    sh(script: """#!/bin/bash
+                        echo '==> pwd'
+                        pwd
+                        
+                        echo '==> python --version'
+                        python --version
+                        
+                        echo '==> which python'
+                        which python
+                        
+                        echo '==> ansible --version'
+                        ansible --version
+                        
+                        echo '==> which ansible'
+                        which ansible
+                    """)
+                    
+                    echo "****************************************************************************"
+                    echo "*** Check installed python:"
+                    for(int i=0; i<pythonVersionList.size(); i++) {
+                        pythonVersion = pythonVersionList[i]
+                        sh(script: """#!/bin/bash
+                            echo '==> ${pythonVersion} --version'
+                            ${pythonVersion} --version
+                            
+                            echo '==> which ${pythonVersion}'
+                            which ${pythonVersion}
+                        """)
+                    }
+                    
+                    echo "****************************************************************************"
+                    echo "Cleanup venv dir:"
+                    venvDir = "/home/test/venv"
+                    dir("${venvDir}") {
+                        sh "pwd"
+                        sh "rm -rf *"
                     }
                 }
-                agent {
-                    node {
-                        label "zmf-ansible-configuration-ssh-${SSH_PORT}"
-                        customWorkspace "workspace/${env.BRANCH_NAME}"
+                
+                echo "****************************************************************************\n****************************************************************************"
+                echo "*** Build and install ansible collection:"
+                checkout scm
+                
+                script {
+                    ansibleCollection = "/home/test/.ansible"
+                    echo "Ansible collection is: ${ansibleCollection}"
+                    dir("${ansibleCollection}") {
+                        sh "pwd"
+                        sh "rm -rf *"
+                    }
+                    
+                    remoteWorkspace = env.WORKSPACE
+                    echo "Remote workspace is: ${remoteWorkspace}"
+                    dir("${remoteWorkspace}") {
+                        sh "pwd"
+                        sh "rm ibm-ibm_zosmf-*.tar.gz"
+                        sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
+                        sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force"'
                     }
                 }
-                stages {
-                    stage('Build') {
-                        steps {
-                            echo "Hello, build on ${SSH_PORT}"
-                            sh "pwd"
-                            sh "whoami"
-
-                            checkout scm
-
-                            sh '/bin/bash -c -l "ansible --version"'
-                            dir("/home/test/.ansible") {
-                                sh "pwd"
-                                sh "rm -rf *"
-                            }
-
-
-
+            }
+        }
+        
+        stage('CICD-Test') {
+            agent {
+                node {
+                    label "zmf-ansible-configuration-ssh-22"
+                    customWorkspace "workspace/${env.BRANCH_NAME}"
+                }
+            }
+            
+            steps {
+                script {
+                    for(int i=0; i<pythonVersionList.size(); i++) {
+                        stage('Test-' + pythonVersionList[i]) {
+                            echo "****************************************************************************\n****************************************************************************"
+                            echo "*** Test on venv ${pythonVersionList[i]}:"
+                            
                             script {
-                                remoteWorkspace = env.WORKSPACE
-
-                                echo "Remote workspace is ${remoteWorkspace} on ${SSH_PORT}"
-
-                                dir("${remoteWorkspace}") {
-                                        if (fileExists('ibm-ibm_zosmf-1.4.1.tar.gz')) {
-                                                echo "ibm-ibm_zosmf-1.4.1.tar.gz existed on ${SSH_PORT}"
-                                                sh 'rm ibm-ibm_zosmf-1.4.1.tar.gz'
-                                                sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
-                                        } else {
-                                                sh '/bin/bash -c -l "ansible-galaxy collection build --force"'
-                                        }
-                                        sh "pwd"
-                                        sh '/bin/bash -c -l "ansible-galaxy collection install ibm-ibm_zosmf-1.4.1.tar.gz --force"'
-                                }
+                                pythonVersion = pythonVersionList[i]
+                                ansibleVersion = ansibleVersionList[i]
+                                venvPath = "${venvDir}/${pythonVersion}"
+                                sh(script: """#!/bin/bash
+                                    echo "****************************************************************************"
+                                    echo "*** Setup venv: ${venvPath}"
+                                    
+                                    echo '*** create:'
+                                    echo '==> ${pythonVersion} -m venv ${venvPath}'
+                                    ${pythonVersion} -m venv ${venvPath}
+                                    
+                                    echo '*** activate:'
+                                    echo '==> source ${venvPath}/bin/activate'
+                                    source ${venvPath}/bin/activate
+                                    
+                                    echo '*** install:'
+                                    echo '==> pip install --upgrade pip'
+                                    pip install --upgrade pip
+                                    echo '==> pip install ansible==${ansibleVersion}'
+                                    pip install ansible==${ansibleVersion}
+                                    echo '==> pip install ansible-lint'
+                                    pip install ansible-lint
+                                    echo '==> pip install flake8'
+                                    pip install flake8
+                                    echo '==> pip install pylint'
+                                    pip install pylint
+                                    echo '==> pip install voluptuous'
+                                    pip install voluptuous
+                                    echo '==> pip install yamllint'
+                                    pip install yamllint
+                                    echo '==> pip install rstcheck'
+                                    pip install rstcheck
+                                    echo '==> pip install bandit'
+                                    pip install bandit
+                                    
+                                    echo '*** check:'
+                                    echo '==> python --version'
+                                    python --version
+                                    echo '==> which python'
+                                    which python
+                                    echo '==> ansible --version'
+                                    ansible --version
+                                    echo '==> which ansible'
+                                    which ansible
+                                    cd ${ansibleCollection}/collections/ansible_collections/ibm/ibm_zosmf
+                                    echo '==> pwd'
+                                    pwd
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run sanity test:"
+                                    
+                                    echo '==> ${venvPath}/bin/ansible-test --version'
+                                    ${venvPath}/bin/ansible-test --version
+                                    echo '==> ${venvPath}/bin/ansible-test sanity'
+                                    ${venvPath}/bin/ansible-test sanity
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run ansible-lint:"
+                                    
+                                    echo '==> ${venvPath}/bin/ansible-lint --version'
+                                    ${venvPath}/bin/ansible-lint --version
+                                    echo '==> ${venvPath}/bin/ansible-lint plugins'
+                                    ${venvPath}/bin/ansible-lint plugins
+                                    echo '==> ${venvPath}/bin/ansible-lint roles'
+                                    ${venvPath}/bin/ansible-lint roles
+                                    echo '==> ${venvPath}/bin/ansible-lint --profile production'
+                                    ${venvPath}/bin/ansible-lint --profile production
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run bandit scan:"
+                                    
+                                    echo '==> ${venvPath}/bin/bandit --version'
+                                    ${venvPath}/bin/bandit --version
+                                    echo '==> ${venvPath}/bin/bandit -r plugins'
+                                    ${venvPath}/bin/bandit -r plugins
+                                    
+                                    echo "****************************************************************************"
+                                    echo "*** Run BVT:"
+                                    
+                                    echo '==> mkdir'
+                                    mkdir tests/CICD
+                                    mkdir tests/CICD/playbooks
+                                    mkdir tests/CICD/playbooks/group_vars
+                                    mkdir tests/CICD/playbooks/host_vars
+                                    echo '==> cp'
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/*.json tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/hosts tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks/
+                                    cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars/
+                                    cp -p /home/test/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
+                                    cp -p /home/test/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P01.yml
+                                    cd tests/CICD/playbooks
+                                    echo '==> pwd'
+                                    pwd
+                                    
+                                    echo '*** Workflow BVT:'
+                                    ${venvPath}/bin/ansible-playbook workflow_complete_CICDtest1.yml
+                                    echo '*** CPM BVT:'
+                                    ${venvPath}/bin/ansible-playbook cpm_complete_CICDtest1.yml
+                                    echo '*** SCA BVT:'
+                                    ${venvPath}/bin/ansible-playbook sca_CICDtest1.yml
+                                    echo '*** ZMSC BVT:'
+                                    ${venvPath}/bin/ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml
+                                    echo '*** SM BVT:'
+                                    ${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml
+                                    
+                                    echo "****************************************************************************"
+                                    echo '*** Test done:'
+                                    echo '==> deactivate'
+                                    deactivate
+                                """) 
                             }
-                        }
-                    }
-
-                    stage('Test') {
-                        steps {
-                            echo "sanity test on ${SSH_PORT}"
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf") {
-                                sh "pwd"
-                                sh '/bin/bash -c -l "ansible-test sanity"'
-                                sh '/bin/bash -c -l "ansible-lint plugins"'
-                                sh '/bin/bash -c -l "ansible-lint roles"'
-                                sh '/bin/bash -c -l "ansible-lint --profile production"'
-                                sh '/bin/bash -c -l "bandit -r /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/plugins/"'
-                            }
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars") {
-                                sh "cp -p /home/test/ansible-tmp/P00.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P00.yml"
-                                sh "cp -p /home/test/ansible-tmp/P01.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/host_vars/P01.yml"
-                                sh "cp -p /home/test/ansible-tmp/hosts /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/"
-                            }
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/group_vars") {
-                                sh "cp ${remoteWorkspace}/tests/CICD/playbooks/*.json /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/"
-                                sh "cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/"
-                                sh "cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml /home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks/group_vars/"
-                            }
-                            echo "SCA BVT on ${SSH_PORT}"
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
-                                sh '/bin/bash -c -l "ansible-playbook sca_CICDtest1.yml"'
-                            }
-                            echo "Workflow BVT on ${SSH_PORT}"
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
-                                sh '/bin/bash -c -l "ansible-playbook workflow_complete_CICDtest1.yml"'
-                            }
-                            echo "CPM BVT on ${SSH_PORT}"
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
-                                sh '/bin/bash -c -l "ansible-playbook cpm_complete_CICDtest1.yml"'
-                            }
-                            echo "SM BVT on ${SSH_PORT}"
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
-                                sh '/bin/bash -c -l "ansible-playbook software_management_reports_CICDtest1.yml"'
-                            }
-                            echo "ZMSC BVT on ${SSH_PORT}"
-                            dir("/home/test/.ansible/collections/ansible_collections/ibm/ibm_zosmf/tests/CICD/playbooks") {
-                                sh '/bin/bash -c -l "ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml"'
-                            }
-                            echo "CICD test successfully on ${SSH_PORT}"
                         }
                     }
                 }
