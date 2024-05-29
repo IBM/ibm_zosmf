@@ -4,6 +4,15 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
+v1.4.2
+======
+
+Minor Changes
+-------------
+
+- The README has been updated with a new template.
+- Fixed role `zmf_workflow_complete` which previously failed to return final_result.
+
 v1.4.1
 ======
 
