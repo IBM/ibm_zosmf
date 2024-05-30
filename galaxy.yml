@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2023
+# Copyright (c) IBM Corporation 2024
 
 # IBM collection namespace
 namespace: ibm
@@ -82,6 +82,5 @@ build_ignore:
   - tests/sanity/ignore-2.11.txt
   - tests/sanity/ignore-2.12.txt
   - tests/sanity/ignore-2.13.txt
-  - tests/sanity/ignore-2.14.txt
   - .idea
   - meta/context
