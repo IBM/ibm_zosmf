@@ -88,7 +88,7 @@ pipeline {
                     dir("${remoteWorkspace}") {
                         sh "pwd"
                         sh(script: """
-                            if [ -d "${remoteWorkspace}/ibm-ibm_zosmf-*.tar.gz" ]; then
+                            if [ -e "${remoteWorkspace}/ibm-ibm_zosmf-*.tar.gz" ]; then
                                 rm ${remoteWorkspace}/ibm-ibm_zosmf-*.tar.gz
                             fi
                         """)
