@@ -4,7 +4,7 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
-v1.4.2
+v1.5.0
 ======
 
 Major Changes
@@ -12,11 +12,25 @@ Major Changes
 
 - Added new roles for z/OSMF Software Management
 
+Minor Changes
+-------------
+
+- Updated the z/OSMF Software Management roles from a previous release to support UUID
+
 New Roles
 ---------
 
 - ibm.ibm_zosmf.zmf_swmgmt_csi_query - Role queries a SMP/E global zone CSI data set
 - ibm.ibm_zosmf.zmf_swmgmt_system_uuid - Role determines a z/OS system's UUID
+
+v1.4.2
+======
+
+Minor Changes
+-------------
+
+- The README has been updated with a new template.
+- Fixed role `zmf_workflow_complete` which previously failed to return final_result.
 
 v1.4.1
 ======
