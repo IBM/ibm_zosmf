@@ -1,0 +1,6 @@
+# Copyright (c) IBM Corporation 2024
+
+---
+# defaults file for zmf_swmgmt_csi_query
+async_thread_check_times: 60
+async_thread_check_delay: 1
