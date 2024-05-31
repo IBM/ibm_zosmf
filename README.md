@@ -8,7 +8,7 @@ The **IBM z/OSMF collection**, also represented as **ibm_zosmf** in this documen
 
 ## Requirements
 
-The **IBM z/OSMF collection** requires both a **control node** and **managed node** be configured with a minimum set of requirements.
+The **IBM z/OSMF collection** requires both a control node and managed node be configured with a minimum set of requirements.
 
 ### Ansible Controller
 
@@ -51,38 +51,38 @@ See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guid
 ## Use Cases
 
 * Use Case Name: Work with z/OSMF workflows
-  * Actors:
-    * System Programmer
-  * Description:
-    * An system programmer can perform various operations with z/OSMF workflows on the target z/OS systems, and complete a z/OSMF workflow forcibly or idempotently on the target z/OS systems.
-  * Flow:
-    * Check whether a workflow instance with the given name exists.
-    * Delete the workflow instance if it exists in the z/OSMF server.
-    * Create a new workflow instance and start it on each target z/OS system.
-    * Periodically check the workflow status and return the final result when the workflow completes.
-  * Sample: [Invoking z/OSMF Workflows](https://github.com/IBM/z_ansible_collections_samples/tree/main/zos_management/zosmf_workflows)
+    * Actors:
+        * System Programmer
+    * Description:
+        * An system programmer can perform various operations with z/OSMF workflows on the target z/OS systems, and complete a z/OSMF workflow forcibly or idempotently on the target z/OS systems.
+    * Flow:
+        * Check whether a workflow instance with the given name exists.
+        * Delete the workflow instance if it exists in the z/OSMF server.
+        * Create a new workflow instance and start it on each target z/OS system.
+        * Periodically check the workflow status and return the final result when the workflow completes.
+    * Sample: [Invoking z/OSMF Workflows](https://github.com/IBM/z_ansible_collections_samples/tree/main/zos_management/zosmf_workflows)
 
 * Use Case Name: Provision and manage z/OS middlewares/softwares
-  * Actors:
-    * Provisioning Administrator
-  * Description:
-    * The provisioning administrator can provision and manage z/OS middlewares/softwares, such as CICS, Db2, MQ, z/OS Connect, and WebSphere Liberty, on the target z/OS systems using templates published in the z/OSMF Software Services Catalog.
-  * Flow:
-    * Provision a z/OS middleware/software.
-    * Perform various actions to manage a provisioned software service instance.
-    * Remove a deprovisioned software service instance.
-  * Sample: [z/OSMF Cloud Provisioning and Management](https://github.com/IBM/z_ansible_collections_samples/tree/main/zos_management/zosmf_cloud_provisioning_and_management)
+    * Actors:
+        * Provisioning Administrator
+    * Description:
+        * The provisioning administrator can provision and manage z/OS middlewares/softwares, such as CICS, Db2, MQ, z/OS Connect, and WebSphere Liberty, on the target z/OS systems using templates published in the z/OSMF Software Services Catalog.
+    * Flow:
+        * Provision a z/OS middleware/software.
+        * Perform various actions to manage a provisioned software service instance.
+        * Remove a deprovisioned software service instance.
+    * Sample: [z/OSMF Cloud Provisioning and Management](https://github.com/IBM/z_ansible_collections_samples/tree/main/zos_management/zosmf_cloud_provisioning_and_management)
 
 * Use Case Name: Validate and provision security requirements
-  * Actors:
-    * Security Administrator
-  * Description:
-    * The security administrator can validate and provision security requirements on target z/OS systems by leveraging z/OSMF Security Configuration Assistant (SCA).
-  * Flow:
-    * Perform the security validation.
-    * Perform the security audit.
-    * Perform the security provision.
-  * Sample: [z/OSMF Security Configuration Assistant](https://github.com/IBM/z_ansible_collections_samples/tree/main/zos_management/zosmf_security_configuration_assistant)
+    * Actors:
+        * Security Administrator
+    * Description:
+        * The security administrator can validate and provision security requirements on target z/OS systems by leveraging z/OSMF Security Configuration Assistant (SCA).
+    * Flow:
+        * Perform the security validation.
+        * Perform the security audit.
+        * Perform the security provision.
+    * Sample: [z/OSMF Security Configuration Assistant](https://github.com/IBM/z_ansible_collections_samples/tree/main/zos_management/zosmf_security_configuration_assistant)
 
 ## Testing
 
