@@ -131,7 +131,7 @@ options:
         description:
             - >
               The list of entry types to be queried. You may provide one or more entry types,
-              or asterisk (“*”) can be used to indicate all entry types will be queried. Entry types
+              or asterisk ('*') can be used to indicate all entry types will be queried. Entry types
               are accepted in mixed case and are folded to uppercase automatically.
             - >
               Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=command-valid-entry-types
@@ -145,7 +145,7 @@ options:
         description:
             - >
               The list of subentry types to be returned. You may provide one or more subentry types,
-              or asterisk (“*”) can be used to indicate all subentry types will be returned.
+              or asterisk ('*') can be used to indicate all subentry types will be returned.
               Subentry types are accepted in mixed case and are folded to uppercase automatically.
               If no subentries are provided, then only the entry name and zone will be returned for
               matching entries.
