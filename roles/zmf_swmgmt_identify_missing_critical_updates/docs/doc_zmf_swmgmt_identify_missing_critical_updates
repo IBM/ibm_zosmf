@@ -134,10 +134,11 @@ notes:
       and response file name.
     - >
       Command syntax to call a playbook using an inventory file:
-        ansible-playbook -i inventory software_management_reports_CICDtest1.yml
+      C(ansible-playbook -i inventory software_management_reports_CICDtest1.yml)
+    - >
       Command syntax to call a playbook using command arguments:
-        ansible-playbook software_management_reports_CICDtest1.yml -e zmf_user=zosmf**
-        -e zmf_password=zosmf**
+      C(ansible-playbook software_management_reports_CICDtest1.yml -e zmf_user=zosmf**
+      -e zmf_password=zosmf**)
     - >
       When the role is executed, a message shown in following example is
       displayed, C("msg": "Output filename= /tmp/xxx/missing_critical_updates_response.json").
