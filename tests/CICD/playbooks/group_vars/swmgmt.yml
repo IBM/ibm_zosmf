@@ -21,3 +21,8 @@ updates:
   - AC00001
   - UH10003
   - FOOBAR1
+zones: ["*"]
+entries: ["*"]
+subentries: ["*"]
+filter: "INSTALLDATE >= '23203'"
+csi_query_response_file: SoftwareCsiQueryReport.json
