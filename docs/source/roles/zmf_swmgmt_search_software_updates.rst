@@ -15,7 +15,7 @@ zmf_swmgmt_search_software_updates -- Search a Software Instance for Software Up
 
 Synopsis
 --------
-- The **IBM z/OSMF collection** provides an Ansible role, referred to as **zmf_swmgmt_search_software_updates**, to search a software instance for one or more software updates to determine which updates are installed or updates that need to be installed.
+- The \ :strong:`IBM z/OSMF collection`\  provides an Ansible role, referred to as \ :strong:`zmf\_swmgmt\_search\_software\_updates`\ , to search a software instance for one or more software updates to determine which updates are installed or updates that need to be installed.
 
 
 
@@ -40,7 +40,7 @@ zmf_host
  
 
 zmf_port
-  Port number of the z/OSMF server. If z/OSMF is not using the default port, you need to specify value for this parameter in the inventory file or as an argument on the playbook command.
+  Port number of the z/OSMF server. If z/OSMF is not using the default port, you need to specify a value for this parameter in the inventory file or as an argument on the playbook command.
 
 
   | **required**: False
@@ -51,7 +51,7 @@ zmf_port
  
 
 zmf_user
-  User name to be used for authenticating with the z/OSMF server.
+  User ID for authenticating with the z/OSMF server.
 
   This variable can be specified in the inventory file or as an argument on the playbook command.
 
@@ -77,10 +77,13 @@ zmf_password
 software_instance_name
   Name of the software instance.
 
+  A software instance name must be specified when a software instance UUID is not specified. If both a software instance name and UUID are specified, then the software instance UUID is used by default.
+
+
   This variable can be specified in the inventory file or as an argument on the playbook command.
 
 
-  | **required**: True
+  | **required**: False
   | **type**: str
 
 
@@ -90,10 +93,32 @@ system_nickname
   Nickname of the z/OSMF host system that has access to the volumes and data sets where the software instance resides.
 
 
+  A system nickname must be specified when a software instance UUID is not specified. If a software instance UUID is specified in  addition to a software instance and system nickname, then the software instance UUID is used by default.
+
+
   This variable can be specified in the inventory file or as an argument on the playbook command.
 
 
-  | **required**: True
+  | **required**: False
+  | **type**: str
+
+
+ 
+
+software_instance_uuid
+  A UUID of a software instance. A UUID is assigned to every software instance and  can be obtained using the "List the software instances defined to z/OSMF" REST API.
+
+
+  A UUID can also be obtained using the zmf\_swmgmt\_zos\_system\_uuid Ansible role which retrieves the UUID for the software instance that represents the installed software for the specified z/OSMF host system.
+
+
+  A software instance UUID must be specified when a software instance name is not specified. If both a software instance UUID and name are specified, then the software instance UUID is used by default.
+
+
+  This variable can be specified in the inventory file or as an argument on the playbook command.
+
+
+  | **required**: False
   | **type**: str
 
 
@@ -118,7 +143,7 @@ updates
   The list of software update (SYSMOD) IDs to be searched in the subject software instance.
 
 
-  This list variable needs to be in following format: ``'"SYSMOD1","SYSMOD2","SYSMOD3"'``
+  This list variable needs to be in following format: \ :literal:`'"SYSMOD1","SYSMOD2","SYSMOD3"'`\ 
 
 
   | **required**: True
@@ -187,10 +212,19 @@ Notes
 -----
 
 .. note::
-   - The given example assumes you have an inventory file *inventory.yml* that contains the values for the variables described above, such as z/OSMF host server, userid, password, software instance name and system, and response file name.
+   - The given example assumes you have an inventory file \ :emphasis:`inventory.yml`\  that contains the values for the variables described above, such as z/OSMF host server, userid, password, software instance name and system, and response file name.
 
 
-   - When the role is executed, a message shown in following example is displayed, ``"msg": "Output filename= /tmp/xxx/search_software_updates_response.json"``. This message includes a file path and file name where the search software updates report for the requested software instance is returned.
+   - Command syntax to call a playbook using an inventory file: \ :literal:`ansible-playbook -i inventory software\_management\_reports\_CICDtest1.yml`\ 
+
+
+   - Command syntax to call a playbook using command arguments: \ :literal:`ansible-playbook software\_management\_reports\_CICDtest1.yml -e zmf\_user=zosmf\*\* -e zmf\_password=zosmf\*\*`\ 
+
+
+   - When the role is executed, a message shown in following example is displayed, \ :literal:`"msg": "Output filename= /tmp/xxx/search\_software\_updates\_response.json"`\ . This message includes a file path and file name where the search software updates report for the requested software instance is returned.
+
+
+   - Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=services-software-update-search for more information on the REST API's request and response JSON.
 
 
 
