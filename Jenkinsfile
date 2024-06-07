@@ -221,6 +221,8 @@ pipeline {
                                     ${venvPath}/bin/ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml
                                     echo '*** SM BVT:'
                                     ${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_system_uuid_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_csi_query_CICDtest1.yml
                                     
                                     echo "****************************************************************************"
                                     echo '*** Test done:'

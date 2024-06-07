@@ -4,6 +4,25 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
+v1.5.0
+======
+
+Major Changes
+-------------
+
+- Added new roles for z/OSMF Software Management
+
+Minor Changes
+-------------
+
+- Updated the z/OSMF Software Management roles from a previous release to support UUID
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_swmgmt_csi_query - Role queries a SMP/E global zone CSI data set
+- ibm.ibm_zosmf.zmf_swmgmt_system_uuid - Role determines a z/OS system's UUID
+
 v1.4.2
 ======
 

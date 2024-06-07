@@ -1,0 +1,336 @@
+# Copyright (c) IBM Corporation 2024
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+# Tasks file for zmf_swmgmt_csi_query play.
+
+# Do not attempt to execute the play without a software instance, a UUID, or a CSI data set name.
+- name: A software instance and system nickname, a UUID, or a CSI data set name must be provided to the role
+  ansible.builtin.fail:
+    msg: "Specify a software instance and system nickname, a UUID, or a CSI data set name and retry the role."
+  when: >
+    (software_instance_uuid is not defined or software_instance_uuid == '') and (software_instance_name is not defined or software_instance_name == ''
+    or system_nickname is not defined or system_nickname == '') and (csi_data_set_name is not defined or csi_data_set_name == '')
+
+# Issue a failure message and stop the playbook if no zones or entries were specified.
+- name: Display the CSI Query action failure information if no zones or entries were specified
+  ansible.builtin.fail:
+    msg: "One or more zones and one or more entries must be specified for the CSI query.  Specify one or more zones and one or more entries and try again."
+  when: zones is not defined or entries is not defined
+
+# Create a variable for the csi query response content when a SWI is specified.
+- name: Initialize the container for the csi query response content
+  ansible.builtin.set_fact:
+    csi_query_swi_response: ""
+  when: software_instance_uuid is not defined and csi_data_set_name is not defined
+
+# Create a variable for the csi query response content when a UUID is specified.
+- name: Initialize the container for the csi query response content
+  ansible.builtin.set_fact:
+    csi_query_uuid_response: ""
+  when: software_instance_uuid is defined and csi_data_set_name is not defined
+
+# Create a variable for the csi query response content when a CSI data set name is specified.
+- name: Initialize the container for the csi query response content
+  ansible.builtin.set_fact:
+    csi_query_dataset_response: ""
+  when: csi_data_set_name is defined
+
+# Add zones and entries to JSON request body.
+- name: "Including zones and entries in the request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{"zones": {{ zones }}, "entries": {{ entries }}'
+
+# Add subentries to the JSON request body if specified.
+- name: "Adding subentries in the request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{{ csi_query_request_body }},"subentries": {{ subentries }}'
+  when: subentries is defined
+
+# Add filter to the JSON request body if specified.
+- name: "Adding filter in the request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{{ csi_query_request_body }},"filter": "{{ filter }}"'
+  when: filter is defined
+
+# Add zosmfuid to the JSON request body if specified.
+- name: "Adding zosmfuid in the request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{{ csi_query_request_body }},"zosmfuid": "{{ remote_zmf_user }}"'
+  when: remote_zmf_user is defined
+
+# Add zosmfpw to the JSON request body if specified.
+- name: "Adding zosmfpw in the request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{{ csi_query_request_body }},"zosmfpw": "{{ remote_zmf_password }}"'
+  when: remote_zmf_password is defined
+
+# Add proxyuid to the JSON request body if specified.
+- name: "Adding proxyuid in the request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{{ csi_query_request_body }},"proxyuid": "{{ proxy_zmf_user }}"'
+  when: proxy_zmf_user is defined
+
+# Add proxypw to the JSON request body if specified.
+- name: "Adding proxypw in the request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{{ csi_query_request_body }},"proxypw": "{{ proxy_zmf_password }}"'
+  when: proxy_zmf_password is defined
+
+# Add the ending curly brace around the request content JSON.
+- name: "Adding ending curly brace for the JSON request content body"
+  ansible.builtin.set_fact:
+    csi_query_request_body: '{{ csi_query_request_body }}}'
+
+# Ensure there is a colon in the host. Add the z/OSMF server port if specified.
+- name: "Set the zmf_port if specified"
+  ansible.builtin.set_fact:
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
+  when: zmf_port is defined and ':' not in zmf_host
+
+##########################################################################################
+# URI MODULE #1: Start a csi query async request for a software instance or data set.    #
+##########################################################################################
+
+# If a SWI was specified call the SWI REST API URI.
+- name: Software Instance CSI Query
+  when: software_instance_uuid is not defined and csi_data_set_name is not defined
+  block:
+    # Start the csi query asynchronous operation.
+    - name: Querying the global zone CSI data set associated with software instance <{{ software_instance_name }}>
+      ansible.builtin.uri:
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/csiquery"
+        return_content: true
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        method: POST
+        status_code: 202, 400, 403, 404, 409, 500, 503
+        validate_certs: false
+        body_format: json
+        body: "{{ csi_query_request_body }}"
+      delegate_to: localhost
+      register: csi_query_swi_response
+
+    # Create a variable for the csi query status monitor URL.
+    - name: Set the csi query status monitor URL
+      ansible.builtin.set_fact:
+        csi_query_status_monitor_url: "{{ csi_query_swi_response.json['statusurl'] }}"
+      when: csi_query_swi_response.status == 202
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display CSI Query REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during CSI Query REST API execution. It's possible the host
+        system is missing required APAR PH58221 which contains the CSI Query REST API. Otherwise the
+        specified software instance was not found. These are the failure
+        details: {{ csi_query_swi_response.json }}"
+      when: csi_query_swi_response.status == 404 and csi_query_swi_response.json is defined
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display CSI Query REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during CSI Query REST API execution. It's possible the host
+        system is missing required APAR PH58221 which contains the CSI Query REST API. Otherwise the
+        specified software instance was not found. These are the failure
+        details: {{ csi_query_swi_response }}"
+      when: csi_query_swi_response.status == 404
+
+    # Issue a failure message when user does not have the appropriate authority.
+    - name: The user does not have the appropriate authority to complete this request
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_swi_response.json }} "
+      when: csi_query_swi_response.status == 403 and csi_query_swi_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the csi query action failure information
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_swi_response.json }} "
+      when: csi_query_swi_response.status != 202 and csi_query_swi_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the csi query action failure information
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_swi_response }} "
+      when: csi_query_swi_response.status != 202
+
+# If a UUID was specified call the UUID REST API URI.
+- name: Software Instance UUID CSI Query
+  when: software_instance_uuid is defined
+  block:
+    # Start the csi query asynchronous operation.
+    - name: Querying the global zone CSI data set associated with software instance with UUID <{{ software_instance_uuid }}>
+      ansible.builtin.uri:
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/csiquery"
+        return_content: true
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        method: POST
+        status_code: 202, 400, 403, 404, 409, 500, 503
+        validate_certs: false
+        body_format: json
+        body: "{{ csi_query_request_body }}"
+      delegate_to: localhost
+      register: csi_query_uuid_response
+
+    # Create a variable for the csi query status monitor URL.
+    - name: Set the csi query status monitor URL
+      ansible.builtin.set_fact:
+        csi_query_status_monitor_url: "{{ csi_query_uuid_response.json['statusurl'] }}"
+      when: csi_query_uuid_response.status == 202
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display CSI Query REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during CSI Query REST API execution. It's possible the host
+        system is missing required APAR PH58221 which contains the CSI Query REST API. Otherwise the
+        specified software instance was not found. These are the failure
+        details: {{ csi_query_uuid_response.json }}"
+      when: csi_query_uuid_response.status == 404 and csi_query_uuid_response.json is defined
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display CSI Query REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during CSI Query REST API execution. It's possible the host
+        system is missing required APAR PH58221 which contains the CSI Query REST API. Otherwise the
+        specified software instance was not found. These are the failure
+        details: {{ csi_query_uuid_response }}"
+      when: csi_query_uuid_response.status == 404
+
+    # Issue a failure message when user does not have the appropriate authority.
+    - name: The user does not have the appropriate authority to complete this request
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_uuid_response.json }} "
+      when: csi_query_uuid_response.status == 403 and csi_query_uuid_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the csi query action failure information
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_uuid_response.json }} "
+      when: csi_query_uuid_response.status != 202 and csi_query_uuid_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the csi query action failure information
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_uuid_response }} "
+      when: csi_query_uuid_response.status != 202
+
+# If a CSI data set name was specified and not a UUID, call the CSI data set name REST API URI.
+- name: Data Set CSI Query
+  when: csi_data_set_name is defined and software_instance_uuid is not defined
+  block:
+    # Start the csi query asynchronous operation.
+    - name: Querying the global zone CSI data set <{{ csi_data_set_name }}>
+      ansible.builtin.uri:
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/csi/csiquery/{{ csi_data_set_name }}"
+        return_content: true
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        method: POST
+        status_code: 202, 400, 403, 404, 409, 500, 503
+        validate_certs: false
+        body_format: json
+        body: "{{ csi_query_request_body }}"
+      delegate_to: localhost
+      register: csi_query_dataset_response
+
+    # Create a variable for the csi query status monitor URL.
+    - name: Set the csi query status monitor URL
+      ansible.builtin.set_fact:
+        csi_query_status_monitor_url: "{{ csi_query_dataset_response.json['statusurl'] }}"
+      when: csi_query_dataset_response.status == 202
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display CSI Query REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during CSI Query REST API execution. It's possible the host
+        system is missing required APAR PH58221 which contains the CSI Query REST API. Otherwise the
+        specified software instance was not found. These are the failure
+        details: {{ csi_query_dataset_response.json }}"
+      when: csi_query_dataset_response.status == 404 and csi_query_dataset_response.json is defined
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display CSI Query REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during CSI Query REST API execution. It's possible the host
+        system is missing required APAR PH58221 which contains the CSI Query REST API. Otherwise the
+        specified CSI data set was not found. These are the failure
+        details: {{ csi_query_dataset_response }}"
+      when: csi_query_dataset_response.status == 404
+
+    # Issue a failure message when user does not have the appropriate authority.
+    - name: The user does not have the appropriate authority to complete this request
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_dataset_response.json }} "
+      when: csi_query_dataset_response.status == 403 and csi_query_dataset_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the csi query action failure information
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_dataset_response.json }} "
+      when: csi_query_dataset_response.status != 202 and csi_query_dataset_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the csi query action failure information
+      ansible.builtin.fail:
+        msg: "CSI Query failure details: {{ csi_query_dataset_response }} "
+      when: csi_query_dataset_response.status != 202
+
+###################################################################
+# URI MODULE #2: Check the status of the csi query async request. #
+###################################################################
+
+# Wait for the asynchronous thread to finish and return a response.
+- name: "Poll the status monitor URL of the csi query operation every {{ async_thread_check_delay }}
+second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
+  ansible.builtin.uri:
+    url: "{{ csi_query_status_monitor_url }}"
+    method: GET
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    status_code: 200
+    validate_certs: false
+    return_content: true
+  register: csi_query_response
+  delegate_to: localhost
+  # This task's URL will be called repeatedly either until the "until" condition is met (request failed or
+  # request completed) or the request still isn't finished after the specified "complete_check_times" attempts.
+  until: (csi_query_response is failed) or (csi_query_response.json['status'] == 'complete')
+  retries: "{{ async_thread_check_times }}"
+  delay: "{{ async_thread_check_delay }}"
+
+# Save the csi query operation's response in a file.
+- name: Write the results for the csi query operation to a JSON file
+  block:
+    # Perform the copy of the csi query response to the file.
+    - name: "Copy the csi query results to JSON file <{{ csi_query_response_file }}>"
+      ansible.builtin.copy:
+        content: '{{ csi_query_response.json | default("") | to_nice_json(indent=2) }}'
+        dest: '{{ csi_query_response_file }}'
+        mode: '0644'
+      delegate_to: localhost
+
+    # Save the response content into a local variable.
+    - name: Create a variable to hold the value of the csi query results
+      ansible.builtin.set_fact:
+        csi_query_response_json: "{{ csi_query_response.json }}"
+
+# Show the path to the csi query REST API results file.
+- name: Display the path to the file containing the results from the csi query operation
+  ansible.builtin.debug:
+    msg: "Output filename= {{ csi_query_response_file }}"

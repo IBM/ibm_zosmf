@@ -1,0 +1,209 @@
+# Copyright (c) IBM Corporation 2024
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+# Tasks file for zmf_swmgmt_zos_system_uuid play.
+
+# Create a variable for the z/OS system UUID response content.
+- name: Initialize the container for the z/OS system UUID response content when a system nickname is specified.
+  ansible.builtin.set_fact:
+    zos_system_uuid_response: ""
+
+# Create a variable for the z/OS system UUID response content.
+- name: Initialize the container for the z/OS system UUID response content when a system nickname is not specified.
+  ansible.builtin.set_fact:
+    zos_system_uuid_hostname_response: ""
+
+# Set comma variable to empty string to use for first variable added to request content.
+- name: "Create comma variable"
+  ansible.builtin.set_fact:
+    comma: ''
+
+# Add the opening curly brace around the request content JSON.
+- name: "Adding opening curly brace for the JSON request content body"
+  ansible.builtin.set_fact:
+    zos_system_uuid_request_body: '{'
+
+# Add zosmfuid to the JSON request body if specified.
+- name: "Adding zosmfuid in the request content body"
+  ansible.builtin.set_fact:
+    zos_system_uuid_request_body: '{{ zos_system_uuid_request_body }}{{ comma }}"zosmfuid": "{{ remote_zmf_user }}"'
+    comma: ','
+  when: remote_zmf_user is defined
+
+# Add zosmfpw to the JSON request body if specified.
+- name: "Adding zosmfpw in the request content body"
+  ansible.builtin.set_fact:
+    zos_system_uuid_request_body: '{{ zos_system_uuid_request_body }}{{ comma }}"zosmfpw": "{{ remote_zmf_password }}"'
+    comma: ','
+  when: remote_zmf_password is defined
+
+# Add proxyuid to the JSON request body if specified.
+- name: "Adding proxyuid in the request content body"
+  ansible.builtin.set_fact:
+    zos_system_uuid_request_body: '{{ zos_system_uuid_request_body }}{{ comma }}"proxyuid": "{{ proxy_zmf_user }}"'
+    comma: ','
+  when: proxy_zmf_user is defined
+
+# Add proxypw to the JSON request body if specified.
+- name: "Adding proxypw in the request content body"
+  ansible.builtin.set_fact:
+    zos_system_uuid_request_body: '{{ zos_system_uuid_request_body }}{{ comma }}"proxypw": "{{ proxy_zmf_password }}"'
+  when: proxy_zmf_password is defined
+
+# Add the ending curly brace around the request content JSON.
+- name: "Adding ending curly brace for the JSON request content body"
+  ansible.builtin.set_fact:
+    zos_system_uuid_request_body: '{{ zos_system_uuid_request_body }}}'
+
+# Ensure there is a colon in the host. Add the z/OSMF server port if specified.
+- name: "Set the zmf_port if specified"
+  ansible.builtin.set_fact:
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
+  when: zmf_port is defined and ':' not in zmf_host
+
+##########################################################################################
+# URI MODULE #1: Obtain the UUID for a z/OS system.                                      #
+##########################################################################################
+
+# If a system nickname was specified call the REST API using that system nickname.
+- name: The z/OS System UUID REST API using a system nickname
+  when: system_nickname is defined
+  block:
+    # Start the z/OS system UUID operation.
+    - name: "Determining the UUID for z/OS system <{{ system_nickname }}>"
+      ansible.builtin.uri:
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/system/uuid/{{ system_nickname }}"
+        return_content: true
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        method: POST
+        status_code: 200, 400, 403, 404, 409, 500, 503
+        validate_certs: false
+        body_format: json
+        body: "{{ zos_system_uuid_request_body }}"
+      delegate_to: localhost
+      register: zos_system_uuid_response
+
+    # Issue a failure message when the z/OS system does not have a UUID.
+    - name: The z/OS system does not have a UUID
+      ansible.builtin.fail:
+        msg: "The z/OS system {{ system_nickname }} does not have a UUID."
+      when: zos_system_uuid_response.status == 200 and not zos_system_uuid_response.json['uuid']
+
+    # Create a variable for the z/OS system UUID.
+    - name: Set the z/OS system's UUID
+      ansible.builtin.set_fact:
+        software_instance_uuid: "{{ zos_system_uuid_response.json['uuid'] }}"
+      when: zos_system_uuid_response.status == 200
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display z/OS system UUID REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during z/OS system UUID REST API execution. It's possible the host
+        system is missing required APAR PH49464 which contains the retrieve z/OS system UUID REST API. Otherwise
+        the specified software instance was not found. These are the failure
+        details: {{ zos_system_uuid_response.json }}"
+      when: zos_system_uuid_response.status == 404 and zos_system_uuid_response.json is defined
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display z/OS system UUID REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during z/OS system UUID REST API execution. It's possible the host
+        system is missing required APAR PH49464 which contains the retrieve z/OS system UUID REST API. Otherwise
+        the specified software instance was not found. These are the failure
+        details: {{ zos_system_uuid_response }}"
+      when: zos_system_uuid_response.status == 404
+
+    # Issue a failure message when user does not have the appropriate authority.
+    - name: The user does not have the appropriate authority to complete this request
+      ansible.builtin.fail:
+        msg: "Missing Critical Updates failure details: {{ zos_system_uuid_response.json }} "
+      when: zos_system_uuid_response.status == 403 and zos_system_uuid_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the z/OS system UUID action failure information
+      ansible.builtin.fail:
+        msg: "z/OS system UUID failure details: {{ zos_system_uuid_response.json }} "
+      when: zos_system_uuid_response.status != 200 and zos_system_uuid_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the z/OS system UUID action failure information
+      ansible.builtin.fail:
+        msg: "z/OS system UUID failure details: {{ zos_system_uuid_response }} "
+      when: zos_system_uuid_response.status != 200
+
+# If a system nickname was not specified call the REST API without a system nickname.
+- name: The z/OS System UUID REST API using the host name
+  when: system_nickname is not defined
+  block:
+    # Start the z/OS system UUID operation.
+    - name: "Determining the UUID for z/OS system with host name <{{ zmf_host }}>"
+      ansible.builtin.uri:
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/system/uuid"
+        return_content: true
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        method: POST
+        status_code: 200, 400, 403, 404, 409, 500, 503
+        validate_certs: false
+        body_format: json
+        body: "{{ zos_system_uuid_request_body }}"
+      delegate_to: localhost
+      register: zos_system_uuid_hostname_response
+
+    # Issue a failure message when the z/OS host system does not have a UUID.
+    - name: The z/OS host system does not have a UUID
+      ansible.builtin.fail:
+        msg: "The z/OS system with host name {{ zmf_host }} does not have a UUID."
+      when: zos_system_uuid_hostname_response.status == 200 and not zos_system_uuid_hostname_response.json['uuid']
+
+    # Create a variable for the z/OS system UUID.
+    - name: Set the z/OS system's UUID
+      ansible.builtin.set_fact:
+        software_instance_uuid: "{{ zos_system_uuid_hostname_response.json['uuid'] }}"
+      when: zos_system_uuid_hostname_response.status == 200
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display z/OS system UUID REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during z/OS system UUID REST API execution. It's possible the host
+        system is missing required APAR PH49464 which contains the retrieve z/OS system UUID REST API. Otherwise
+        the specified software instance was not found. These are the failure
+        details: {{ zos_system_uuid_hostname_response.json }}"
+      when: zos_system_uuid_hostname_response.status == 404 and zos_system_uuid_hostname_response.json is defined
+
+    # Issue a failure message when user does not have the APAR with the report APIs installed on their system.
+    - name: Display z/OS system UUID REST API failure information
+      ansible.builtin.fail:
+        msg: "There was an error encountered during z/OS system UUID REST API execution. It's possible the host
+        system is missing required APAR PH49464 which contains the retrieve z/OS system UUID REST API. Otherwise
+        the specified software instance was not found. These are the failure
+        details: {{ zos_system_uuid_hostname_response }}"
+      when: zos_system_uuid_hostname_response.status == 404
+
+    # Issue a failure message when user does not have the appropriate authority.
+    - name: The user does not have the appropriate authority to complete this request
+      ansible.builtin.fail:
+        msg: "Missing Critical Updates failure details: {{ zos_system_uuid_hostname_response.json }} "
+      when: zos_system_uuid_hostname_response.status == 403 and zos_system_uuid_hostname_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the z/OS system UUID action failure information
+      ansible.builtin.fail:
+        msg: "z/OS system UUID failure details: {{ zos_system_uuid_hostname_response.json }} "
+      when: zos_system_uuid_hostname_response.status != 200 and zos_system_uuid_hostname_response.json is defined
+
+    # Issue a failure message and stop the playbook.
+    - name: Display the z/OS system UUID action failure information
+      ansible.builtin.fail:
+        msg: "z/OS system UUID failure details: {{ zos_system_uuid_hostname_response }} "
+      when: zos_system_uuid_hostname_response.status != 200
