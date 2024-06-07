@@ -103,3 +103,18 @@ releases:
         - The README has been updated with a new template.
         - Fixed role `zmf_workflow_complete` which previously failed to return final_result.
     release_date: '2024-06-01'
+  1.5.0:
+    changes:
+      major_changes:
+        - Added new roles for z/OSMF Software Management
+      minor_changes:
+        - Updated the z/OSMF Software Management roles from a previous release to support UUID
+    objects:
+      role:
+        - description: Role queries a SMP/E global zone CSI data set
+          name: ibm.ibm_zosmf.zmf_swmgmt_csi_query
+          namespace: null
+        - description: Role determines a z/OS system's UUID
+          name: ibm.ibm_zosmf.zmf_swmgmt_system_uuid
+          namespace: null
+    release_date: '2024-06-07'

@@ -6,6 +6,27 @@
 Releases
 ========
 
+Version 1.5.0
+=============
+
+Notes
+-----
+
+* Added new roles for z/OSMF Software Management
+* Updated the z/OSMF Software Management roles from a previous release to support UUID
+
+* New roles
+
+  * `zmf_swmgmt_csi_query`_
+  * `zmf_swmgmt_system_uuid`_
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
 Version 1.4.2
 =============
 
@@ -280,6 +301,12 @@ Reference
 
 .. _zmf_zmsc_run_management_service:
    roles/zmf_zmsc_run_management_service.html
+
+.. _zmf_swmgmt_csi_query:
+   roles/zmf_swmgmt_csi_query.html
+
+.. _zmf_swmgmt_system_uuid:
+   roles/zmf_swmgmt_system_uuid.html
 
 .. _Automation Hub:
    https://www.ansible.com/products/automation-hub
