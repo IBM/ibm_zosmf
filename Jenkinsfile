@@ -22,7 +22,7 @@ pipeline {
         stage('CICD-Build') {
             agent {
                 node {
-                    label "zmf-ansible-configuration-ssh-22"
+                    label "zmf-ansible-agent"
                     customWorkspace "workspace/${env.BRANCH_NAME}"
                 }
             }
@@ -102,7 +102,7 @@ pipeline {
         stage('CICD-Test') {
             agent {
                 node {
-                    label "zmf-ansible-configuration-ssh-22"
+                    label "zmf-ansible-agent"
                     customWorkspace "workspace/${env.BRANCH_NAME}"
                 }
             }
