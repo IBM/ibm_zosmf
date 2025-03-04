@@ -1,5 +1,5 @@
-def pythonVersionList = ["python3.10", "python3.11"]
-def ansibleVersionList = ["8.7.0", "9.5.1"] // (ansible-core) ["2.15.12", "2.16.6"]
+def pythonVersionList = ["python3.11", "python3.12"]
+def ansibleVersionList = ["11.3.0"] // (ansible-core) ["2.18.3"]
 
 pipeline {
 	agent none
