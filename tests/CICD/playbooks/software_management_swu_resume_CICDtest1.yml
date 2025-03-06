@@ -1,0 +1,44 @@
+# Copyright (c) IBM Corporation 2025
+# This playbook demonstrates using roles:
+# 'zmf_swupdate_resume', 'zmf_swupdate_retrieve',
+# and 'zmf_swupdate_copy' to complete the software management
+# software update Resume, Retrieve, and Copy REST APIs.
+
+#######################################################################################
+# PLAY #1: Resume the Software Update.                                                #
+#######################################################################################
+- name: Resume a Software Update on a Software Instance
+  hosts: swupdate_resume
+  gather_facts: false
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - name: Resume Software Update
+      include_role:
+        name: zmf_swupdate_resume
+
+#######################################################################################
+# PLAY #2: Retrieve the Status of the Software Update.                                #
+#######################################################################################
+- name: Retrieve the Status of the Software Update after Resolve Holds were specified
+  hosts: swupdate_resume
+  gather_facts: false
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - name: Retrieve Software Update Status
+      include_role:
+        name: zmf_swupdate_retrieve
+
+#######################################################################################
+# PLAY #3: Copy the Software Update output to a directory.                            #
+#######################################################################################
+- name: Copy the output from the Software Update
+  hosts: swupdate_resume
+  gather_facts: false
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - name: Copy Software Update
+      include_role:
+        name: zmf_swupdate_copy
