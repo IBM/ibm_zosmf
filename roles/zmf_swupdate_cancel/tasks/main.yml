@@ -10,7 +10,7 @@
     msg: "Specify a software instance and system nickname, a UUID, or a software update process ID and retry the role."
   when: >
     (software_instance_uuid is not defined or software_instance_uuid == '') and (software_instance_name is not defined or software_instance_name == ''
-    or system_nickname is not defined or system_nickname == '') and (software_update_process_ID is not defined or software_update_process_ID == '')
+    or system_nickname is not defined or system_nickname == '') and (swupdate_process_id is not defined or swupdate_process_id == '')
 
 # Create a variable for the cancel software update response content.
 - name: Initialize the container for the cancel software update response content
@@ -29,16 +29,16 @@
 
 # Wait for the software update process to finish and return a response.
 - name: "Cancel Software Update by Process ID"
-  when: software_update_process_ID is defined
+  when: swupdate_process_id is defined
   block:
     # Create a variable for the cancel software update response content when a process ID is specified.
     - name: Initialize the container for the cancel software update by process ID response content
       ansible.builtin.set_fact:
         swupdate_cancel_processid_response: ""
 
-    - name: "Cancel the software update process with ID <{{ software_update_process_ID }}>"
+    - name: "Cancel the software update process with ID <{{ swupdate_process_id }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/cancel/{{ software_update_process_ID }}"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/cancel/{{ swupdate_process_id }}"
         method: POST
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -58,7 +58,7 @@
 
 # Wait for the software update process to finish and return a response.
 - name: "Cancel Software Update by Software Instance UUID"
-  when: software_update_process_ID is not defined and software_instance_uuid is defined
+  when: swupdate_process_id is not defined and software_instance_uuid is defined
   block:
     # Create a variable for the cancel software update response content when a SWI UUID is specified.
     - name: Initialize the container for the cancel software update by software instance UUID response content
@@ -87,7 +87,7 @@
 
 # Wait for the software update process to finish and return a response.
 - name: "Cancel Software Update by Software Instance Name and System"
-  when: software_update_process_ID is not defined and software_instance_uuid is not defined and software_instance_name is defined
+  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
   block:
     # Create a variable for the cancel software update response content when a SWI is specified.
     - name: Initialize the container for the cancel software update by software instance name and system response content

@@ -2,14 +2,13 @@
 
 
 DOCUMENTATION = r"""
-role: zmf_swmgmt_identify_missing_critical_updates
-short_description: Identify Missing Critical Software Updates for a Software Instance
+role: zmf_swupdate_start
+short_description: Start a Software Update
 description:
     - >
       The B(IBM z/OSMF collection) provides an Ansible role, referred to as
-      B(zmf_swmgmt_identify_missing_critical_updates), to determine if a software instance is missing software updates
-      to resolve PE PTFs, HIPER fixes, or other exception SYSMODs identified by ERROR HOLDDATA.  It also helps you
-      identify the SYSMODs that resolve those exceptions.
+      B(zmf_swupdate_start), to start a software update process on a
+      software instance.
 author:
     - Taylor Digilio (Taylor.Digilio@ibm.com)
 options:
@@ -91,18 +90,186 @@ options:
               the playbook command.
         required: False
         type: str
-    missing_critical_updates_response_file:
+    target_zone:
         description:
-            - The path to the file that will contain the results from the missing critical updates operation.
+            - The software instance target zone into which the software updates will be installed.
             - >
-              The directory must already exist otherwise there will be an error writing the
-              results to the file. If the file exists in the directory already, it will be
-              overwritten by the new response when the playbook is executed. If the file
-              doesn't exist in the directory, it will be created.
+              The target zone must be 1-7 characters long and is accepted in mixed case and is
+              folded to uppercase automatically. It may consist of alphabetic, numeric, and
+              national characters (@,#,$) and must begin with an alphabetic or national character.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
         required: True
+        type: str
+    updates:
+        description:
+            - >
+              The list of individual software updates to install by name. Any software update that resolves
+              an error for a specified update will be selected automatically for installation. For
+              experienced SMP/E users, this means z/OSMF uses the SMP/E GROUPEXTEND option to forward
+              fix PE PTFs.
+            - >
+              Update names must be 7 characters long and are accepted in mixed case and are folded to
+              uppercase automatically. They may consist of alphabetic, numeric, and national characters
+              (@,#,$).
+            - >
+              This property is mutually exclusive with the sourceids and fixcats properties. One of the
+              updates, sourceids, or fixcats properties must be specified.
+            - >
+              The updates array needs to be in the following format:
+              C('"UPDATE1","UPDATE2"')
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    sourceids:
+        description:
+            - >
+              List of source IDs assigned to software updates to be installed. Source IDs identify
+              groups of updates and may indicate whether updates are recommended by the vendor and when,
+              from where or how updates were aquired, or other update categories. Any software update
+              assigned to a selected source ID that has an unresolved error will be excluded
+              automatically from installation. For experienced SMP/E users, this means PE PTFs will
+              be automatically excluded.
+            - >
+              Source IDs are accepted in mixed case and are folded to uppercase automatically by
+              SMP/E. They must be 1-64 characters long and can consist of any nonblank characters
+              except for single quotes ('), commas (,), left parentheses ((), and right parentheses ()).
+            - >
+              This property is mutually exclusive with the updates and fixcats properties. One of the
+              updates, sourceids, or fixcats properties must be specified.
+            - >
+              The sourceids array needs to be in the following format:
+              C('"SOURCEID1","SOURCEID2"')
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    fixcats:
+        description:
+            - >
+              List of fix categories associated with software updates to be installed. Fix categories
+              identify updates which support new hardware, software, or functions. Any software
+              update that resolves an error for a selected update will be selected automatically
+              for installation. For experienced SMP/E users, this means z/OSMF uses the SMP/E
+              GROUPEXTEND option to forward fix PE PTFs.
+            - >
+              Fix categories are accepted in mixed case and are folded to uppercase automatically by
+              SMP/E. They must be 1-64 characters long and can consist of any nonblank characters
+              except for single quotes ('), commas (,), left parentheses ((), and right parentheses ()).
+            - >
+              This property is mutually exclusive with the updates and sourceids properties. One of the
+              updates, sourceids, or fixcats properties must be specified.
+            - >
+              The fixcats array needs to be in the following format:
+              C('"FIXCAT1","FIXCAT2"')
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    suspend_steps:
+        description:
+            - >
+              The RESOLVE_HOLDS and PRE_INSTALLATION_SUMMARY steps may be specified on the
+              suspend-steps property to allow for review or interaction of the update process.
+              A software update process has 6 steps:
+            - >
+              PREPARING_UPDATES: z/OSMF is performing an APPLY CHECK to identify HOLDs for
+              review and ensure no missing requisites.
+            - >
+              RESOLVE_HOLDS: User reviews and resolves each HOLD, either bypass the HOLD or
+              exclude the update.
+            - >
+              VERIFYING_UPDATES: z/OSMF performs APPLY CHECK to validate the HOLD resolution
+              choices.
+            - >
+              PRE_INSTALLATION_SUMMARY: User reviews the list of updates that will be installed.
+            - >
+              INSTALLATION: z/OSMF performs the APPLY.
+            - >
+              COMPLETE: The installation is complete. User should review any HOLDs that need
+              ACTION after the APPLY.
+            - >
+              The suspend-steps array needs to be in the following format:
+              C('"SUSPEND-STEP1","SUSPEND-STEP2"')
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    exclude_updates:
+        description:
+            - >
+              List of software update names to exclude from the installation.
+            - >
+              Update names must be 7 characters long and are accepted in mixed case and are folded to
+              uppercase automatically. They may consist of alphabetic, numeric, and national
+              characters (@,#,$).
+            - >
+              The exclude-updates array needs to be in the following format:
+              C('"UPDATE1","UPDATE2"')
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    resolve_holds:
+        description:
+            - >
+              List of resolve-options to resolve HOLDs. If resolve-options are not provided, or there are
+              other HOLDs to be resolved, the software update process will suspend at the RESOLVE_HOLDS
+              step and cannot proceed until all HOLDs have been resolved.
+            - >
+              The resolve-holds array needs to be in the following format:
+              C('[{"type":"TYPE1","reason":"REASON1","names":["UPDATE1"]},
+              {"type":"TYPE2","reason":"REASON2","names":["UPDATE2"]}]')
+            - >
+              Below are the descriptions of the resolve-hold object properties:
+            - >
+              type: The hold type of the hold. This property is required if resolve-holds is specified.
+              Valid hold types are "SYSTEM", "ERROR", "FIXCAT", and "USER". For more information about hold
+              types see https://www.ibm.com/docs/en/zos/3.1.0?topic=statements-hold-mcs in z/OS SMP/E
+              Reference.
+            - >
+              reason: The reason value for the hold. The hold reason must be 1-7 characters long and is
+              accepted in mixed case and is folded to uppercase automatically. It may consist of alphabetic,
+              numeric, and national characters (@,#,$). If a hold-reason is not provided, all holds of the
+              specified hold-type will be resolved.
+            - >
+              names: List of update names for which to resolve the specified hold-type and
+              hold-reason. This property is only allowed for the SYSTEM hold-type. If a list of update
+              names is not provided, all holds of the specified hold-type, and hold-reason if specifed,
+              will be resolved.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    smpe_userid:
+        description:
+            - The user ID used to run SMP/E operations instead of your z/OSMF user ID.
+            - >
+              Your z/OSMF user ID acts as a surrogate user to run SMP/E on behalf of the specified user.
+            - >
+              If an SMP/E user ID is not specified in the request content, but an SMP/E user ID is specified
+              in the Software Update UI Settings Page, for the logged-in user and selected system, that
+              SMP/E user ID will be used to start the TSO address space and perform the SMP/E operations.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    notes:
+        description:
+            - Notes about the software update process. The maximum length for the notes property is 140 characters.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
         type: str
     remote_zmf_user:
         description:
@@ -131,27 +298,19 @@ notes:
       The given example assumes you have an inventory file
       I(inventory.yml) that contains the values for the variables described above,
       such as z/OSMF host server, userid, password, software instance name and system,
-      and response file name.
+      and request content variables.
     - >
       Command syntax to call a playbook using an inventory file:
-      C(ansible-playbook -i inventory software_management_reports_CICDtest1.yml)
+      C(ansible-playbook -i inventory software_management_swu_start_CICDtest1.yml)
     - >
       Command syntax to call a playbook using command arguments:
-      C(ansible-playbook software_management_reports_CICDtest1.yml -e zmf_user=zosmf**
+      C(ansible-playbook software_management_swu_start_CICDtest1.yml -e zmf_user=zosmf**
       -e zmf_password=zosmf**)
-    - >
-      When the role is executed, a message shown in following example is
-      displayed, C("msg": "Output filename= /tmp/xxx/missing_critical_updates_response.json").
-      This message includes a file path and file name where the missing critical updates report
-      for the requested software instance is returned.
-    - >
-      Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=services-missing-critical-updates
-      for more information on the REST API's request and response JSON.
 
 """
 
 EXAMPLES = r"""
-- name: sample of identifying missing critical software updates for a software instance
+- name: sample of starting a software update on a software instance
   hosts: sampleHost
   gather_facts: no
   collections:
@@ -159,7 +318,7 @@ EXAMPLES = r"""
 
   tasks:
     - include_role :
-        name: zmf_swmgmt_identify_missing_critical_updates
+        name: zmf_swupdate_start
 
 """
 

@@ -210,7 +210,7 @@
 # Create a variable for the software update process ID.
 - name: Set the software update process ID
   ansible.builtin.set_fact:
-    software_update_process_ID: "{{ swupdate_start_response.json['processid'] }}"
+    swupdate_process_id: "{{ swupdate_start_response.json['processid'] }}"
   when: swupdate_start_response.status == 202
 
   # Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
