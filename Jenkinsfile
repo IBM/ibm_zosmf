@@ -1,5 +1,5 @@
-def pythonVersionList = ["python3.11", "python3.12"]
-def ansibleVersionList = ["11.3.0"] // (ansible-core) ["2.18.3"]
+def pythonVersionList = ["python3.10", "python3.11"]
+def ansibleVersionList = ["8.7.0", "9.5.1"] // (ansible-core) ["2.15.12", "2.16.6"]
 
 pipeline {
 	agent none
@@ -22,7 +22,7 @@ pipeline {
         stage('CICD-Build') {
             agent {
                 node {
-                    label "zmf-ansible-agent"
+                    label "zmf-ansible-configuration-ssh-22"
                     customWorkspace "workspace/${env.BRANCH_NAME}"
                 }
             }
@@ -102,7 +102,7 @@ pipeline {
         stage('CICD-Test') {
             agent {
                 node {
-                    label "zmf-ansible-agent"
+                    label "zmf-ansible-configuration-ssh-22"
                     customWorkspace "workspace/${env.BRANCH_NAME}"
                 }
             }
@@ -223,6 +223,10 @@ pipeline {
                                     ${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml
                                     ${venvPath}/bin/ansible-playbook software_management_system_uuid_CICDtest1.yml
                                     ${venvPath}/bin/ansible-playbook software_management_csi_query_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_swu_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_swu_start_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_swu_resume_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_swu_cancel_CICDtest1.yml
                                     
                                     echo "****************************************************************************"
                                     echo '*** Test done:'
