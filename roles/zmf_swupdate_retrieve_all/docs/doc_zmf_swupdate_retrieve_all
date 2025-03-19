@@ -1,0 +1,143 @@
+# Copyright (c) IBM Corporation 2025
+
+
+DOCUMENTATION = r"""
+role: zmf_swupdate_retrieve_all
+short_description: Retrieve the status of all Software Updates
+description:
+    - >
+      The B(IBM z/OSMF collection) provides an Ansible role, referred to as
+      B(zmf_swupdate_retrieve_all), retrieves all software update processes
+      on a software instance.
+author:
+    - Taylor Digilio (Taylor.Digilio@ibm.com)
+options:
+    zmf_host:
+        description:
+            - >
+              Hostname of the z/OSMF server, specified in the inventory file
+              or as an argument on the playbook command.
+        required: True
+        type: str
+    zmf_port:
+        description:
+            - >
+              Port number of the z/OSMF server.
+              If z/OSMF is not using the default port, you need to specify a
+              value for this parameter in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+        default: 443
+    zmf_user:
+        description:
+            - User ID for authenticating with the z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: True
+        type: str
+    zmf_password:
+        description:
+            - Password to be used for authenticating with z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: True
+        type: str
+    software_instance_name:
+        description:
+            - Name of the software instance.
+            - >
+              A software instance name must be specified when a software instance UUID
+              is not specified. If both a software instance name and UUID are
+              specified, then the software instance UUID is used by default.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    system_nickname:
+        description:
+            - >
+              Nickname of the z/OSMF host system that has access to the volumes and
+              data sets where the software instance resides.
+            - >
+              A system nickname must be specified when a software instance UUID
+              is not specified. If a software instance UUID is specified in 
+              addition to a software instance and system nickname, then the
+              software instance UUID is used by default.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    software_instance_uuid:
+        description:
+            - >
+              A UUID of a software instance. A UUID is assigned to every software instance and
+              can be obtained using the "List the software instances defined to z/OSMF" REST API.
+            - >
+              A UUID can also be obtained using the zmf_swmgmt_zos_system_uuid Ansible role which
+              retrieves the UUID for the software instance that represents the installed software
+              for the specified z/OSMF host system.
+            - >
+              A software instance UUID must be specified when a software instance name
+              is not specified. If both a software instance UUID and name are
+              specified, then the software instance UUID is used by default.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    swupdate_retrieve_all_response_file:
+        description:
+            - The path to the file that will contain the results from the retrieve all
+              software updates operation.
+            - >
+              The directory must already exist otherwise there will be an error writing the
+              results to the file. If the file exists in the directory already, it will be
+              overwritten by the new response when the playbook is executed. If the file
+              doesn't exist in the directory, it will be created.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: True
+        type: str
+notes:
+    - >
+      The given example assumes you have an inventory file
+      I(inventory.yml) that contains the values for the variables described above,
+      such as z/OSMF host server, userid, password, software instance name, and system.
+    - >
+      Command syntax to call a playbook using an inventory file:
+      C(ansible-playbook -i inventory software_management_swu_retrieve_all_CICDtest1.yml)
+    - >
+      Command syntax to call a playbook using command arguments:
+      C(ansible-playbook software_management_swu_retrieve_all_CICDtest1.yml -e zmf_user=zosmf**
+      -e zmf_password=zosmf**)
+
+"""
+
+EXAMPLES = r"""
+- name: sample of retrieving the status of all software updates
+  hosts: sampleHost
+  gather_facts: no
+  collections:
+    - ibm.ibm_zosmf
+
+  tasks:
+    - include_role :
+        name: zmf_swupdate_retrieve_all
+
+"""
+
+# Roles don't return anything.
+# But RETURN block must be defined for doc extraction tooling to avoid error.
+# The content in RETURN block will not be display in doc-site.
+RETURN = r"""
+changed:
+    description: Indicates if any change is made during the role operation.
+    returned: always
+    type: bool
+"""

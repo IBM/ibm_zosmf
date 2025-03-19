@@ -4,7 +4,7 @@
 ---
 # Tasks file for zmf_swupdate_cancel play.
 
-# Issue a failure message and stop the playbook if a software instance/system nickname, UUID, or process ID was not specified.
+# Issue a failure message and stop the playbook if a software instance/system nickname, UUID, or process ID specified.
 - name: A software instance and system nickname, a UUID, or a software update process ID must be provided to the role
   ansible.builtin.fail:
     msg: "Specify a software instance and system nickname, a UUID, or a software update process ID and retry the role."
@@ -114,10 +114,10 @@
       ansible.builtin.set_fact:
         swupdate_cancel_response: "{{ swupdate_cancel_swi_response }}"
 
-# Save the response content into a local variable.
-- name: Create a variable to hold the value of the cancel software update results
+# Create a variable for the software update process ID.
+- name: Set the software update process ID
   ansible.builtin.set_fact:
-    swupdate_cancel_response_json: "{{ swupdate_cancel_response.json }}"
+    swupdate_process_id: "{{ swupdate_cancel_response.json['processid'] }}"
   when: swupdate_cancel_response.status == 200
 
 # Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.

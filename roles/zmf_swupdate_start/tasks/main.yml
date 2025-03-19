@@ -4,7 +4,7 @@
 ---
 # Tasks file for zmf_swupdate_start play.
 
-# Do not attempt to execute the play without a software instance or UUID.
+# Do not attempt to execute the play without a software instance or UUID specified.
 - name: A software instance and system nickname or a UUID must be provided to the role
   ansible.builtin.fail:
     msg: "Specify a software instance and system nickname or a UUID and retry the role."
@@ -213,7 +213,7 @@
     swupdate_process_id: "{{ swupdate_start_response.json['processid'] }}"
   when: swupdate_start_response.status == 202
 
-  # Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
+# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
 - name: Display Start Software Update REST API failure information
   ansible.builtin.fail:
     msg: "There was an error encountered during Start Software Update REST API execution. It's possible the host

@@ -1,0 +1,126 @@
+# Copyright (c) IBM Corporation 2025
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+# Tasks file for zmf_swupdate_retrieve_all play.
+
+# Do not attempt to execute the play without a software instance/system nickname or UUID specified.
+- name: A software instance and system nickname or a UUID must be provided to the role
+  ansible.builtin.fail:
+    msg: "Specify a software instance and system nickname or a UUID and retry the role."
+  when: >
+    (software_instance_uuid is not defined or software_instance_uuid == '') and (software_instance_name is not defined or software_instance_name == ''
+    or system_nickname is not defined or system_nickname == '')
+
+# Create a variable for the retrieve all software updates response content.
+- name: Initialize the container for the retrieve all software updates response content
+  ansible.builtin.set_fact:
+    swupdate_retrieve_all_response: ""
+
+# Ensure there is a colon in the host. Add the z/OSMF server port if specified.
+- name: "Set the zmf_port if specified"
+  ansible.builtin.set_fact:
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
+  when: zmf_port is defined and ':' not in zmf_host
+
+###################################################################
+# URI MODULE #1: Retrieve all software update processes.          #
+###################################################################
+
+# Retrieve all software updates.
+- name: "Retrieve All Software Updates by Software Instance UUID"
+  when: software_instance_uuid is defined
+  block:
+    # Create a variable for the retrieve all software updates response content when a software instance UUID is specified.
+    - name: Initialize the container for the retrieve all software updates by software instance UUID response content
+      ansible.builtin.set_fact:
+        swupdate_retrieve_all_uuid_response: ""
+
+    - name: "Retrieving all software updates for software instance with UUID <{{ software_instance_uuid }}>"
+      ansible.builtin.uri:
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/all"
+        method: GET
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        status_code: 200, 404
+        validate_certs: false
+        return_content: true
+      register: swupdate_retrieve_all_uuid_response
+      delegate_to: localhost
+
+    - name: "Save retrieve all software updates by software instance UUID response"
+      ansible.builtin.set_fact:
+        swupdate_retrieve_all_response: "{{ swupdate_retrieve_all_uuid_response }}"
+
+# Retrieve all software updates.
+- name: "Retrieve All Software Updates by Software Instance Name and System"
+  when: software_instance_uuid is not defined and software_instance_name is defined
+  block:
+    # Create a variable for the retrieve all software updates response content when a software instance name is specified.
+    - name: Initialize the container for the retrieve all software updates by software instance name and system response content
+      ansible.builtin.set_fact:
+        swupdate_retrieve_all_swi_response: ""
+
+    - name: "Retrieving all software updates for software instance <{{ software_instance_name }}>"
+      ansible.builtin.uri:
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/all"
+        method: GET
+        user: "{{ zmf_user | trim }}"
+        password: "{{ zmf_password | trim }}"
+        force_basic_auth: true
+        headers:
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
+        status_code: 200, 404
+        validate_certs: false
+        return_content: true
+      register: swupdate_retrieve_all_swi_response
+      delegate_to: localhost
+
+    - name: "Save retrieve all software updates by software instance name and system response"
+      ansible.builtin.set_fact:
+        swupdate_retrieve_all_response: "{{ swupdate_retrieve_all_swi_response }}"
+
+# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
+- name: Display Retrieve All Software Updates REST API failure information
+  ansible.builtin.fail:
+    msg: "There was an error encountered during Retrieve All Software Updates REST API execution. It's possible the host
+      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
+      specified software instance was not found. These are the failure
+      details: {{ swupdate_retrieve_all_response.json }}"
+  when: swupdate_retrieve_all_response.status == 404 and swupdate_retrieve_all_response.json is defined
+
+# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
+- name: Display Retrieve All Software Updates REST API failure information
+  ansible.builtin.fail:
+    msg: "There was an error encountered during Retrieve All Software Updates REST API execution. It's possible the host
+      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
+      specified software instance was not found. These are the failure
+      details: {{ swupdate_retrieve_all_response }}"
+  when: swupdate_retrieve_all_response.status == 404
+
+# Save the retrieve all software updates response in a file.
+- name: Write the results for the retrieve all software updates to a JSON file
+  when: swupdate_retrieve_all_response.status == 200
+  block:
+    # Perform the copy of the retrieve all software updates response to the file.
+    - name: "Copy the retrieve all software updates results to JSON file <{{ swupdate_retrieve_all_response_file }}>"
+      ansible.builtin.copy:
+        content: '{{ swupdate_retrieve_all_response.json | default("") | to_nice_json(indent=2) }}'
+        dest: '{{ swupdate_retrieve_all_response_file }}'
+        mode: '0644'
+      delegate_to: localhost
+
+    # Save the response content into a local variable.
+    - name: Create a variable to hold the value of the software updates' results
+      ansible.builtin.set_fact:
+        swupdate_retrieve_all_response_json: "{{ swupdate_retrieve_all_response.json }}"
+
+    # Show the path to the retrieve all software updates REST API results file.
+    - name: Display the path to the file containing the results from the software update operations
+      ansible.builtin.debug:
+        msg: "Output filename= {{ swupdate_retrieve_all_response_file }}"

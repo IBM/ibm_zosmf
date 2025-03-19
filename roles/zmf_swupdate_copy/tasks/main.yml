@@ -4,7 +4,7 @@
 ---
 # Tasks file for zmf_swupdate_copy play.
 
-# Issue a failure message and stop the playbook if a software instance/system nickname, UUID, or process ID was not specified.
+# Issue a failure message and stop the playbook if a software instance/system nickname, UUID, or process ID specified.
 - name: A software instance and system nickname, a UUID, or a software update process ID must be provided to the role
   ansible.builtin.fail:
     msg: "Specify a software instance and system nickname, a UUID, or a software update process ID and retry the role."
