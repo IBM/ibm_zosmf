@@ -5,12 +5,27 @@
 # software update Start, Retrieve, and Copy REST APIs.
 
 #######################################################################################
+# THIS PLAYBOOK IS INTENDED TO START A SOFTWARE UPDATE PROCESS, RESOLVE ALL OF THE    #
+# SYSTEM HOLDS, AND COMPLETE THE PROCESS WITHOUT SUSPENDING AT ANY STEP.              #
+#######################################################################################
+
+#######################################################################################
 # PLAY #1: Start a Software Update on a Software Instance.                            #
 #######################################################################################
 - name: Start a Software Update on a Software Instance
-  hosts: swupdate_start
+  hosts: swupdate_start_and_resolve_all_system_holds
   gather_facts: false
   tasks:
+    # Resolve all SYSTEM holds by default.
+    - name: Setting resolve-holds JSON
+      ansible.builtin.set_fact:
+        resolve_holds: '[{"type":"SYSTEM"}]'
+
+    # Do not suspend at any step.
+    - name: Setting suspend-steps JSON
+      ansible.builtin.set_fact:
+        suspend_steps: '[]'
+    
     - name: Start Software Update
       ansible.builtin.include_role:
         name: ibm.ibm_zosmf.zmf_swupdate_start
@@ -19,7 +34,7 @@
 # PLAY #2: Retrieve the Status of the Software Update.                                #
 #######################################################################################
 - name: Retrieve the Status of the Software Update
-  hosts: swupdate_start
+  hosts: swupdate_start_and_resolve_all_system_holds
   gather_facts: false
   tasks:
     - name: Retrieve Software Update Status
@@ -30,7 +45,7 @@
 # PLAY #3: Copy the Software Update output to a directory.                            #
 #######################################################################################
 - name: Copy the output from the Software Update
-  hosts: swupdate_start
+  hosts: swupdate_start_and_resolve_all_system_holds
   gather_facts: false
   tasks:
     - name: Copy Software Update

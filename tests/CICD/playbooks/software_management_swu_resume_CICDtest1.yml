@@ -10,12 +10,10 @@
 - name: Resume a Software Update on a Software Instance
   hosts: swupdate_resume
   gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
   tasks:
     - name: Resume Software Update
-      include_role:
-        name: zmf_swupdate_resume
+      ansible.builtin.include_role:
+        name: ibm.ibm_zosmf.zmf_swupdate_resume
 
 #######################################################################################
 # PLAY #2: Retrieve the Status of the Software Update.                                #
@@ -23,12 +21,10 @@
 - name: Retrieve the Status of the Software Update after Resolve Holds were specified
   hosts: swupdate_resume
   gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
   tasks:
     - name: Retrieve Software Update Status
-      include_role:
-        name: zmf_swupdate_retrieve
+      ansible.builtin.include_role:
+        name: ibm.ibm_zosmf.zmf_swupdate_retrieve
 
 #######################################################################################
 # PLAY #3: Copy the Software Update output to a directory.                            #
@@ -36,9 +32,12 @@
 - name: Copy the output from the Software Update
   hosts: swupdate_resume
   gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
   tasks:
     - name: Copy Software Update
-      include_role:
-        name: zmf_swupdate_copy
+      ansible.builtin.include_role:
+        name: ibm.ibm_zosmf.zmf_swupdate_copy
+      when: >
+        (swupdate_retrieve_response.json['update-processes'][0]['status'] is defined) and
+        ((swupdate_retrieve_response.json['update-processes'][0]['status'] == 'COMPLETED') or
+        (swupdate_retrieve_response.json['update-processes'][0]['status'] == 'CANCELED') or
+        (swupdate_retrieve_response.json['update-processes'][0]['status'] == 'CANCELED WITH ERROR'))

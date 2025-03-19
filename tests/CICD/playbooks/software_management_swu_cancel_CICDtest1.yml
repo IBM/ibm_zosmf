@@ -10,12 +10,10 @@
 - name: Cancel the Software Update
   hosts: swupdate_cancel
   gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
   tasks:
     - name: Cancel Software Update
-      include_role:
-        name: zmf_swupdate_cancel
+      ansible.builtin.include_role:
+        name: ibm.ibm_zosmf.zmf_swupdate_cancel
 
 #######################################################################################
 # PLAY #2: Copy the Software Update output to a directory.                            #
@@ -23,9 +21,7 @@
 - name: Copy the output from the Software Update
   hosts: swupdate_cancel
   gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
   tasks:
     - name: Copy Software Update
-      include_role:
-        name: zmf_swupdate_copy
+      ansible.builtin.include_role:
+        name: ibm.ibm_zosmf.zmf_swupdate_copy
