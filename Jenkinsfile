@@ -223,9 +223,10 @@ pipeline {
                                     ${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml
                                     ${venvPath}/bin/ansible-playbook software_management_system_uuid_CICDtest1.yml
                                     ${venvPath}/bin/ansible-playbook software_management_csi_query_CICDtest1.yml
-                                    ${venvPath}/bin/ansible-playbook software_management_swu_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_swu_start_and_resolve_all_system_holds_CICDtest1.yml
                                     ${venvPath}/bin/ansible-playbook software_management_swu_start_CICDtest1.yml
                                     ${venvPath}/bin/ansible-playbook software_management_swu_resume_CICDtest1.yml
+                                    ${venvPath}/bin/ansible-playbook software_management_swu_retrieve_all_CICDtest1.yml
                                     ${venvPath}/bin/ansible-playbook software_management_swu_cancel_CICDtest1.yml
                                     
                                     echo "****************************************************************************"
