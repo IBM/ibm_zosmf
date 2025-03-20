@@ -133,7 +133,7 @@
       until: >
         (swupdate_retrieve_swi_response is failed) or
         ((swupdate_retrieve_swi_response.json['update-processes'][0]['status'] is defined) and
-        (swupdate_swi_retrieve_response.json['update-processes'][0]['status'] != 'RUNNING'))
+        (swupdate_retrieve_swi_response.json['update-processes'][0]['status'] != 'RUNNING'))
       retries: "{{ async_thread_check_times }}"
       delay: "{{ async_thread_check_delay }}"
 

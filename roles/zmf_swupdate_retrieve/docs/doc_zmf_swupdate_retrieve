@@ -129,10 +129,10 @@ notes:
       and software update process ID.
     - >
       Command syntax to call a playbook using an inventory file:
-      C(ansible-playbook -i inventory software_management_swu_CICDtest1.yml)
+      C(ansible-playbook -i inventory software_management_swu_start_CICDtest1.yml)
     - >
       Command syntax to call a playbook using command arguments:
-      C(ansible-playbook software_management_swu_CICDtest1.yml -e zmf_user=zosmf**
+      C(ansible-playbook software_management_swu_start_CICDtest1.yml -e zmf_user=zosmf**
       -e zmf_password=zosmf**)
 
 """
