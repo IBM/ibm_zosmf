@@ -163,7 +163,9 @@
 - name: Write the results for the retrieve software update status to a JSON file
   when: >
     (swupdate_retrieve_response.json['update-processes'][0]['status'] is defined) and
-    (swupdate_retrieve_response.json['update-processes'][0]['status'] == 'COMPLETED')
+    ((swupdate_retrieve_response.json['update-processes'][0]['status'] == 'COMPLETED') or
+    (swupdate_retrieve_response.json['update-processes'][0]['status'] == 'CANCELED') or
+    (swupdate_retrieve_response.json['update-processes'][0]['status'] == 'CANCELED WITH ERROR'))
   block:
     # Perform the copy of the retrieve software update response to the file.
     - name: "Copy the software update results to JSON file <{{ swupdate_retrieve_response_file }}>"
