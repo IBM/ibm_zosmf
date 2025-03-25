@@ -1,12 +1,12 @@
 def pythonVersionList = ["python3.11", "python3.12"]
-def ansibleVersionList = ["11.3.0"] // (ansible-core) ["2.18.3"]
+def ansibleVersionList = ["11.3.0"] // (ansible-core) ["2.18.3"] 
 
 pipeline {
 	agent none
 	
 	options {
 		// Skip checking out code from source control by default in the agent directive
-		skipDefaultCheckout()
+		// skipDefaultCheckout()
 		// Disallow concurrent executions of the Pipeline
 		disableConcurrentBuilds()
 		// only keep 15 builds to prevent disk usage from growing out of control
