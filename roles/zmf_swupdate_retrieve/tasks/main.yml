@@ -123,7 +123,7 @@
         headers:
           Host: "{{ zmf_host }}"
           Origin: "https://{{ zmf_host }}"
-        status_code: 200, 404
+        status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
         return_content: true
       register: swupdate_retrieve_swi_response
@@ -140,24 +140,6 @@
     - name: "Save retrieve software update status by software instance name and system response"
       ansible.builtin.set_fact:
         swupdate_retrieve_response: "{{ swupdate_retrieve_swi_response }}"
-
-# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
-- name: Display Retrieve Software Update Status REST API failure information
-  ansible.builtin.fail:
-    msg: "There was an error encountered during Retrieve Software Update Status REST API execution. It's possible the host
-      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
-      specified software instance was not found. These are the failure
-      details: {{ swupdate_retrieve_response.json }}"
-  when: swupdate_retrieve_response.status == 404 and swupdate_retrieve_response.json is defined
-
-# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
-- name: Display Retrieve Software Update Status REST API failure information
-  ansible.builtin.fail:
-    msg: "There was an error encountered during Retrieve Software Update Status REST API execution. It's possible the host
-      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
-      specified software instance was not found. These are the failure
-      details: {{ swupdate_retrieve_response }}"
-  when: swupdate_retrieve_response.status == 404
 
 # Save the retrieve software update status response for a completed process in a file.
 - name: Write the results for the retrieve software update status to a JSON file
@@ -183,3 +165,39 @@
     - name: Display the path to the file containing the results from the software update operation
       ansible.builtin.debug:
         msg: "Output filename= {{ swupdate_retrieve_response_file }}"
+
+# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
+- name: Display Retrieve Software Update Status REST API failure information
+  ansible.builtin.fail:
+    msg: "There was an error encountered during Retrieve Software Update Status REST API execution. It's possible the host
+      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
+      specified software instance was not found. These are the failure
+      details: {{ swupdate_retrieve_response.json }}"
+  when: swupdate_retrieve_response.status == 404 and swupdate_retrieve_response.json is defined
+
+# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
+- name: Display Retrieve Software Update Status REST API failure information
+  ansible.builtin.fail:
+    msg: "There was an error encountered during Retrieve Software Update Status REST API execution. It's possible the host
+      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
+      specified software instance was not found. These are the failure
+      details: {{ swupdate_retrieve_response }}"
+  when: swupdate_retrieve_response.status == 404
+
+# Issue a failure message when user does not have the appropriate authority.
+- name: The user does not have the appropriate authority to complete this request
+  ansible.builtin.fail:
+    msg: "Retrieve Software Update Status failure details: {{ swupdate_retrieve_response.json }} "
+  when: swupdate_retrieve_response.status == 403 and swupdate_retrieve_response.json is defined
+
+# Issue a failure message and stop the playbook.
+- name: Display the retrieve software update status action failure information
+  ansible.builtin.fail:
+    msg: "Retrieve Software Update Status failure details: {{ swupdate_retrieve_response.json }} "
+  when: swupdate_retrieve_response.status != 200 and swupdate_retrieve_response.json is defined
+
+# Issue a failure message and stop the playbook.
+- name: Display the retrieve software update status action failure information
+  ansible.builtin.fail:
+    msg: "Retrieve Software Update Status failure details: {{ swupdate_retrieve_response }} "
+  when: swupdate_retrieve_response.status != 200
