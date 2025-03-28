@@ -50,8 +50,9 @@ options:
             - Name of the software instance.
             - >
               A software instance name must be specified when a software instance UUID
-              is not specified. If both a software instance name and UUID are
-              specified, then the software instance UUID is used by default.
+              is not specified. If a software instance UUID is specified in
+              addition to a software instance name and system nickname, then the
+              software instance UUID is used by default.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
@@ -65,7 +66,7 @@ options:
             - >
               A system nickname must be specified when a software instance UUID
               is not specified. If a software instance UUID is specified in 
-              addition to a software instance and system nickname, then the
+              addition to a software instance name and system nickname, then the
               software instance UUID is used by default.
             - >
               This variable can be specified in the inventory file or as an argument on

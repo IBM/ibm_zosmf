@@ -51,7 +51,7 @@ options:
             - >
               A software instance name must be specified when a software instance UUID
               or a software update process ID are not specified. If a software update
-              process ID is specified in addition to a software instance and system
+              process ID is specified in addition to a software instance name and system
               nickname, then the software update process ID is used by default.
             - >
               This variable can be specified in the inventory file or as an argument on
@@ -66,8 +66,8 @@ options:
             - >
               A system nickname name must be specified when a software instance UUID
               or a software update process ID are not specified. If a software update
-              process ID is specified in addition to a software instance and system nickname,
-              then the software update process ID is used by default.
+              process ID is specified in addition to a software instance name and system
+              nickname, then the software update process ID is used by default.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
@@ -83,7 +83,7 @@ options:
               retrieves the UUID for the software instance that represents the installed software
               for the specified z/OSMF host system.
             - >
-              A software instance UUID name must be specified when a software instance
+              A software instance UUID must be specified when a software instance name
               or a software update process ID are not specified. If a software update
               process ID is specified in addition to a software instance UUID, then
               the software update process ID is used by default.
@@ -98,9 +98,9 @@ options:
               A software update process ID indicating the software update process to be
               resumed.
             - >
-              A software update process ID must be specified when a software instance
-              or a software instance UUID are not specified. If a process ID is
-              specified in addition to a software instance or UUID, then the process ID
+              A software update process ID must be specified when a software instance name
+              or a software instance UUID are not specified. If a process ID is specified
+              in addition to a software instance name or UUID, then the process ID
               is used by default.
             - >
               This variable can be specified in the inventory file or as an argument on
