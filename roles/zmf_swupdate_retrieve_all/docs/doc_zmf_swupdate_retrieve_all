@@ -137,6 +137,12 @@ EXAMPLES = r"""
   tasks:
     - include_role :
         name: zmf_swupdate_retrieve_all
+    - set_fact :
+        zmf_user: 'ibmuser'
+        zmf_password: 'ibmuser'
+        software_instance_name: 'YourSwiName'
+        system_nickname: 'YourSystemName'
+        swupdate_retrieve_all_response_file: '/Users/yourUser/YourSwiNameRetrieveAll.json'
 
 """
 

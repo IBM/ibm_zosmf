@@ -137,6 +137,11 @@ EXAMPLES = r"""
   tasks:
     - include_role :
         name: zmf_swupdate_cancel
+    - set_fact :
+        zmf_user: 'ibmuser'
+        zmf_password: 'ibmuser'
+        software_instance_name: 'YourSwiName'
+        system_nickname: 'YourSystemName'
 
 """
 

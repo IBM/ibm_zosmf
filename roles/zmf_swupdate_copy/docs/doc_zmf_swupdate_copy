@@ -168,6 +168,12 @@ EXAMPLES = r"""
   tasks:
     - include_role :
         name: zmf_swupdate_copy
+    - set_fact :
+        zmf_user: 'ibmuser'
+        zmf_password: 'ibmuser'
+        software_instance_name: 'YourSwiName'
+        system_nickname: 'YourSystemName'
+        directory: '/u/ibmuser/yourDirName/'
 
 """
 

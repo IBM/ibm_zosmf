@@ -51,7 +51,7 @@ options:
         description:
             - >
               Name of the software instance for which the software update process will
-              be started on.
+              be started.
             - >
               A software instance name must be specified when a software instance UUID
               is not specified. If a software instance UUID is specified in
@@ -81,7 +81,7 @@ options:
         description:
             - >
               A UUID of a software instance for which the software update process will
-              be started on. A UUID is assigned to every software instance and can be obtained
+              be started. A UUID is assigned to every software instance and can be obtained
               using the "List the software instances defined to z/OSMF" REST API.
             - >
               A UUID can also be obtained using the zmf_swmgmt_zos_system_uuid Ansible role which
@@ -328,6 +328,14 @@ EXAMPLES = r"""
   tasks:
     - include_role :
         name: zmf_swupdate_start
+    - set_fact :
+        zmf_user: 'ibmuser'
+        zmf_password: 'ibmuser'
+        software_instance_name: 'YourSwiName'
+        system_nickname: 'YourSystemName'
+        target_zone: 'TGT'
+        sourceids: '["RSU*"]'
+        resolve_holds: '[{"type":"SYSTEM"}]'
 
 """
 
