@@ -200,6 +200,7 @@ dmypy.json
 .keep
 shell_exploits.txt
 tests/collections
+.ansible/
 
 # changelog
 changelogs/.plugin-cache.yaml

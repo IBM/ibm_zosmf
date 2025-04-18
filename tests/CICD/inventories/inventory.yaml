@@ -1,0 +1,14 @@
+# Copyright (c) IBM Corporation 2025
+
+---
+example_group:
+    example_lpar:
+        hosts:
+            ansible_host: your.zosmf.instance.url.com
+            ansible_user: demouser
+
+second_optional_example_group:
+    example_lpar:
+        hosts:
+            ansible_host: your.zosmf.instance.url.com
+            ansible_user: demouser
