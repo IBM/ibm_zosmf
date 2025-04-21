@@ -2,13 +2,16 @@
 
 ---
 example_group:
-    example_lpar:
-        hosts:
+    hosts:
+        example_lpar:
             ansible_host: your.zosmf.instance.url.com
+            ansible_user: demouser
+        example_second_lpar:
+            ansible_host: your.second.zosmf.instance.url.com
             ansible_user: demouser
 
 second_optional_example_group:
-    example_lpar:
-        hosts:
+    hosts:
+        example_lpar:
             ansible_host: your.zosmf.instance.url.com
             ansible_user: demouser
