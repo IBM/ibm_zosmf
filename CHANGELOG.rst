@@ -4,6 +4,24 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
+v1.5.1
+======
+
+Major Changes
+-------------
+
+- Added new roles for z/OSMF Software Management
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_swupdate_cancel - Role cancels a software update process
+- ibm.ibm_zosmf.zmf_swupdate_copy - Role copies a software update process
+- ibm.ibm_zosmf.zmf_swupdate_resume - Role resumes a software update process
+- ibm.ibm_zosmf.zmf_swupdate_retrieve - Role retrieves a software update process
+- ibm.ibm_zosmf.zmf_swupdate_retrieve_all - Role retrieves all software update processes
+- ibm.ibm_zosmf.zmf_swupdate_start - Role starts a software update process
+
 v1.5.0
 ======
 
