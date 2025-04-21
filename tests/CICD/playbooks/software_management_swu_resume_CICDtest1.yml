@@ -8,7 +8,7 @@
 # PLAY #1: Resume the Software Update.                                                #
 #######################################################################################
 - name: Resume a Software Update on a Software Instance
-  hosts: swupdate_resume
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Resume Software Update
@@ -19,7 +19,7 @@
 # PLAY #2: Retrieve the Status of the Software Update.                                #
 #######################################################################################
 - name: Retrieve the Status of the Software Update after Resolve Holds were specified
-  hosts: swupdate_resume
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Retrieve Software Update Status
@@ -30,7 +30,7 @@
 # PLAY #3: Copy the Software Update output to a directory.                            #
 #######################################################################################
 - name: Copy the output from the Software Update
-  hosts: swupdate_resume
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Copy Software Update
