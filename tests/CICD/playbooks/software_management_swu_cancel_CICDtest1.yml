@@ -8,7 +8,7 @@
 # PLAY #1: Cancel the Software Update process.                                        #
 #######################################################################################
 - name: Cancel the Software Update
-  hosts: swupdate_cancel
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Cancel Software Update
@@ -19,7 +19,7 @@
 # PLAY #2: Copy the Software Update output to a directory.                            #
 #######################################################################################
 - name: Copy the output from the Software Update
-  hosts: swupdate_cancel
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Copy Software Update

@@ -7,7 +7,7 @@
 # PLAY #1: Retrieve all Software Updates for a Software Instance.                     #
 #######################################################################################
 - name: Retrieve all Software Updates for a Software Instance
-  hosts: swupdate_retrieve_all
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Retrieve all Software Updates

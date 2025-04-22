@@ -13,7 +13,7 @@
 # PLAY #1: Start a Software Update on a Software Instance.                            #
 #######################################################################################
 - name: Start a Software Update on a Software Instance
-  hosts: swupdate_start_and_resolve_all_system_holds
+  hosts: swmgmt
   gather_facts: false
   tasks:
     # Resolve all SYSTEM holds by default.
@@ -34,7 +34,7 @@
 # PLAY #2: Retrieve the Status of the Software Update.                                #
 #######################################################################################
 - name: Retrieve the Status of the Software Update
-  hosts: swupdate_start_and_resolve_all_system_holds
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Retrieve Software Update Status
@@ -45,7 +45,7 @@
 # PLAY #3: Copy the Software Update output to a directory.                            #
 #######################################################################################
 - name: Copy the output from the Software Update
-  hosts: swupdate_start_and_resolve_all_system_holds
+  hosts: swmgmt
   gather_facts: false
   tasks:
     - name: Copy Software Update
