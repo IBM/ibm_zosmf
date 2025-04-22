@@ -64,7 +64,7 @@ pipeline {
                     
                     echo "****************************************************************************"
                     echo "Cleanup venv dir:"
-                    venvDir = "/home/test/venv"
+                    venvDir = "/home/connect-ansible-build-server/venv"
                     dir("${venvDir}") {
                         sh "pwd"
                         sh "rm -rf *"
@@ -76,7 +76,7 @@ pipeline {
                 checkout scm
                 
                 script {
-                    ansibleCollection = "/home/test/.ansible"
+                    ansibleCollection = "/home/connect-ansible-build-server/.ansible"
                     echo "Ansible collection is: ${ansibleCollection}"
                     dir("${ansibleCollection}") {
                         sh "pwd"
@@ -205,8 +205,8 @@ pipeline {
                                     cp ${remoteWorkspace}/tests/CICD/playbooks/hosts tests/CICD/playbooks/
                                     cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks/
                                     cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars/
-                                    // cp -p /home/test/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
-                                    // cp -p /home/test/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P01.yml
+                                    // cp -p /home/connect-ansible-build-server/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
+                                    // cp -p /home/connect-ansible-build-server/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P01.yml
                                     cd tests/CICD/playbooks
                                     echo '==> pwd'
                                     pwd
@@ -233,6 +233,7 @@ pipeline {
                                     echo '*** Test done:'
                                     echo '==> deactivate'
                                     deactivate
+                                    rm -rf ${venvPath}
                                 """) 
                             }
                         }
