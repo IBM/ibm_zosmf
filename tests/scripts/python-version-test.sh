@@ -26,7 +26,7 @@ ansible --version
 which ansible
 
 echo 'Confirming Ansible Collection was Installed Correctly'
-cd ${remoteWorkspace}/collections/ansible_collections/ibm/ibm_zosmf
+cd ~/.ansible/collections/ansible_collections/ibm/ibm_zosmf
 
 # echo 'Checking the Directory'
 # pwd
