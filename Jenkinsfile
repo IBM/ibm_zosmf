@@ -33,12 +33,12 @@ pipeline {
         }
         stage('Cleaning Up Virtual Environment') {
             steps {
-                sh('./tests/scripts/cleanup-virtual-environment.sh ${venvDir}')
+                sh("./tests/scripts/cleanup-virtual-environment.sh ${venvDir}")
             }
         }
         stage('Build and Install Ansible Collection') {
             steps {
-                sh('./tests/scripts/build-and-install-ansible-collection.sh $REMOTE_WORKSPACE')
+                sh('./tests/scripts/build-and-install-ansible-collection.sh ${remoteWorkspace}')
             }
         }    
         stage('Test Valid Python Versions') {
