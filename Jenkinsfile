@@ -42,23 +42,21 @@ pipeline {
             }
         }    
         stage('Test Valid Python Versions') {
-            steps {
-                parallel {
-                    stage("Testing with Python 3.11") {
-                        environment {
-                            PYTHON_VERSION = 'python3.11'
-                        }
-                        steps {
-                            sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
-                        }
+            parallel {
+                stage("Testing with Python 3.11") {
+                    environment {
+                        PYTHON_VERSION = 'python3.11'
                     }
-                    stage("Testing with Python 3.12") {
-                        environment {
-                            PYTHON_VERSION = 'python3.12'
-                        }
-                        steps {
-                            sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
-                        }
+                    steps {
+                        sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
+                    }
+                }
+                stage("Testing with Python 3.12") {
+                    environment {
+                        PYTHON_VERSION = 'python3.12'
+                    }
+                    steps {
+                        sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
                     }
                 }
             }
