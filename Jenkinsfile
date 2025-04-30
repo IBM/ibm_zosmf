@@ -3,7 +3,9 @@ def ansibleVersionList = ["11.3.0"] // (ansible-core) ["2.18.3"]
 def venvDir = "/home/connect-ansible-build-server/venv"
 
 pipeline {
-	agent "zmf-ansible-agent"
+	agent {
+        label "zmf-ansible-agent"
+    }
 	options {
 		// Skip checking out code from source control by default in the agent directive
 		// skipDefaultCheckout()
@@ -36,7 +38,7 @@ pipeline {
         }
         stage('Build and Install Ansible Collection') {
             steps {
-                remoteWorkspace = env.WORKSPACE
+                def remoteWorkspace = env.WORKSPACE
                 sh('./tests/scripts/build-and-install-ansible-collection.sh ${remoteWorkspace}')
             }
         }
@@ -46,13 +48,13 @@ pipeline {
                 parallel {
                     stage("Testing with Python 3.11") {
                         steps {
-                            pythonVersion = 'python3.11'
+                            def pythonVersion = 'python3.11'
                             sh('./tests/scripts/python-version-test.sh ${pythonVersion} ${venvDir} ${remoteWorkspace}')
                         }
                     }
                     stage("Testing with Python 3.12") {
                         steps {
-                            pythonVersion = 'python3.11'
+                            def pythonVersion = 'python3.12'
                             sh('./tests/scripts/python-version-test.sh ${pythonVersion} ${venvDir} ${remoteWorkspace}')
                         }
                     }
