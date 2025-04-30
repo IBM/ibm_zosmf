@@ -19,7 +19,6 @@ pipeline {
 			)
 		)
 	}
-    
 	stages {
         stage('Validating Tools are Installed') {
             steps {
@@ -37,25 +36,30 @@ pipeline {
             }
         }
         stage('Build and Install Ansible Collection') {
-            steps {
-                def remoteWorkspace = env.WORKSPACE
-                sh('./tests/scripts/build-and-install-ansible-collection.sh ${remoteWorkspace}')
+            environment {
+                REMOTE_WORKSPACE = env.WORKSPACE
             }
-        }
-        
+            steps {
+                sh('./tests/scripts/build-and-install-ansible-collection.sh $REMOTE_WORKSPACE')
+            }
+        }    
         stage('Test Valid Python Versions') {
             steps {
                 parallel {
                     stage("Testing with Python 3.11") {
+                        environment {
+                            PYTHON_VERSION = 'python3.11'
+                        }
                         steps {
-                            def pythonVersion = 'python3.11'
-                            sh('./tests/scripts/python-version-test.sh ${pythonVersion} ${venvDir} ${remoteWorkspace}')
+                            sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
                         }
                     }
                     stage("Testing with Python 3.12") {
+                        environment {
+                            PYTHON_VERSION = 'python3.12'
+                        }
                         steps {
-                            def pythonVersion = 'python3.12'
-                            sh('./tests/scripts/python-version-test.sh ${pythonVersion} ${venvDir} ${remoteWorkspace}')
+                            sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
                         }
                     }
                 }
