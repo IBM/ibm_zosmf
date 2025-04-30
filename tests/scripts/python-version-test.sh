@@ -2,20 +2,19 @@
 pythonVersion=$1
 venvDir=$2
 remoteWorkspace=$3
-echo "Test Collection with ${pythonVersion}:"
 
+echo "Test Collection with ${pythonVersion}:"
 venvPath="${venvDir}/${pythonVersion}"
 
-echo "Setup venv: ${venvPath}"
+echo "Setting Up Virtual Environment Here: ${venvPath}"
 
 echo 'Creating Virtual Environment:'
-echo '==> ${pythonVersion} -m venv ${venvPath}'
 ${pythonVersion} -m venv ${venvPath}
 
-echo '*** activate:'
-echo '==> source ${venvPath}/bin/activate'
+echo 'Activating Virtual Environment:'
 source ${venvPath}/bin/activate
 
+echo 'pip Installing the Project Requirements'
 pip install -r requirements.txt
 
 echo 'Checking for Proper Python Version and Location'
@@ -27,9 +26,10 @@ ansible --version
 which ansible
 
 echo 'Confirming Ansible Collection was Installed Correctly'
-cd ${ansibleCollection}/collections/ansible_collections/ibm/ibm_zosmf
-echo '==> pwd'
-pwd
+cd ${remoteWorkspace}/collections/ansible_collections/ibm/ibm_zosmf
+
+# echo 'Checking the Directory'
+# pwd
 
 
 echo "Running Ansible Sanity Test:"
