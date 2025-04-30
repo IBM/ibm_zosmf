@@ -31,14 +31,14 @@ pipeline {
                 sh('./tests/scripts/check-python-levels.sh')
             }
         }
-        stage('Cleaning Up Virtual Environment') {
-            steps {
-                sh("./tests/scripts/cleanup-virtual-environment.sh ${venvDir}")
-            }
-        }
+        // stage('Cleaning Up Virtual Environment') {
+        //     steps {
+        //         sh("./tests/scripts/cleanup-virtual-environment.sh ${venvDir}")
+        //     }
+        // }
         stage('Build and Install Ansible Collection') {
             steps {
-                sh('./tests/scripts/build-and-install-ansible-collection.sh ${remoteWorkspace}')
+                sh("./tests/scripts/build-and-install-ansible-collection.sh ${remoteWorkspace}")
             }
         }    
         stage('Test Valid Python Versions') {
@@ -48,7 +48,7 @@ pipeline {
                         PYTHON_VERSION = 'python3.11'
                     }
                     steps {
-                        sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
+                        sh("./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}")
                     }
                 }
                 stage("Testing with Python 3.12") {
@@ -56,7 +56,7 @@ pipeline {
                         PYTHON_VERSION = 'python3.12'
                     }
                     steps {
-                        sh('./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}')
+                        sh("./tests/scripts/python-version-test.sh $PYTHON_VERSION ${venvDir} ${remoteWorkspace}")
                     }
                 }
             }

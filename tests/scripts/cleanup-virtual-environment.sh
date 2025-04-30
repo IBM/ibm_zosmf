@@ -1,9 +1,14 @@
 #!/bin/zsh
 venvDir=$1
 
-echo "Cleanup venv dir:"
+echo "Searching for Old venv Directory"
 
-cd $venvDir
+if [ -e "${$venvDir}" ]; then
+    echo "venv Directory Found Cleaning Up venv Directory:"
+    cd $venvDir
+    pwd
+    rm -rf *
+else
+    echo "venv Directory Found Cleaning Up venv Directory:"
+fi
 
-pwd
-rm -rf *
