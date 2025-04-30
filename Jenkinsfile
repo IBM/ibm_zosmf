@@ -1,6 +1,7 @@
 def pythonVersionList = ["python3.11", "python3.12"]
 def ansibleVersionList = ["11.3.0"] // (ansible-core) ["2.18.3"]
 def venvDir = "/home/connect-ansible-build-server/venv"
+def remoteWorkspace = env.WORKSPACE
 
 pipeline {
 	agent {
@@ -36,9 +37,6 @@ pipeline {
             }
         }
         stage('Build and Install Ansible Collection') {
-            environment {
-                REMOTE_WORKSPACE = env.WORKSPACE
-            }
             steps {
                 sh('./tests/scripts/build-and-install-ansible-collection.sh $REMOTE_WORKSPACE')
             }
