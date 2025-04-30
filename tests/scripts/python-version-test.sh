@@ -65,20 +65,20 @@ cp ${remoteWorkspace}/tests/CICD/playbooks/*.json tests/CICD/playbooks/
 cp ${remoteWorkspace}/tests/CICD/playbooks/hosts tests/CICD/playbooks/
 cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks/
 cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars/
-// cp -p /home/connect-ansible-build-server/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
-// cp -p /home/connect-ansible-build-server/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P01.yml
+# // cp -p /home/connect-ansible-build-server/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
+# // cp -p /home/connect-ansible-build-server/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P01.yml
 cd tests/CICD/playbooks
 echo '==> pwd'
 pwd
 
-// echo '*** Workflow BVT:'
-// ${venvPath}/bin/ansible-playbook workflow_complete_CICDtest1.yml
-// echo '*** CPM BVT:'
-// ${venvPath}/bin/ansible-playbook cpm_complete_CICDtest1.yml
-// echo '*** SCA BVT:'
-// ${venvPath}/bin/ansible-playbook sca_CICDtest1.yml
-// echo '*** ZMSC BVT:'
-// ${venvPath}/bin/ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml
+# // echo '*** Workflow BVT:'
+# // ${venvPath}/bin/ansible-playbook workflow_complete_CICDtest1.yml
+# // echo '*** CPM BVT:'
+# // ${venvPath}/bin/ansible-playbook cpm_complete_CICDtest1.yml
+# // echo '*** SCA BVT:'
+# // ${venvPath}/bin/ansible-playbook sca_CICDtest1.yml
+# // echo '*** ZMSC BVT:'
+# // ${venvPath}/bin/ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml
 echo '*** SM BVT:'
 ${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml
 ${venvPath}/bin/ansible-playbook software_management_system_uuid_CICDtest1.yml
