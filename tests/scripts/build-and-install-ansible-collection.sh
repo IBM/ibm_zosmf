@@ -1,25 +1,25 @@
 #!/bin/zsh
 
-echo "Build and install Ansible collection:"
+# echo "Build and install Ansible collection:"
 
-ansibleCollection="/home/connect-ansible-build-server/.ansible"
-echo "Ansible collection is: $ansibleCollection"
+# ansibleCollection="/home/connect-ansible-build-server/.ansible"
+# echo "Ansible collection is: $ansibleCollection"
 
-cd $ansibleCollection
+# cd $ansibleCollection
 
-pwd
-rm -rf *
+# pwd
+# rm -rf *
 
-remoteWorkspace=$1
-echo "Remote workspace is: ${remoteWorkspace}"
+# remoteWorkspace=$1
+# echo "Remote workspace is: ${remoteWorkspace}"
 
-cd ${remoteWorkspace}
+# cd ${remoteWorkspace}
 
-pwd
+# pwd
 
-if [ -e "${remoteWorkspace}/ibm-ibm_zosmf-*.tar.gz" ]; then
-    rm ${remoteWorkspace}/ibm-ibm_zosmf-*.tar.gz
-fi
+# if [ -e "${remoteWorkspace}/ibm-ibm_zosmf-*.tar.gz" ]; then
+#     rm ${remoteWorkspace}/ibm-ibm_zosmf-*.tar.gz
+# fi
 
 ansible-galaxy collection build --force
 ansible-galaxy collection install ibm-ibm_zosmf-*.tar.gz --force
