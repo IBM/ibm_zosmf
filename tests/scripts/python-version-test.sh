@@ -1,10 +1,10 @@
 # echo "*** Test in the venv for ${pythonVersionList[i]}:"
-pythonVersion = $1
-venvDir = $2
-remoteWorkspace = $3
+pythonVersion=$1
+venvDir=$2
+remoteWorkspace=$3
 echo "Test Collection with ${pythonVersion}:"
 
-venvPath = "${venvDir}/${pythonVersion}"
+venvPath="${venvDir}/${pythonVersion}"
 
 echo "Setup venv: ${venvPath}"
 

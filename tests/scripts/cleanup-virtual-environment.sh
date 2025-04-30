@@ -1,5 +1,5 @@
 #!/bin/zsh
-venvDir = $1
+venvDir=$1
 
 echo "Cleanup venv dir:"
 

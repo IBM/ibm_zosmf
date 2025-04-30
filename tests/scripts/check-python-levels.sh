@@ -1,5 +1,5 @@
 #!/bin/zsh
-pythonVersionList = ("python3.11" "python3.12")
+pythonVersionList=("python3.11" "python3.12")
 
 echo "Check installed Python versions:"
 

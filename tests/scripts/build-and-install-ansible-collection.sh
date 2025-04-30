@@ -2,7 +2,7 @@
 
 echo "Build and install Ansible collection:"
 
-ansibleCollection = "/home/connect-ansible-build-server/.ansible"
+ansibleCollection="/home/connect-ansible-build-server/.ansible"
 echo "Ansible collection is: $ansibleCollection"
 
 cd $ansibleCollection
@@ -10,7 +10,7 @@ cd $ansibleCollection
 pwd
 rm -rf *
 
-remoteWorkspace = $1
+remoteWorkspace=$1
 echo "Remote workspace is: ${remoteWorkspace}"
 
 cd ${remoteWorkspace}
