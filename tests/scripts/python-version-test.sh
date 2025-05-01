@@ -62,7 +62,7 @@ mkdir tests/CICD/playbooks/host_vars
 echo '==> cp'
 cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml tests/CICD/playbooks/
 cp ${remoteWorkspace}/tests/CICD/playbooks/*.json tests/CICD/playbooks/
-cp ${remoteWorkspace}/tests/CICD/playbooks/hosts tests/CICD/playbooks/
+# cp ${remoteWorkspace}/tests/CICD/playbooks/hosts tests/CICD/playbooks/
 cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks/
 cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars/
 # // cp -p /home/connect-ansible-build-server/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
