@@ -4,8 +4,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_util import \
-    handle_request
+from ansible_collections.ibm.ibm_zosmf.plugins.module_utils.zmf_util import handle_request
 import json
 import re
 
@@ -71,7 +70,7 @@ def __get_sca_apis():
         # validate descriptor
         validateDescriptor=dict(
             method='post',
-            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/'
                 + version + '/validate/descriptor?userid={userid}',
             args=dict(
                 path=dict(
@@ -83,7 +82,7 @@ def __get_sca_apis():
         # validate resource
         validateResource=dict(
             method='post',
-            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/'
                 + version + '/validate?userid={userid}',
             args=resource_dict,
             ok_rcode=200
@@ -91,7 +90,7 @@ def __get_sca_apis():
         # provision descriptor
         provisionDescriptor=dict(
             method='post',
-            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/'
                 + version + '/provision/descriptor?userid={userid}',
             args=dict(
                 path=dict(
@@ -103,7 +102,7 @@ def __get_sca_apis():
         # provision resource
         provisionResource=dict(
             method='post',
-            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/config/security/'
                 + version + '/provision?userid={userid}',
             args=resource_dict,
             ok_rcode=200
