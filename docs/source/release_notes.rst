@@ -7,22 +7,28 @@ Releases
 ========
 
 Version 1.6.0
-======
+=============
 
-Major Changes
--------------
+Notes
+-----
+* Added new roles for z/OSMF Software Update
 
-- Added new roles for z/OSMF Software Management
+* New Roles
 
-New Roles
----------
+   * `zmf_swupdate_cancel`_
+   * `zmf_swupdate_copy`_
+   * `zmf_swupdate_resume`_
+   * `zmf_swupdate_retrieve`_
+   * `zmf_swupdate_retrieve_all`_
+   * `zmf_swupdate_start`_
 
-- ibm.ibm_zosmf.zmf_swupdate_cancel - Role cancels a software update process
-- ibm.ibm_zosmf.zmf_swupdate_copy - Role copies a software update process
-- ibm.ibm_zosmf.zmf_swupdate_resume - Role resumes a software update process
-- ibm.ibm_zosmf.zmf_swupdate_retrieve - Role retrieves a software update process
-- ibm.ibm_zosmf.zmf_swupdate_retrieve_all - Role retrieves all software update processes
-- ibm.ibm_zosmf.zmf_swupdate_start - Role starts a software update process
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
 
 
 Version 1.5.0
@@ -327,6 +333,24 @@ Reference
 .. _zmf_swmgmt_system_uuid:
    roles/zmf_swmgmt_system_uuid.html
 
+.. _zmf_swupdate_cancel:
+   roles/zmf_swupdate_cancel.html
+
+.. _zmf_swupdate_copy:
+   roles/zmf_swupdate_copy.html
+
+.. _zmf_swupdate_resume:
+   roles/zmf_swupdate_resume.html
+
+.. _zmf_swupdate_retrieve:
+   roles/zmf_swupdate_retrieve.html
+
+.. _zmf_swupdate_retrieve_all:
+   roles/zmf_swupdate_retrieve_all.html
+
+.. _zmf_swupdate_start:
+   roles/zmf_swupdate_start.html
+   
 .. _Automation Hub:
    https://www.ansible.com/products/automation-hub
 
