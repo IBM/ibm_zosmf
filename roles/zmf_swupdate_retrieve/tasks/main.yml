@@ -169,6 +169,17 @@
       ansible.builtin.debug:
         msg: "Output filename= {{ swupdate_retrieve_response_file }}"
 
+# Save the HOLDs array to a local variable
+- name: Save the HOLDs array from the software update process
+  ansible.builtin.set_fact:
+    software_update_holds: "{{ swupdate_retrieve_response.json['update-processes'][0]['holds'] }}"
+    software_instance_uuid: "{{ swupdate_retrieve_response.json['uuid'] }}"
+  when: >
+        (swupdate_retrieve_response.status == 200) and
+        (swupdate_retrieve_response.json['update-processes'][0]['status'] is defined) and
+        (swupdate_retrieve_response.json['update-processes'][0]['status'] != 'RUNNING') and
+        (swupdate_retrieve_response.json['update-processes'][0]['holds'] is defined)
+
 # Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
 - name: Display Retrieve Software Update Status REST API failure information
   ansible.builtin.fail:

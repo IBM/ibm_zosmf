@@ -234,17 +234,17 @@
 # Issue a failure message when user does not have the appropriate authority.
 - name: The user does not have the appropriate authority to complete this request
   ansible.builtin.fail:
-    msg: "Start Software Update failure details: {{ swupdate_start_response.json }} "
+    msg: "Start Software Update failure details: {{ swupdate_start_response.json }}"
   when: swupdate_start_response.status == 403 and swupdate_start_response.json is defined
 
 # Issue a failure message and stop the playbook.
 - name: Display the start software update action failure information
   ansible.builtin.fail:
-    msg: "Start Software Update failure details: {{ swupdate_start_response.json }} "
+    msg: "Start Software Update failure details: {{ swupdate_start_response.json }}"
   when: swupdate_start_response.status != 202 and swupdate_start_response.json is defined
 
 # Issue a failure message and stop the playbook.
 - name: Display the start software update action failure information
   ansible.builtin.fail:
-    msg: "Start Software Update failure details: {{ swupdate_start_response }} "
+    msg: "Start Software Update failure details: {{ swupdate_start_response }}"
   when: swupdate_start_response.status != 202

@@ -1,0 +1,6 @@
+# Copyright (c) IBM Corporation 2025
+
+---
+# defaults file for zmf_swmgmt_holds_for_reason
+async_thread_check_times: 60
+async_thread_check_delay: 1
