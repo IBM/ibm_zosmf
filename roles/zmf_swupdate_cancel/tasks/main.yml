@@ -38,7 +38,7 @@
 
     - name: "Cancel the software update process with ID <{{ swupdate_process_id }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/cancel/{{ swupdate_process_id }}"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swupdate/cancel/{{ swupdate_process_id | urlencode }}"
         method: POST
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -67,7 +67,7 @@
 
     - name: "Cancel the software update process associated with software instance with UUID <{{ software_instance_uuid }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/cancel"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/swupdate/cancel"
         method: POST
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -96,7 +96,7 @@
 
     - name: "Cancel the software update process associated with software instance <{{ software_instance_name }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/cancel"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/swupdate/cancel"
         method: POST
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"

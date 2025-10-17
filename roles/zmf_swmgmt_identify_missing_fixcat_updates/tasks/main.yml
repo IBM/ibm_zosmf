@@ -114,7 +114,7 @@
     # Start the missing fixcat updates asynchronous operation.
     - name: "Determining the missing fixcat software updates for software instance with UUID <{{ software_instance_uuid }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/missingfixcatupdates"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/missingfixcatupdates"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"

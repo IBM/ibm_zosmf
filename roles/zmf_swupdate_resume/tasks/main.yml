@@ -117,7 +117,7 @@
 
     - name: "Resume the software update process with ID <{{ swupdate_process_id }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/resume/{{ swupdate_process_id }}"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swupdate/resume/{{ swupdate_process_id | urlencode }}"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -148,7 +148,7 @@
 
     - name: "Resume the software update for software instance with UUID <{{ software_instance_uuid }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/resume"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/swupdate/resume"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -179,7 +179,7 @@
 
     - name: "Resume the software update for software instance <{{ software_instance_name }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/resume"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/swupdate/resume"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"

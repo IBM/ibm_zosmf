@@ -156,7 +156,7 @@
 
     - name: "Start a software update for software instance with UUID <{{ software_instance_uuid }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/swupdate"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -187,7 +187,7 @@
 
     - name: "Start a software update for software instance <{{ software_instance_name }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/swupdate"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"

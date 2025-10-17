@@ -31,8 +31,7 @@ options:
     hold_reason:
         description:
             - >
-              The HOLD REASON ID to get the HOLDDATA text for. You may specify '*' for all
-              HOLD REASON IDs.
+              The HOLD REASON ID in which to get the HOLDDATA text.
             - >
               A HOLD REASON ID must be 1-7 characters long and is accepted in mixed case and is
               folded to uppercase automatically. It may consist of alphabetic, numeric, and
@@ -42,16 +41,18 @@ options:
               the playbook command.
         required: True
         type: str
-    holds_for_reason_file:
+    holds_for_reason_dir:
         description:
             - >
-              The directory that will contain the HOLDDATA text files. One file will be
-              written with the HOLDDATA text pertaining to the specific HOLD REASON each
-              time this role is invoked.
+              The directory that will contain the HOLDDATA text file. The directory specified
+              must have valid UNIX directory name syntax. It must start and end with a slash
+              ('/') and can be up to 1023 characters long.
             - >
-              The files written in this directory will follow this naming convention where
-              the file names will be a concatenation of the software instance name and the
-              HOLD REASON: C(YourSoftwareInstanceName + YourHoldReason + .txt)
+              One file will be written in this directory with the HOLDDATA text pertaining
+              to the specified HOLD REASON each time this role is invoked. The file written
+              will follow this naming convention where the file name will be a combination of
+              the software instance name and the HOLD REASON:
+              C(YourSoftwareInstanceName-YourHoldReason-HOLDDATA.txt)
             - >
               The directory must already exist otherwise there will be an error writing the
               results to the file. If files exist in the directory already, they will be
@@ -73,12 +74,13 @@ notes:
     - >
       Command syntax to call a playbook using command arguments:
       C(ansible-playbook software_management_holds_for_reason_CICDtest1.yml
-      -e software_instance_uuid=cccccc...444444 -e hold_reason=ACTION)
+      -e software_instance_uuid=cccccc...444444 -e hold_reason=ACTION
+      -e holds_for_reason_file=/Users/yourUser/AnsibleOutputDir/)
     - >
       When the role is executed, a message shown in following example is
-      displayed, C("msg": "Output filename= /tmp/xxx/holds_for_reason_response.json").
-      This message includes a file path and file name where the HOLDs and HOLDDATA text
-      for the requested HOLD REASON are returned.
+      displayed, C("msg": "Output filename= /tmp/xxx/yourSwiName-ACTION-HOLDDATA.txt").
+      This message includes a file path and file name where the HOLDDATA text for the
+      requested HOLD REASON is returned.
 
 """
 

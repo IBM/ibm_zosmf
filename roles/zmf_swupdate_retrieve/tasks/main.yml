@@ -39,7 +39,7 @@
     - name: "Check the status of the software update operation every {{ async_thread_check_delay }}
         second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id | urlencode }}"
         method: GET
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -78,7 +78,7 @@
     - name: "Check the status of the software update operation every {{ async_thread_check_delay }}
         second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/swupdate"
         method: GET
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -117,7 +117,7 @@
     - name: "Check the status of the software update operation every {{ async_thread_check_delay }}
         second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/swupdate"
         method: GET
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
@@ -168,17 +168,6 @@
     - name: Display the path to the file containing the results from the software update operation
       ansible.builtin.debug:
         msg: "Output filename= {{ swupdate_retrieve_response_file }}"
-
-# Save the HOLDs array to a local variable
-- name: Save the HOLDs array from the software update process
-  ansible.builtin.set_fact:
-    software_update_holds: "{{ swupdate_retrieve_response.json['update-processes'][0]['holds'] }}"
-    software_instance_uuid: "{{ swupdate_retrieve_response.json['uuid'] }}"
-  when: >
-        (swupdate_retrieve_response.status == 200) and
-        (swupdate_retrieve_response.json['update-processes'][0]['status'] is defined) and
-        (swupdate_retrieve_response.json['update-processes'][0]['status'] != 'RUNNING') and
-        (swupdate_retrieve_response.json['update-processes'][0]['holds'] is defined)
 
 # Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
 - name: Display Retrieve Software Update Status REST API failure information

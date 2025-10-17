@@ -112,7 +112,7 @@
     # Start the software update search asynchronous operation.
     - name: "Searching software instance with UUID <{{ software_instance_uuid }}> for software updates"
       ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/softwareupdatesearch"
+        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/softwareupdatesearch"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
