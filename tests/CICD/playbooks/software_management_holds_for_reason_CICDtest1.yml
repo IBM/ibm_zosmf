@@ -14,17 +14,15 @@
   collections:
     - ibm.ibm_zosmf
   tasks:
-    - name: Saving specified output file
-      ansible.builtin.set_fact:
-        holds_for_reason_file_specified: "{{ holds_for_reason_file }}"
     - name: Retrieve the Software Update
       include_role:
         name: zmf_swupdate_retrieve
 
-#######################################################################################
-# PLAY #2: Query the global zone CSI data set on the specified HOLD REASON.           #
-#######################################################################################
-- name: Determine which CSI and HOLDs to query the HOLDDATA text for
+########################################################################################################
+# PLAY #2: Query the HOLDs returned by Software Update Retrieve on the specified HOLD REASON. For this #
+# play, the hold_reason parameter is specified in the host variables.                                  #
+########################################################################################################
+- name: "Get the HOLDDATA text for the {{ hold_reason }} HOLD REASON"
   hosts: swmgmt
   gather_facts: false
   collections:
@@ -34,56 +32,59 @@
       include_role:
         name: zmf_swmgmt_holds_for_reason
 
-##########################################################################################
-# PLAY #3: Query the global zone CSI data set on the HOLD REASON specified in this play. #
-##########################################################################################
-- name: Determine which CSI and HOLDs to query the HOLDDATA text for DOC HOLDs
+###################################################################################################
+# PLAY #3: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
+# play, the hold_reason parameter is redeclared here in the playbook as 'DOC' in order to overlay #
+# the original specification in the host variables.                                               #                                      
+###################################################################################################
+- name: Get the HOLDDATA text for the DOC HOLD REASON
   hosts: swmgmt
   gather_facts: false
   collections:
     - ibm.ibm_zosmf
   tasks:
     # Get HOLDDATA text for HOLDs with the DOC REASON.
-    - name: Setting resolve-holds JSON
+    - name: Setting the hold_reason to DOC
       ansible.builtin.set_fact:
         hold_reason: 'DOC'
-        holds_for_reason_file: "{{ holds_for_reason_file_specified }}"
     - name: "Create CSI Query request using the {{ hold_reason }} HOLD REASON"
       include_role:
         name: zmf_swmgmt_holds_for_reason
 
-##########################################################################################
-# PLAY #4: Query the global zone CSI data set on the HOLD REASON specified in this play. #
-##########################################################################################
-- name: Determine which CSI and HOLDs to query the HOLDDATA text for ACTION HOLDs
+###################################################################################################
+# PLAY #4: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
+# play, the hold_reason parameter is redeclared here in the playbook as 'ACTION' in order to      #
+# overlay the previous specification in this sample playbook.                                     # 
+###################################################################################################
+- name: Get the HOLDDATA text for the ACTION HOLD REASON
   hosts: swmgmt
   gather_facts: false
   collections:
     - ibm.ibm_zosmf
   tasks:
     # Get HOLDDATA text for HOLDs with the ACTION REASON.
-    - name: Setting resolve-holds JSON
+    - name: Setting the hold_reason to ACTION
       ansible.builtin.set_fact:
         hold_reason: 'ACTION'
-        holds_for_reason_file: "{{ holds_for_reason_file_specified }}"
     - name: "Create CSI Query request using the {{ hold_reason }} HOLD REASON"
       include_role:
         name: zmf_swmgmt_holds_for_reason
 
-##########################################################################################
-# PLAY #5: Query the global zone CSI data set on the HOLD REASON specified in this play. #
-##########################################################################################
-- name: Determine which CSI and HOLDs to query the HOLDDATA text for RESTART HOLDs
+###################################################################################################
+# PLAY #5: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
+# play, the hold_reason parameter is redeclared here in the playbook as 'RESTART' in order to     #
+# overlay the previous specification in this sample playbook.                                     #
+###################################################################################################
+- name: Get the HOLDDATA text for the RESTART HOLD REASON
   hosts: swmgmt
   gather_facts: false
   collections:
     - ibm.ibm_zosmf
   tasks:
     # Get HOLDDATA text for HOLDs with the RESTART REASON.
-    - name: Setting resolve-holds JSON
+    - name: Setting the hold_reason to RESTART
       ansible.builtin.set_fact:
         hold_reason: 'RESTART'
-        holds_for_reason_file: "{{ holds_for_reason_file_specified }}"
     - name: "Create CSI Query request using the {{ hold_reason }} HOLD REASON"
       include_role:
         name: zmf_swmgmt_holds_for_reason
