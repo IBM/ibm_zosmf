@@ -1,25 +1,12 @@
 # Copyright (c) IBM Corporation 2025
-# This playbook demonstrates using roles:
-# 'zmf_swupdate_retrieve' and 'zmf_swmgmt_holds_for_reason' to
-# gather the HOLDDATA TEXT for HOLDs by querying the global
-# zone CSI data set associated with the software instance
+# This playbook demonstrates using the
+# 'zmf_swmgmt_holds_for_reason' role to gather the
+# HOLDDATA TEXT for HOLDs by querying the global zone
+# CSI data set associated with the software instance
 # who's software update process identified the HOLDs.
 
-#####################################################################################
-# PLAY #1: Retrieve the Software Update for a Software Instance.                    #
-#####################################################################################
-- name: Retrieve the Software Update for a Software Instance
-  hosts: swmgmt
-  gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
-  tasks:
-    - name: Retrieve the Software Update
-      include_role:
-        name: zmf_swupdate_retrieve
-
 ########################################################################################################
-# PLAY #2: Query the HOLDs returned by Software Update Retrieve on the specified HOLD REASON. For this #
+# PLAY #1: Query the HOLDs returned by Software Update Retrieve on the specified HOLD REASON. For this #
 # play, the hold_reason parameter is specified in the host variables.                                  #
 ########################################################################################################
 - name: "Get the HOLDDATA text for the {{ hold_reason }} HOLD REASON"
@@ -33,7 +20,7 @@
         name: zmf_swmgmt_holds_for_reason
 
 ###################################################################################################
-# PLAY #3: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
+# PLAY #2: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
 # play, the hold_reason parameter is redeclared here in the playbook as 'DOC' in order to overlay #
 # the original specification in the host variables.                                               #                                      
 ###################################################################################################
@@ -52,7 +39,7 @@
         name: zmf_swmgmt_holds_for_reason
 
 ###################################################################################################
-# PLAY #4: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
+# PLAY #3: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
 # play, the hold_reason parameter is redeclared here in the playbook as 'ACTION' in order to      #
 # overlay the previous specification in this sample playbook.                                     # 
 ###################################################################################################
@@ -71,7 +58,7 @@
         name: zmf_swmgmt_holds_for_reason
 
 ###################################################################################################
-# PLAY #5: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
+# PLAY #4: Query the global zone CSI data set on the HOLD REASON specified in this play. For this #
 # play, the hold_reason parameter is redeclared here in the playbook as 'RESTART' in order to     #
 # overlay the previous specification in this sample playbook.                                     #
 ###################################################################################################
