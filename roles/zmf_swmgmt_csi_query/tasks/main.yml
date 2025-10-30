@@ -75,108 +75,49 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using global zone CSI data set name.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/csi/csiquery/{{ csi_data_set_name }}"
+  when: csi_data_set_name is defined
+
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/csiquery"
+  when: csi_data_set_name is not defined and software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/csiquery"
+  when: csi_data_set_name is not defined and software_instance_uuid is not defined and software_instance_name is defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ##########################################################################################
 # URI MODULE #1: Start a csi query async request for a software instance or data set.    #
 ##########################################################################################
-
-# If a SWI was specified call the SWI REST API URI.
-- name: Software Instance CSI Query
-  when: software_instance_uuid is not defined and csi_data_set_name is not defined
-  block:
-    # Create a variable for the csi query response content when a SWI is specified.
-    - name: Initialize the container for the csi query response content
-      ansible.builtin.set_fact:
-        csi_query_swi_response: ""
-
-    # Start the csi query asynchronous operation.
-    - name: Querying the global zone CSI data set associated with software instance <{{ software_instance_name }}>
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/csiquery"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ csi_query_request_body }}"
-      delegate_to: localhost
-      register: csi_query_swi_response
-
-    # Create a variable for the csi query response content when a SWI is specified.
-    - name: Save the csi query by software instance name and system response
-      ansible.builtin.set_fact:
-        csi_query_response: "{{ csi_query_swi_response }}"
-
-# If a UUID was specified call the UUID REST API URI.
-- name: Software Instance UUID CSI Query
-  when: software_instance_uuid is defined
-  block:
-    # Create a variable for the csi query response content when a SWI UUID is specified.
-    - name: Initialize the container for the csi query response content
-      ansible.builtin.set_fact:
-        csi_query_uuid_response: ""
-
-    # Start the csi query asynchronous operation.
-    - name: Querying the global zone CSI data set associated with software instance with UUID <{{ software_instance_uuid }}>
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/csiquery"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ csi_query_request_body }}"
-      delegate_to: localhost
-      register: csi_query_uuid_response
-
-    # Create a variable for the csi query response content when a SWI UUID is specified.
-    - name: Save the csi query by software instance UUID response
-      ansible.builtin.set_fact:
-        csi_query_response: "{{ csi_query_uuid_response }}"
-
-# If a CSI data set name was specified and not a UUID, call the CSI data set name REST API URI.
-- name: Data Set CSI Query
-  when: csi_data_set_name is defined and software_instance_uuid is not defined
-  block:
-    # Create a variable for the csi query response content when a CSI data set is specified.
-    - name: Initialize the container for the csi query response content
-      ansible.builtin.set_fact:
-        csi_query_dataset_response: ""
-
-    # Start the csi query asynchronous operation.
-    - name: Querying the global zone CSI data set <{{ csi_data_set_name }}>
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/csi/csiquery/{{ csi_data_set_name | urlencode }}"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ csi_query_request_body }}"
-      delegate_to: localhost
-      register: csi_query_dataset_response
-
-    # Create a variable for the csi query response content when a CSI data set is specified.
-    - name: Save the csi query by CSI data set response
-      ansible.builtin.set_fact:
-        csi_query_response: "{{ csi_query_dataset_response }}"
+- name: Querying the global zone CSI data set
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    return_content: true
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    method: POST
+    status_code: 202, 400, 403, 404, 409, 500, 503
+    validate_certs: false
+    body_format: json
+    body: "{{ csi_query_request_body }}"
+  delegate_to: localhost
+  register: csi_query_response
 
 # Create a variable for the csi query status monitor URL.
 - name: Set the csi query status monitor URL
@@ -231,7 +172,7 @@
   ansible.builtin.uri:
     url: "{{ csi_query_status_monitor_url }}"
     method: GET
-    user: "{{ zmf_user | trim }}" #TODO use cert/keyring instead
+    user: "{{ zmf_user | trim }}"
     password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
