@@ -23,67 +23,41 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/all"
+  when: software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/all"
+  when: software_instance_uuid is not defined and software_instance_name is defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ###################################################################
 # URI MODULE #1: Retrieve all software update processes.          #
 ###################################################################
-
-# Retrieve all software updates.
-- name: "Retrieve All Software Updates by Software Instance UUID"
-  when: software_instance_uuid is defined
-  block:
-    # Create a variable for the retrieve all software updates response content when a software instance UUID is specified.
-    - name: Initialize the container for the retrieve all software updates by software instance UUID response content
-      ansible.builtin.set_fact:
-        swupdate_retrieve_all_uuid_response: ""
-
-    - name: "Retrieving all software updates for software instance with UUID <{{ software_instance_uuid }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/swupdate/all"
-        method: GET
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 403, 404, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_retrieve_all_uuid_response
-      delegate_to: localhost
-
-    - name: "Save retrieve all software updates by software instance UUID response"
-      ansible.builtin.set_fact:
-        swupdate_retrieve_all_response: "{{ swupdate_retrieve_all_uuid_response }}"
-
-# Retrieve all software updates.
-- name: "Retrieve All Software Updates by Software Instance Name and System"
-  when: software_instance_uuid is not defined and software_instance_name is defined
-  block:
-    # Create a variable for the retrieve all software updates response content when a software instance name is specified.
-    - name: Initialize the container for the retrieve all software updates by software instance name and system response content
-      ansible.builtin.set_fact:
-        swupdate_retrieve_all_swi_response: ""
-
-    - name: "Retrieving all software updates for software instance <{{ software_instance_name }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/swupdate/all"
-        method: GET
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 403, 404, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_retrieve_all_swi_response
-      delegate_to: localhost
-
-    - name: "Save retrieve all software updates by software instance name and system response"
-      ansible.builtin.set_fact:
-        swupdate_retrieve_all_response: "{{ swupdate_retrieve_all_swi_response }}"
+- name: Retrieving all software updates for the software instance
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    method: GET
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    status_code: 200, 403, 404, 500, 503
+    validate_certs: false
+    return_content: true
+  register: swupdate_retrieve_all_response
+  delegate_to: localhost
 
 # Save the retrieve all software updates response in a file.
 - name: Write the results for the retrieve all software updates to a JSON file

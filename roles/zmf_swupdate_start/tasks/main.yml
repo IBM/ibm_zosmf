@@ -141,71 +141,43 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate"
+  when: software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate"
+  when: software_instance_uuid is not defined and software_instance_name is defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ##########################################################################################
 # URI MODULE #1: Start a software update for a software instance.                        #
 ##########################################################################################
-
-# Start a software update operation.
-- name: "Start Software Update by Software Instance UUID"
-  when: software_instance_uuid is defined
-  block:
-    # Create a variable for the start software update response content.
-    - name: Initialize the container for the start software update by software instance UUID response content
-      ansible.builtin.set_fact:
-        swupdate_start_uuid_response: ""
-
-    - name: "Start a software update for software instance with UUID <{{ software_instance_uuid }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/swupdate"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ swupdate_start_request_body }}"
-      delegate_to: localhost
-      register: swupdate_start_uuid_response
-
-    - name: "Save start software update by software instance UUID response"
-      ansible.builtin.set_fact:
-        swupdate_start_response: "{{ swupdate_start_uuid_response }}"
-
-# Start a software update operation.
-- name: "Start Software Update by Software Instance Name and System"
-  when: software_instance_uuid is not defined and software_instance_name is defined
-  block:
-    # Create a variable for the start software update response content.
-    - name: Initialize the container for the start software update by software instance name and system response content
-      ansible.builtin.set_fact:
-        swupdate_start_swi_response: ""
-
-    - name: "Start a software update for software instance <{{ software_instance_name }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/swupdate"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ swupdate_start_request_body }}"
-      delegate_to: localhost
-      register: swupdate_start_swi_response
-
-    - name: "Save start software update by software instance name and system response"
-      ansible.builtin.set_fact:
-        swupdate_start_response: "{{ swupdate_start_swi_response }}"
+- name: Start a software update for the software instance
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    return_content: true
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    method: POST
+    status_code: 202, 400, 403, 404, 409, 500, 503
+    validate_certs: false
+    body_format: json
+    body: "{{ swupdate_start_request_body }}"
+  delegate_to: localhost
+  register: swupdate_start_response
 
 # Create a variable for the software update process ID.
 - name: Set the software update process ID

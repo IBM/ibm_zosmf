@@ -10,6 +10,13 @@
     msg: "Specify a HOLD REASON ID and retry the role."
   when: hold_reason is not defined or hold_reason == ''
 
+###########################################
+# Call the Software Update Retrieve role. #
+###########################################
+- name: Retrieve the most recent Software Update process for the Software Instance
+  ansible.builtin.include_role:
+    name: zmf_swupdate_retrieve
+
 # Save the HOLDs array from the Software Update Retrieve response to a local variable.
 - name: Save the HOLDs array from the software update process
   ansible.builtin.set_fact:
@@ -67,7 +74,7 @@
     filter_param_value: "{{ filter_param_value[:-3] + ')' }}"
   when: filter_param_value | length > 3 and holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
 
-# Set the lists of zones and entires to pass as request content to the CSI Query role.
+# Set the lists of zones and entries to pass as request content to the CSI Query role.
 - name: Initializing CSI Query request content parameters
   ansible.builtin.set_fact:
     zones: '["GLOBAL"]'
@@ -111,7 +118,7 @@
 # Create the filename to write the HOLDDATA text to.
 - name: Create the name of the file to contain the HOLDDATA text
   ansible.builtin.set_fact:
-    holds_for_reason_file: "{{ holds_for_reason_dir }}{{ software_instance_name }}-{{ hold_reason }}-HOLDDATA.txt"
+    holds_for_reason_file: "{{ holds_for_reason_dir }}{{ hold_reason }}-HOLDDATA.txt"
 
 # Add a newline character to the end of the last line of HOLDDATA text.
 # Without this newline character, the last line of text isn't written

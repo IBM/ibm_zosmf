@@ -29,96 +29,47 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using Software Update Process ID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}?dir={{ directory }}"
+  when: swupdate_process_id is defined
+
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate?dir={{ directory }}"
+  when: swupdate_process_id is not defined and software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate?dir={{ directory }}"
+  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ##########################################################################
 # URI MODULE #1: Copy the output files from the software update process. #
 ##########################################################################
-
-# Wait for the software update process to finish and return a response.
-- name: "Copy Software Update by Process ID"
-  when: swupdate_process_id is defined
-  block:
-    # Create a variable for the copy software update response content when a process ID is specified.
-    - name: Initialize the container for the copy software update by process ID response content
-      ansible.builtin.set_fact:
-        swupdate_copy_processid_response: ""
-
-    - name: "Copy the software update output for process ID <{{ swupdate_process_id }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id | urlencode }}?dir={{ directory | urlencode }}"
-        method: PUT
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_copy_processid_response
-      delegate_to: localhost
-
-    - name: "Save copy software update by process ID response"
-      ansible.builtin.set_fact:
-        swupdate_copy_response: "{{ swupdate_copy_processid_response }}"
-
-# Wait for the software update process to finish and return a response.
-- name: "Copy Software Update by Software Instance UUID"
-  when: swupdate_process_id is not defined and software_instance_uuid is defined
-  block:
-    # Create a variable for the copy software update response content when a SWI UUID is specified.
-    - name: Initialize the container for the copy software update by software instance UUID response content
-      ansible.builtin.set_fact:
-        swupdate_copy_uuid_response: ""
-
-    - name: "Copy the software update associated with software instance with UUID <{{ software_instance_uuid }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/swupdate?dir={{ directory | urlencode }}"
-        method: PUT
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_copy_uuid_response
-      delegate_to: localhost
-
-    - name: "Save copy software update by software instance UUID response"
-      ansible.builtin.set_fact:
-        swupdate_copy_response: "{{ swupdate_copy_uuid_response }}"
-
-# Wait for the software update process to finish and return a response.
-- name: "Copy Software Update by Software Instance Name and System"
-  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
-  block:
-    # Create a variable for the copy software update response content when a SWI is specified.
-    - name: Initialize the container for the copy software update by software instance name and system response content
-      ansible.builtin.set_fact:
-        swupdate_copy_swi_response: ""
-
-    - name: "Copy the software update output associated with software instance <{{ software_instance_name }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/swupdate?dir={{ directory | urlencode }}"
-        method: PUT
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_copy_swi_response
-      delegate_to: localhost
-
-    - name: "Save copy software update by software instance name and system response"
-      ansible.builtin.set_fact:
-        swupdate_copy_response: "{{ swupdate_copy_swi_response }}"
+- name: Copy the software update output
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    method: PUT
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    status_code: 200, 400, 403, 404, 409, 500, 503
+    validate_certs: false
+    return_content: true
+  register: swupdate_copy_response
+  delegate_to: localhost
 
 # Save the copy software update response in a file.
 - name: Write the results for the copy software update to a JSON file

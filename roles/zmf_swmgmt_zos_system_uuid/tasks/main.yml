@@ -57,75 +57,43 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using system nickname.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/system/uuid/{{ system_nickname }}"
+  when: system_nickname is defined
+
+# Using z/OS host system.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/system/uuid"
+  when: system_nickname is not defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ##########################################################################################
 # URI MODULE #1: Obtain the UUID for a z/OS system.                                      #
 ##########################################################################################
-
-# If a system nickname was specified call the REST API using that system nickname.
-- name: The z/OS System UUID REST API using a system nickname
-  when: system_nickname is defined
-  block:
-    # Create a variable for the z/OS system UUID response content when a system nickname was specified.
-    - name: Initialize the container for the z/OS system UUID response content
-      ansible.builtin.set_fact:
-        zos_system_uuid_nickname_response: ""
-
-    # Start the z/OS system UUID operation.
-    - name: "Determining the UUID for z/OS system <{{ system_nickname }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/system/uuid/{{ system_nickname | urlencode }}"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 200, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ zos_system_uuid_request_body }}"
-      delegate_to: localhost
-      register: zos_system_uuid_nickname_response
-
-    # Create a variable for the z/OS system UUID response content when a system nickname was specified.
-    - name: Save the z/OS system UUID by system nickname response
-      ansible.builtin.set_fact:
-        zos_system_uuid_response: "{{ zos_system_uuid_nickname_response }}"
-
-# If a system nickname was not specified call the REST API without a system nickname.
-- name: The z/OS System UUID REST API using the host name
-  when: system_nickname is not defined
-  block:
-    # Create a variable for the z/OS system UUID response content when a system nickname was not specified.
-    - name: Initialize the container for the z/OS system UUID response content
-      ansible.builtin.set_fact:
-        zos_system_uuid_hostname_response: ""
-
-    # Start the z/OS system UUID operation.
-    - name: "Determining the UUID for z/OS system with host name <{{ zmf_host }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/system/uuid"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 200, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ zos_system_uuid_request_body }}"
-      delegate_to: localhost
-      register: zos_system_uuid_hostname_response
-
-    # Create a variable for the z/OS system UUID response content when a system nickname was not specified.
-    - name: Save the z/OS system UUID by host system response
-      ansible.builtin.set_fact:
-        zos_system_uuid_response: "{{ zos_system_uuid_hostname_response }}"
+- name: Determining the UUID for the z/OS system
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    return_content: true
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    method: POST
+    status_code: 200, 400, 403, 404, 409, 500, 503
+    validate_certs: false
+    body_format: json
+    body: "{{ zos_system_uuid_request_body }}"
+  delegate_to: localhost
+  register: zos_system_uuid_response
 
 # Issue a failure message when the z/OS system does not have a UUID.
 - name: The z/OS system does not have a UUID

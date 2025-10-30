@@ -63,75 +63,43 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/softwareupdatesearch"
+  when: software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/softwareupdatesearch"
+  when: software_instance_uuid is not defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ########################################################################################
 # URI MODULE #1: Start a software update search async request for a software instance. #
 ########################################################################################
-
-# If a SWI was specified call the SWI REST API URI.
-- name: Software Instance Software Update Search
-  when: software_instance_uuid is not defined
-  block:
-    # Create a variable for the software update search response content when a SWI is specified.
-    - name: Initialize the container for the software update search response content
-      ansible.builtin.set_fact:
-        software_update_search_swi_response: ""
-
-    # Start the software update search asynchronous operation.
-    - name: "Searching software instance <{{ software_instance_name }}> for software updates"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ system_nickname | urlencode }}/{{ software_instance_name | urlencode }}/softwareupdatesearch"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ software_update_search_request_body }}"
-      delegate_to: localhost
-      register: software_update_search_swi_response
-
-    # Create a variable for the software update search response content when a SWI is specified.
-    - name: Save the software update search by software instance name and system response
-      ansible.builtin.set_fact:
-        software_update_search_response: "{{ software_update_search_swi_response }}"
-
-# If a UUID was specified call the UUID REST API URI.
-- name: Software Instance UUID Software Update Search
-  when: software_instance_uuid is defined
-  block:
-    # Create a variable for the software update search response content when a SWI UUID is specified.
-    - name: Initialize the container for the software update search response content
-      ansible.builtin.set_fact:
-        software_update_search_uuid_response: ""
-
-    # Start the software update search asynchronous operation.
-    - name: "Searching software instance with UUID <{{ software_instance_uuid }}> for software updates"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host | urlencode }}/zosmf/swmgmt/swi/{{ software_instance_uuid | urlencode }}/softwareupdatesearch"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ software_update_search_request_body }}"
-      delegate_to: localhost
-      register: software_update_search_uuid_response
-
-    # Create a variable for the software update search response content when a SWI UUID is specified.
-    - name: Save the software update search by software instance UUID response
-      ansible.builtin.set_fact:
-        software_update_search_response: "{{ software_update_search_uuid_response }}"
+- name: Searching the software instance for software updates
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    return_content: true
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    method: POST
+    status_code: 202, 400, 403, 404, 409, 500, 503
+    validate_certs: false
+    body_format: json
+    body: "{{ software_update_search_request_body }}"
+  delegate_to: localhost
+  register: software_update_search_response
 
 # Create a variable for the software update search status monitor URL.
 - name: Set the software update search status monitor URL
