@@ -57,9 +57,9 @@ options:
               C(YourHoldReason-HOLDDATA.txt)
             - >
               The directory must already exist otherwise there will be an error writing the
-              results to the file. If files exist in the directory already, they will be
-              overwritten by the new response when the playbook is executed. If files
-              don't exist in the directory, they will be created.
+              results to the file. If files with the same name already exist in the
+              directory, they will be overwritten by the new response when the playbook is
+              executed. If files don't exist in the directory, they will be created.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
