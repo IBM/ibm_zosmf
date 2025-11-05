@@ -49,7 +49,7 @@
     holds_with_specified_reason: "{{ holds_with_specified_reason + software_update_holds | selectattr('holdReason', 'equalto', hold_reason) | list }}"
 
 # Assume there were no HOLDs found for the specified HOLD REASON
-- name: Default number of HOLDs found to zero
+- name: Default HOLDs found for the specified HOLD REASON to false
   ansible.builtin.set_fact:
     holds_found_for_reason: false
 
@@ -59,121 +59,119 @@
     holds_found_for_reason: true
   when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 0
 
-# Add the singular PTF to the filter.
-- name: Add the PTF to the CSI Query filter
-  ansible.builtin.set_fact:
-    filter_param_value: "{{ filter_param_value }} & (ename='{{ holds_with_specified_reason[0]['name'] }}')"
-  when: holds_found_for_reason and holds_with_specified_reason is defined and holds_with_specified_reason | length == 1
-
-# Add the first PTF to the filter.
-- name: Add the 1st PTF to the CSI Query filter
-  ansible.builtin.set_fact:
-    filter_param_value: "{{ filter_param_value }} & ("
-  when: holds_found_for_reason and holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
-
-# Add each PTF to the filter.
-- name: Add the rest of the PTFs to the CSI Query filter
-  ansible.builtin.set_fact:
-    filter_param_value: "{{ filter_param_value }}ename='{{ holds_with_specified_reason[index]['name'] }}' | "
-  loop: "{{ holds_with_specified_reason }}"
-  loop_control:
-    index_var: index
-  when: holds_found_for_reason and holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
-
-# Add the ending parenthesis to end the list of PTFs in the filter parameter.
-- name: Finalize the CSI Query filter parameter
-  ansible.builtin.set_fact:
-    filter_param_value: "{{ filter_param_value[:-3] + ')' }}"
-  when: holds_found_for_reason and filter_param_value | length > 3 and holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
-
-# Set the lists of zones and entries to pass as request content to the CSI Query role.
-- name: Initializing CSI Query request content parameters
-  ansible.builtin.set_fact:
-    zones: '["GLOBAL"]'
-    entries: '["HOLDDATA"]'
-    subentries: '["HOLDDATA"]'
-    filter: "{{ filter_param_value }}"
+#################################################################################################
+# Build the request and call the CSI Query role when at least one HOLD is found for the REASON. #
+#################################################################################################
+- name: Build the CSI Query request and call the CSI Query role
   when: holds_found_for_reason
+  block:
+    # Add the singular PTF to the filter.
+    - name: Add the PTF to the CSI Query filter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value }} & (ename='{{ holds_with_specified_reason[0]['name'] }}')"
+      when: holds_with_specified_reason is defined and holds_with_specified_reason | length == 1
 
-############################
-# Call the CSI Query role. #
-############################
-- name: Query a CSI data set for HOLD REASON ID <{{ hold_reason }}>
-  ansible.builtin.include_role:
-    name: zmf_swmgmt_csi_query
-  when: holds_found_for_reason
+    # Add the first PTF to the filter.
+    - name: Add the 1st PTF to the CSI Query filter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value }} & ("
+      when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
 
-# Initialize lists to contain the HOLDDATA text.
-- name: Initialize lists
-  ansible.builtin.set_fact:
-    entries: "{{ csi_query_response.json['entries'] }}"
-    subentries: []
-    holddata_text_list: []
-  when: holds_found_for_reason and csi_query_response is defined
+    # Add each PTF to the filter.
+    - name: Add the rest of the PTFs to the CSI Query filter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value }}ename='{{ holds_with_specified_reason[index]['name'] }}' | "
+      loop: "{{ holds_with_specified_reason }}"
+      loop_control:
+        index_var: index
+      when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
 
-# Consolidate a list of subentries.
-- name: Getting the subentries out of the CSI query response
-  ansible.builtin.set_fact:
-    subentries: "{{ subentries + csi_query_response.json['entries'][index]['subentries'] }}"
-  loop: "{{ csi_query_response.json['entries'] }}"
-  loop_control:
-    index_var: index
-  when: holds_found_for_reason and csi_query_response.json['entries'] is defined and csi_query_response.json['entries'] | length > 0
+    # Add the ending parenthesis to end the list of PTFs in the filter parameter.
+    - name: Finalize the CSI Query filter parameter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value[:-3] + ')' }}"
+      when: filter_param_value | length > 3 and holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
 
-# Create a list for the HOLDDATA text where each index contains one line of the text.
-- name: Loop through the subentries to get the HOLDDATA text
-  ansible.builtin.set_fact:
-    holddata_text_list: "{{ holddata_text_list + subentries[index]['HOLDDATA'] }}"
-  loop: "{{ subentries }}"
-  loop_control:
-    index_var: index
-  when: holds_found_for_reason and subentries is defined and subentries | length > 0
+    # Set the lists of zones and entries to pass as request content to the CSI Query role.
+    - name: Initializing CSI Query request content parameters
+      ansible.builtin.set_fact:
+        zones: '["GLOBAL"]'
+        entries: '["HOLDDATA"]'
+        subentries: '["HOLDDATA"]'
+        filter: "{{ filter_param_value }}"
 
-# Create the filename to write the HOLDDATA text to.
-- name: Create the name of the file to contain the HOLDDATA text
-  ansible.builtin.set_fact:
-    holds_for_reason_file: "{{ holds_for_reason_dir }}{{ hold_reason }}-HOLDDATA.txt"
-  when: holds_found_for_reason
+    ############################
+    # Call the CSI Query role. #
+    ############################
+    - name: Query a CSI data set for HOLD REASON ID <{{ hold_reason }}>
+      ansible.builtin.include_role:
+        name: zmf_swmgmt_csi_query
 
-# Add a newline character to the end of the last line of HOLDDATA text.
-# Without this newline character, the last line of text isn't written
-# to the file.
-- name: Formatting the HOLDDATA text
-  ansible.builtin.set_fact:
-    last_line: "{{ holddata_text_list[-1] + '\n' }}"
-    formatted_list: "{{ holddata_text_list[:-1] }}"
-  when: holds_found_for_reason
+    # Initialize lists to contain the HOLDDATA text.
+    - name: Initialize lists
+      ansible.builtin.set_fact:
+        entries: "{{ csi_query_response.json['entries'] }}"
+        subentries: []
+        holddata_text_list: []
+      when: csi_query_response is defined
 
-# Put back the last line of HOLDDATA text.
-- name: Formatting the HOLDDATA text
-  ansible.builtin.set_fact:
-    formatted_list: "{{ formatted_list + [last_line] }}"
-  when: holds_found_for_reason
+    # Consolidate a list of subentries.
+    - name: Getting the subentries out of the CSI query response
+      ansible.builtin.set_fact:
+        subentries: "{{ subentries + csi_query_response.json['entries'][index]['subentries'] }}"
+      loop: "{{ csi_query_response.json['entries'] }}"
+      loop_control:
+        index_var: index
+      when: csi_query_response.json['entries'] is defined and csi_query_response.json['entries'] | length > 0
 
-# Delete the file where the HOLDDATA text will be written if it already exists.
-- name: Delete the file if it already exists
-  ansible.builtin.file:
-    path: '{{ holds_for_reason_file }}'
-    state: absent
-  delegate_to: localhost
-  when: holds_found_for_reason
+    # Create a list for the HOLDDATA text where each index contains one line of the text.
+    - name: Loop through the subentries to get the HOLDDATA text
+      ansible.builtin.set_fact:
+        holddata_text_list: "{{ holddata_text_list + subentries[index]['HOLDDATA'] }}"
+      loop: "{{ subentries }}"
+      loop_control:
+        index_var: index
+      when: subentries is defined and subentries | length > 0
 
-# Write HOLDDATA text one line at a time.
-- name: "Writing the HOLDDATA text to {{ holds_for_reason_file }}"
-  ansible.builtin.lineinfile:
-    path: '{{ holds_for_reason_file }}'
-    line: "{{ formatted_list[index] }}"
-    state: present
-    create: true
-    mode: '0644'
-  delegate_to: localhost
-  loop: "{{ formatted_list }}"
-  loop_control:
-    index_var: index
-  when: holds_found_for_reason
+    # Create the filename to write the HOLDDATA text to.
+    - name: Create the name of the file to contain the HOLDDATA text
+      ansible.builtin.set_fact:
+        holds_for_reason_file: "{{ holds_for_reason_dir }}{{ hold_reason }}-HOLDDATA.txt"
 
-# Show the path to the HOLDDATA text file.
-- name: Display the path to the file containing the HOLDDATA text
-  ansible.builtin.debug:
-    msg: "Output filename= {{ holds_for_reason_file }}"
-  when: holds_found_for_reason
+    # Add a newline character to the end of the last line of HOLDDATA text.
+    # Without this newline character, the last line of text isn't written
+    # to the file.
+    - name: Formatting the HOLDDATA text
+      ansible.builtin.set_fact:
+        last_line: "{{ holddata_text_list[-1] + '\n' }}"
+        formatted_list: "{{ holddata_text_list[:-1] }}"
+
+    # Put back the last line of HOLDDATA text.
+    - name: Formatting the HOLDDATA text
+      ansible.builtin.set_fact:
+        formatted_list: "{{ formatted_list + [last_line] }}"
+
+    # Delete the file where the HOLDDATA text will be written if it already exists.
+    - name: Delete the file if it already exists
+      ansible.builtin.file:
+        path: '{{ holds_for_reason_file }}'
+        state: absent
+      delegate_to: localhost
+
+    # Write HOLDDATA text one line at a time.
+    - name: "Writing the HOLDDATA text to {{ holds_for_reason_file }}"
+      ansible.builtin.lineinfile:
+        path: '{{ holds_for_reason_file }}'
+        line: "{{ formatted_list[index] }}"
+        state: present
+        create: true
+        mode: '0644'
+      delegate_to: localhost
+      loop: "{{ formatted_list }}"
+      loop_control:
+        index_var: index
+
+    # Show the path to the HOLDDATA text file.
+    - name: Display the path to the file containing the HOLDDATA text
+      ansible.builtin.debug:
+        msg: "Output filename= {{ holds_for_reason_file }}"
