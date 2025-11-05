@@ -25,7 +25,7 @@
   hosts: swmgmt
   gather_facts: false
   tasks:
-    - name: Create CSI Query request using the specified HOLD REASON
+    - name: Write HOLDDATA for a single REASON to a file
       ansible.builtin.include_role:
         name: ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason
 
@@ -42,7 +42,7 @@
     - name: Setting the hold_reason to DOC
       ansible.builtin.set_fact:
         hold_reason: 'DOC'
-    - name: "Create CSI Query request using the {{ hold_reason }} HOLD REASON"
+    - name: Write HOLDDATA for a single REASON to a file
       ansible.builtin.include_role:
         name: ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason
 
@@ -59,7 +59,7 @@
     - name: Setting the hold_reason to ACTION
       ansible.builtin.set_fact:
         hold_reason: 'ACTION'
-    - name: "Create CSI Query request using the {{ hold_reason }} HOLD REASON"
+    - name: Write HOLDDATA for a single REASON to a file
       ansible.builtin.include_role:
         name: ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason
 
@@ -76,6 +76,6 @@
     - name: Setting the hold_reason to RESTART
       ansible.builtin.set_fact:
         hold_reason: 'RESTART'
-    - name: "Create CSI Query request using the {{ hold_reason }} HOLD REASON"
+    - name: Write HOLDDATA for a single REASON to a file
       ansible.builtin.include_role:
         name: ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason
