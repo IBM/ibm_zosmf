@@ -29,28 +29,38 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Encode the directory portion of the request URL.
+- name: Encode the directory portion of the request URL
+  ansible.builtin.set_fact:
+    directory: "{{ directory | urlencode }}"
+
+# Preserve the ? special character in the query string portion of the URL.
+- name: Add the encoded directory to the query string
+  ansible.builtin.set_fact:
+    end_of_url: "?dir={{ directory }}"
+
 # Using Software Update Process ID.
 - name: Create the HTTP Request URL
   ansible.builtin.set_fact:
-    request_url: "{{ zmf_host }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}?dir={{ directory }}"
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}"
   when: swupdate_process_id is defined
 
 # Using Software Instance UUID.
 - name: Create the HTTP Request URL
   ansible.builtin.set_fact:
-    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate?dir={{ directory }}"
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate"
   when: swupdate_process_id is not defined and software_instance_uuid is defined
 
 # Using Software Instance Name and System.
 - name: Create the HTTP Request URL
   ansible.builtin.set_fact:
-    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate?dir={{ directory }}"
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate"
   when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
 
 # Encode the HTTP request URL
 - name: Encode the request URL
   ansible.builtin.set_fact:
-    request_url: "{{ request_url | urlencode }}"
+    request_url: "{{ request_url | urlencode + end_of_url }}"
 
 ##########################################################################
 # URI MODULE #1: Copy the output files from the software update process. #
