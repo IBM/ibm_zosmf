@@ -138,38 +138,18 @@
       ansible.builtin.set_fact:
         holds_for_reason_file: "{{ holds_for_reason_dir }}{{ hold_reason }}-HOLDDATA.txt"
 
-    # Add a newline character to the end of the last line of HOLDDATA text.
-    # Without this newline character, the last line of text isn't written
-    # to the file.
+    # Split the array of HOLDDATA text into a string with a newline after each array index.
     - name: Formatting the HOLDDATA text
       ansible.builtin.set_fact:
-        last_line: "{{ holddata_text_list[-1] + '\n' }}"
-        formatted_list: "{{ holddata_text_list[:-1] }}"
+        holddata_text_string : "{{ holddata_text_list | join('\n') }}"
 
-    # Put back the last line of HOLDDATA text.
-    - name: Formatting the HOLDDATA text
-      ansible.builtin.set_fact:
-        formatted_list: "{{ formatted_list + [last_line] }}"
-
-    # Delete the file where the HOLDDATA text will be written if it already exists.
-    - name: Delete the file if it already exists
-      ansible.builtin.file:
-        path: '{{ holds_for_reason_file }}'
-        state: absent
-      delegate_to: localhost
-
-    # Write HOLDDATA text one line at a time.
+    # Write the HOLDDATA text to the file.
     - name: "Writing the HOLDDATA text to {{ holds_for_reason_file }}"
-      ansible.builtin.lineinfile:
-        path: '{{ holds_for_reason_file }}'
-        line: "{{ formatted_list[index] }}"
-        state: present
-        create: true
+      ansible.builtin.copy:
+        content: '{{ holddata_text_string }}'
+        dest: '{{ holds_for_reason_file }}'
         mode: '0644'
       delegate_to: localhost
-      loop: "{{ formatted_list }}"
-      loop_control:
-        index_var: index
 
     # Show the path to the HOLDDATA text file.
     - name: Display the path to the file containing the HOLDDATA text
