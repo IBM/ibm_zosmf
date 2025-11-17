@@ -133,6 +133,12 @@
         index_var: index
       when: subentries is defined and subentries | length > 0
 
+    # Ensure the directory specification ends in a slash.
+    - name: Add an ending slash to the directory if it doesn't already end with a slash
+      ansible.builtin.set_fact:
+        holds_for_reason_dir: "{{ holds_for_reason_dir }}/"
+      when: holds_for_reason_dir[-1] != '/'
+
     # Create the filename to write the HOLDDATA text to.
     - name: Create the name of the file to contain the HOLDDATA text
       ansible.builtin.set_fact:
