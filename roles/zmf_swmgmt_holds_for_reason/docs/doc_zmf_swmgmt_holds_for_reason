@@ -7,9 +7,9 @@ short_description: Collect ++HOLDs for selected REASON IDs
 description:
     - >
       The B(IBM z/OSMF collection) provides an Ansible role, referred to as
-      B(zmf_swmgmt_holds_for_reason), to separate HOLDs by REASON and
-      prepare to query the CSI associated with a software instance. The HOLDs
-      are gathered from the retrieve software update response and then the
+      B(zmf_swmgmt_holds_for_reason), to separate SYSTEM HOLDs by REASON and
+      prepare to query the CSI associated with a software instance. The SYSTEM
+      HOLDs are gathered from the retrieve software update response and then the
       HOLDDATA text is gathered from the CSI query response.
 author:
     - Taylor Digilio (Taylor.Digilio@ibm.com)
