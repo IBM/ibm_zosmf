@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash -eu
 echo "Validating the tools in the local environment:"
 
 echo 'Checking the working directory:'

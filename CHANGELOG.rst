@@ -4,13 +4,13 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
-v1.5.1
+v1.6.0
 ======
 
 Major Changes
 -------------
 
-- Added new roles for z/OSMF Software Management
+- Added new roles for z/OSMF Software Update
 
 New Roles
 ---------

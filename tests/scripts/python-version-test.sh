@@ -1,3 +1,5 @@
+#!/bin/bash -eu
+
 # echo "*** Test in the venv for ${pythonVersionList[i]}:"
 pythonVersion=$1
 venvDir=$2
@@ -9,10 +11,10 @@ venvPath="${venvDir}/${pythonVersion}"
 echo "Setting Up Virtual Environment Here: ${venvPath}"
 
 echo 'Creating Virtual Environment:'
-${pythonVersion} -m venv ${venvPath}
+"${pythonVersion} -m venv ${venvPath}"
 
 echo 'Activating Virtual Environment:'
-source ${venvPath}/bin/activate
+"source ${venvPath}/bin/activate"
 
 echo 'pip Installing the Project Requirements'
 pip install -r requirements.txt
@@ -26,32 +28,32 @@ ansible --version
 which ansible
 
 echo 'Confirming Ansible Collection was Installed Correctly'
-cd ~/.ansible/collections/ansible_collections/ibm/ibm_zosmf
+cd ~/.ansible/collections/ansible_collections/ibm/ibm_zosmf || exit
 
 # echo 'Checking the Directory'
 # pwd
 
 
 echo "Running Ansible Sanity Test:"
-${venvPath}/bin/ansible-test --version
-${venvPath}/bin/ansible-test sanity
+"${venvPath}/bin/ansible-test --version"
+"${venvPath}/bin/ansible-test sanity"
 
 echo "Running Ansible Lint:"
 # echo '==> ${venvPath}/bin/ansible-lint --version'
-${venvPath}/bin/ansible-lint --version
+"${venvPath}/bin/ansible-lint --version"
 # echo '==> ${venvPath}/bin/ansible-lint plugins'
-${venvPath}/bin/ansible-lint plugins
+"${venvPath}/bin/ansible-lint plugins"
 # echo '==> ${venvPath}/bin/ansible-lint roles'
-${venvPath}/bin/ansible-lint roles
+"${venvPath}/bin/ansible-lint roles"
 # echo '==> ${venvPath}/bin/ansible-lint --profile production'
-${venvPath}/bin/ansible-lint --profile production
+"${venvPath}/bin/ansible-lint --profile production"
 
 echo "Running Bandit Scan:"
 
 # echo '==> ${venvPath}/bin/bandit --version'
-${venvPath}/bin/bandit --version
+"${venvPath}/bin/bandit --version"
 # echo '==> ${venvPath}/bin/bandit -r plugins'
-${venvPath}/bin/bandit -r plugins
+"${venvPath}/bin/bandit -r plugins"
 
 echo "*** Run BVT:"
 echo '==> mkdir'
@@ -60,14 +62,14 @@ mkdir tests/CICD/playbooks
 mkdir tests/CICD/playbooks/group_vars
 mkdir tests/CICD/playbooks/host_vars
 echo '==> cp'
-cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml tests/CICD/playbooks/
-cp ${remoteWorkspace}/tests/CICD/playbooks/*.json tests/CICD/playbooks/
+"cp ${remoteWorkspace}/tests/CICD/playbooks/*.yml tests/CICD/playbooks"
+"cp ${remoteWorkspace}/tests/CICD/playbooks/*.json tests/CICD/playbooks"
 # cp ${remoteWorkspace}/tests/CICD/playbooks/hosts tests/CICD/playbooks/
-cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks/
-cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars/
+"cp ${remoteWorkspace}/tests/CICD/playbooks/ansible.cfg tests/CICD/playbooks"
+"cp ${remoteWorkspace}/tests/CICD/playbooks/group_vars/*.yml tests/CICD/playbooks/group_vars"
 # // cp -p /home/connect-ansible-build-server/ansible-tmp/P00.yml tests/CICD/playbooks/host_vars/P00.yml
 # // cp -p /home/connect-ansible-build-server/ansible-tmp/P01.yml tests/CICD/playbooks/host_vars/P01.yml
-cd tests/CICD/playbooks
+cd tests/CICD/playbooks || exit
 echo '==> pwd'
 pwd
 
@@ -80,16 +82,16 @@ pwd
 # // echo '*** ZMSC BVT:'
 # // ${venvPath}/bin/ansible-playbook zmsc_run_mgmt_service_CICDTest1.yml
 echo '*** SM BVT:'
-${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml
-${venvPath}/bin/ansible-playbook software_management_system_uuid_CICDtest1.yml
-${venvPath}/bin/ansible-playbook software_management_csi_query_CICDtest1.yml
-${venvPath}/bin/ansible-playbook software_management_swu_start_and_resolve_all_system_holds_CICDtest1.yml
-${venvPath}/bin/ansible-playbook software_management_swu_start_CICDtest1.yml
-${venvPath}/bin/ansible-playbook software_management_swu_resume_CICDtest1.yml
-${venvPath}/bin/ansible-playbook software_management_swu_retrieve_all_CICDtest1.yml
-${venvPath}/bin/ansible-playbook software_management_swu_cancel_CICDtest1.yml
+"${venvPath}/bin/ansible-playbook software_management_reports_CICDtest1.yml"
+"${venvPath}/bin/ansible-playbook software_management_system_uuid_CICDtest1.yml"
+"${venvPath}/bin/ansible-playbook software_management_csi_query_CICDtest1.yml"
+"${venvPath}/bin/ansible-playbook software_management_swu_start_and_resolve_all_system_holds_CICDtest1.yml"
+"${venvPath}/bin/ansible-playbook software_management_swu_start_CICDtest1.yml"
+"${venvPath}/bin/ansible-playbook software_management_swu_resume_CICDtest1.yml"
+"${venvPath}/bin/ansible-playbook software_management_swu_retrieve_all_CICDtest1.yml"
+"${venvPath}/bin/ansible-playbook software_management_swu_cancel_CICDtest1.yml"
 
 echo 'Test Completed Deactivating and Cleaning up Virtual Environment:'
 echo '==> deactivate'
 deactivate
-rm -rf ${venvPath}
+"rm -rf ${venvPath}"

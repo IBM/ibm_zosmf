@@ -28,7 +28,7 @@ def __get_workflow_apis():
         # list the z/OSMF workflow instances for a system or sysplex
         list=dict(
             method='get',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/'
                 + version + '/workflows',
             args=dict(
                 workflowName=dict(
@@ -55,7 +55,7 @@ def __get_workflow_apis():
         # system
         retrieveDefinition=dict(
             method='get',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/'
                 + version + '/workflowDefinition',
             args=dict(
                 definitionFilePath=dict(
@@ -75,7 +75,7 @@ def __get_workflow_apis():
         # retrieve the properties of a z/OSMF workflow instance
         retrieveProperties=dict(
             method='get',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/'
                 + version + '/workflows/{workflowKey}',
             args=dict(
                 returnData=dict(
@@ -88,7 +88,7 @@ def __get_workflow_apis():
         # create a z/OSMF workflow instance on a z/OS system
         create=dict(
             method='post',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/'
                 + version + '/workflows',
             args=dict(
                 workflowName=dict(
@@ -149,7 +149,7 @@ def __get_workflow_apis():
         # start a z/OSMF workflow instance on a z/OS system
         start=dict(
             method='put',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/'
                 + version + '/workflows/{workflowKey}/operations/start',
             args=dict(
                 resolveConflictByUsing=dict(
@@ -179,7 +179,7 @@ def __get_workflow_apis():
         # remove a z/OSMF workflow instance from a z/OS system
         delete=dict(
             method='delete',
-            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/' \
+            url='https://{zmf_host}:{zmf_port}/zosmf/workflow/rest/'
                 + version + '/workflows/{workflowKey}',
             args={},
             ok_rcode=204
