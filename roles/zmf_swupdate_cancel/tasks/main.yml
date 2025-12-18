@@ -20,7 +20,7 @@
 # Ensure there is a colon in the host. Add the z/OSMF server port if specified.
 - name: "Set the zmf_port if specified"
   ansible.builtin.set_fact:
-    zmf_socket: '{{ zmf_host }}:{{ zmf_port }}'
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
 ###################################################################
@@ -38,14 +38,14 @@
 
     - name: "Cancel the software update process with ID <{{ swupdate_process_id }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/swupdate/cancel/{{ swupdate_process_id }}"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/cancel/{{ swupdate_process_id }}"
         method: POST
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
         return_content: true
@@ -67,14 +67,14 @@
 
     - name: "Cancel the software update process associated with software instance with UUID <{{ software_instance_uuid }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/cancel"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/cancel"
         method: POST
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
         return_content: true
@@ -96,14 +96,14 @@
 
     - name: "Cancel the software update process associated with software instance <{{ software_instance_name }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/cancel"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/cancel"
         method: POST
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
         return_content: true

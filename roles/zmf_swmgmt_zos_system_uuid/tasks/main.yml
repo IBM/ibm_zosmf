@@ -59,7 +59,7 @@
 # Ensure there is a colon in the host. Add the z/OSMF server port if specified.
 - name: "Set the zmf_port if specified"
   ansible.builtin.set_fact:
-    zmf_socket: '{{ zmf_host }}:{{ zmf_port }}'
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
 ##########################################################################################
@@ -73,14 +73,14 @@
     # Start the z/OS system UUID operation.
     - name: "Determining the UUID for z/OS system <{{ system_nickname }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/system/uuid/{{ system_nickname }}"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/system/uuid/{{ system_nickname }}"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         method: POST
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
@@ -142,16 +142,16 @@
   when: system_nickname is not defined
   block:
     # Start the z/OS system UUID operation.
-    - name: "Determining the UUID for z/OS system with host name <{{ zmf_socket }}>"
+    - name: "Determining the UUID for z/OS system with host name <{{ zmf_host }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/system/uuid"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/system/uuid"
         return_content: true
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         method: POST
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
@@ -163,7 +163,7 @@
     # Issue a failure message when the z/OS host system does not have a UUID.
     - name: The z/OS host system does not have a UUID
       ansible.builtin.fail:
-        msg: "The z/OS system with host name {{ zmf_socket }} does not have a UUID."
+        msg: "The z/OS system with host name {{ zmf_host }} does not have a UUID."
       when: zos_system_uuid_hostname_response.status == 200 and not zos_system_uuid_hostname_response.json['uuid']
 
     # Create a variable for the z/OS system UUID.

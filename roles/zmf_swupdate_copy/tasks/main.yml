@@ -26,7 +26,7 @@
 # Ensure there is a colon in the host. Add the z/OSMF server port if specified.
 - name: "Set the zmf_port if specified"
   ansible.builtin.set_fact:
-    zmf_socket: '{{ zmf_host }}:{{ zmf_port }}'
+    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
 ##########################################################################
@@ -44,14 +44,14 @@
 
     - name: "Copy the software update output for process ID <{{ swupdate_process_id }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}?dir={{ directory }}"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}?dir={{ directory }}"
         method: PUT
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
         return_content: true
@@ -73,14 +73,14 @@
 
     - name: "Copy the software update associated with software instance with UUID <{{ software_instance_uuid }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate?dir={{ directory }}"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate?dir={{ directory }}"
         method: PUT
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
         return_content: true
@@ -102,14 +102,14 @@
 
     - name: "Copy the software update output associated with software instance <{{ software_instance_name }}>"
       ansible.builtin.uri:
-        url: "https://{{ zmf_socket }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate?dir={{ directory }}"
+        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate?dir={{ directory }}"
         method: PUT
         user: "{{ zmf_user | trim }}"
         password: "{{ zmf_password | trim }}"
         force_basic_auth: true
         headers:
-          Host: "{{ zmf_socket }}"
-          Origin: "https://{{ zmf_socket }}"
+          Host: "{{ zmf_host }}"
+          Origin: "https://{{ zmf_host }}"
         status_code: 200, 400, 403, 404, 409, 500, 503
         validate_certs: false
         return_content: true
