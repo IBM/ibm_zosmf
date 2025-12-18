@@ -200,7 +200,7 @@ dmypy.json
 .keep
 shell_exploits.txt
 tests/collections
-# .ansible/
+.ansible/
 .pre-commit-config.yaml
 .whitesource
 

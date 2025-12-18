@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/zsh
 
 echo "Building the Ansible Collection"
 ansible-galaxy collection build --force
