@@ -4,6 +4,24 @@ Ibm.Ibm_Zosmf Release Notes
 
 .. contents:: Topics
 
+v1.5.2
+======
+
+Major Changes
+-------------
+
+- Added a new role for z/OSMF Software Management
+
+Minor Changes
+-------------
+
+- Updated all z/OSMF Software Management roles to encode the characters in the request URLs
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason - Role gathers and separates HOLDDATA text by HOLD REASON
+
 v1.5.1
 ======
 

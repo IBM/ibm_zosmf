@@ -23,126 +23,57 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using Software Update Process ID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}"
+  when: swupdate_process_id is defined
+
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate"
+  when: swupdate_process_id is not defined and software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate"
+  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ###################################################################
 # URI MODULE #1: Check the status of the software update process. #
 ###################################################################
-
-# Wait for the software update process to finish and return a response.
-- name: "Retrieve Software Update Status by Process ID"
-  when: swupdate_process_id is defined
-  block:
-    # Create a variable for the retrieve software update response content when a process ID is specified.
-    - name: Initialize the container for the retrieve software update status by process ID response content
-      ansible.builtin.set_fact:
-        swupdate_retrieve_processid_response: ""
-
-    - name: "Check the status of the software update operation every {{ async_thread_check_delay }}
-        second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/{{ swupdate_process_id }}"
-        method: GET
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 403, 404, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_retrieve_processid_response
-      delegate_to: localhost
-      # This task's URL will be called repeatedly either until the "until" condition is met (request failed or
-      # request completed) or the request still isn't finished after the specified "complete_check_times" attempts.
-      until: >
-        (swupdate_retrieve_processid_response is failed) or
-        (swupdate_retrieve_processid_response.status != 200) or
-        ((swupdate_retrieve_processid_response.json['update-processes'][0]['status'] is defined) and
-        (swupdate_retrieve_processid_response.json['update-processes'][0]['status'] != 'RUNNING'))
-      retries: "{{ async_thread_check_times }}"
-      delay: "{{ async_thread_check_delay }}"
-
-    - name: "Save retrieve software update status by process ID response"
-      ansible.builtin.set_fact:
-        swupdate_retrieve_response: "{{ swupdate_retrieve_processid_response }}"
-
-# Wait for the software update process to finish and return a response.
-- name: "Retrieve Software Update Status by Software Instance UUID"
-  when: swupdate_process_id is not defined and software_instance_uuid is defined
-  block:
-    # Create a variable for the retrieve software update response content when a software instance UUID is specified.
-    - name: Initialize the container for the retrieve software update status by software instance UUID response content
-      ansible.builtin.set_fact:
-        swupdate_retrieve_uuid_response: ""
-
-    - name: "Check the status of the software update operation every {{ async_thread_check_delay }}
-        second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate"
-        method: GET
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 403, 404, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_retrieve_uuid_response
-      delegate_to: localhost
-      # This task's URL will be called repeatedly either until the "until" condition is met (request failed or
-      # request completed) or the request still isn't finished after the specified "complete_check_times" attempts.
-      until: >
-        (swupdate_retrieve_uuid_response is failed) or
-        (swupdate_retrieve_uuid_response.status != 200) or
-        ((swupdate_retrieve_uuid_response.json['update-processes'][0]['status'] is defined) and
-        (swupdate_retrieve_uuid_response.json['update-processes'][0]['status'] != 'RUNNING'))
-      retries: "{{ async_thread_check_times }}"
-      delay: "{{ async_thread_check_delay }}"
-
-    - name: "Save retrieve software update status by software instance UUID response"
-      ansible.builtin.set_fact:
-        swupdate_retrieve_response: "{{ swupdate_retrieve_uuid_response }}"
-
-# Wait for the software update process to finish and return a response.
-- name: "Retrieve Software Update Status by Software Instance Name and System"
-  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
-  block:
-    # Create a variable for the retrieve software update response content when a software instance name is specified.
-    - name: Initialize the container for the retrieve software update status by software instance name and system response content
-      ansible.builtin.set_fact:
-        swupdate_retrieve_swi_response: ""
-
-    - name: "Check the status of the software update operation every {{ async_thread_check_delay }}
-        second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate"
-        method: GET
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        status_code: 200, 403, 404, 500, 503
-        validate_certs: false
-        return_content: true
-      register: swupdate_retrieve_swi_response
-      delegate_to: localhost
-      # This task's URL will be called repeatedly either until the "until" condition is met (request failed or
-      # request completed) or the request still isn't finished after the specified "complete_check_times" attempts.
-      until: >
-        (swupdate_retrieve_swi_response is failed) or
-        (swupdate_retrieve_swi_response.status != 200) or
-        ((swupdate_retrieve_swi_response.json['update-processes'][0]['status'] is defined) and
-        (swupdate_retrieve_swi_response.json['update-processes'][0]['status'] != 'RUNNING'))
-      retries: "{{ async_thread_check_times }}"
-      delay: "{{ async_thread_check_delay }}"
-
-    - name: "Save retrieve software update status by software instance name and system response"
-      ansible.builtin.set_fact:
-        swupdate_retrieve_response: "{{ swupdate_retrieve_swi_response }}"
+- name: "Check the status of the software update operation every {{ async_thread_check_delay }}
+    second(s) until it is finished or maximum {{ async_thread_check_times }} poll(s) reached"
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    method: GET
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    status_code: 200, 403, 404, 500, 503
+    validate_certs: false
+    return_content: true
+  register: swupdate_retrieve_response
+  delegate_to: localhost
+  # This task's URL will be called repeatedly either until the "until" condition is met (request failed or
+  # request completed) or the request still isn't finished after the specified "complete_check_times" attempts.
+  until: >
+    (swupdate_retrieve_response is failed) or
+    (swupdate_retrieve_response.status != 200) or
+    ((swupdate_retrieve_response.json['update-processes'][0]['status'] is defined) and
+    (swupdate_retrieve_response.json['update-processes'][0]['status'] != 'RUNNING'))
+  retries: "{{ async_thread_check_times }}"
+  delay: "{{ async_thread_check_delay }}"
 
 # Save the retrieve software update status response for a completed process in a file.
 - name: Write the results for the retrieve software update status to a JSON file

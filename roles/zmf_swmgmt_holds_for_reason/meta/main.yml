@@ -1,0 +1,21 @@
+# Copyright (c) IBM Corporation 2025
+
+---
+galaxy_info:
+  author: Taylor Digilio <Taylor.Digilio@ibm.com>
+  description: Ansible role to seperate HOLDs by REASON and prepare to invoke the Software Management CSI Query REST API for HOLD REASON criteria.
+  company: IBM
+  min_ansible_version: 2.9
+  galaxy_tags:
+    - ibm
+    - z
+    - zos
+    - zosmf
+    - softwaremanagement
+  license:
+    - Apache-2.0
+  platforms:
+    - name: GenericLinux
+      versions:
+        - all
+dependencies: []

@@ -102,102 +102,49 @@
     zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
+# Using Software Update Process ID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swupdate/resume/{{ swupdate_process_id }}"
+  when: swupdate_process_id is defined
+
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/resume"
+  when: swupdate_process_id is not defined and software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/resume"
+  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
 ##########################################################################################
 # URI MODULE #1: Resume a software update for a software instance.                       #
 ##########################################################################################
-
-# Resume the software update operation.
-- name: "Resume Software Update by Process ID"
-  when: swupdate_process_id is defined
-  block:
-    # Create a variable for the resume software update response content.
-    - name: Initialize the container for the resume software update by process ID response content
-      ansible.builtin.set_fact:
-        swupdate_resume_processid_response: ""
-
-    - name: "Resume the software update process with ID <{{ swupdate_process_id }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swupdate/resume/{{ swupdate_process_id }}"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ swupdate_resume_request_body }}"
-      delegate_to: localhost
-      register: swupdate_resume_processid_response
-
-    - name: "Save resume software update by process ID response"
-      ansible.builtin.set_fact:
-        swupdate_resume_response: "{{ swupdate_resume_processid_response }}"
-
-# Resume the software update operation.
-- name: "Resume Software Update by Software Instance UUID"
-  when: swupdate_process_id is not defined and software_instance_uuid is defined
-  block:
-    # Create a variable for the resume software update response content.
-    - name: Initialize the container for the resume software update by software instance UUID response content
-      ansible.builtin.set_fact:
-        swupdate_resume_uuid_response: ""
-
-    - name: "Resume the software update for software instance with UUID <{{ software_instance_uuid }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/resume"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ swupdate_resume_request_body }}"
-      delegate_to: localhost
-      register: swupdate_resume_uuid_response
-
-    - name: "Save resume software update by software instance UUID response"
-      ansible.builtin.set_fact:
-        swupdate_resume_response: "{{ swupdate_resume_uuid_response }}"
-
-# Resume the software update operation.
-- name: "Resume Software Update by Software Instance Name and System"
-  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
-  block:
-    # Create a variable for the resume software update response content.
-    - name: Initialize the container for the resume software update by software instance name and system response content
-      ansible.builtin.set_fact:
-        swupdate_resume_swi_response: ""
-
-    - name: "Resume the software update for software instance <{{ software_instance_name }}>"
-      ansible.builtin.uri:
-        url: "https://{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/resume"
-        return_content: true
-        user: "{{ zmf_user | trim }}"
-        password: "{{ zmf_password | trim }}"
-        force_basic_auth: true
-        headers:
-          Host: "{{ zmf_host }}"
-          Origin: "https://{{ zmf_host }}"
-        method: POST
-        status_code: 202, 400, 403, 404, 409, 500, 503
-        validate_certs: false
-        body_format: json
-        body: "{{ swupdate_resume_request_body }}"
-      delegate_to: localhost
-      register: swupdate_resume_swi_response
-
-    - name: "Save resume software update by software instance name and system response"
-      ansible.builtin.set_fact:
-        swupdate_resume_response: "{{ swupdate_resume_swi_response }}"
+- name: Resume the software update process
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    return_content: true
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_host }}"
+      Origin: "https://{{ zmf_host }}"
+    method: POST
+    status_code: 202, 400, 403, 404, 409, 500, 503
+    validate_certs: false
+    body_format: json
+    body: "{{ swupdate_resume_request_body }}"
+  delegate_to: localhost
+  register: swupdate_resume_response
 
 # Create a variable for the software update process ID.
 - name: Set the software update process ID
