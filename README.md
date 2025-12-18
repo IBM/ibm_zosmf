@@ -95,8 +95,8 @@ All releases will meet the following test criteria:
 This release of the collection was tested with following dependencies:
 
 * ansible-core v2.15.x, v2.16.x
-* Python 3.10.x, 3.11.x
-* z/OS 3.1
+* Python 3.11.x, 3.12.x, 3.12.x
+* z/OS 3.1, 3.2
 
 Review the [release notes](https://ibm.github.io/z_ansible_collections_doc/ibm_zosmf/docs/source/release_notes.html) for the details of this release.
 
