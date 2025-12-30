@@ -72,25 +72,25 @@
 # Ensure there is a colon in the host. Add the z/OSMF server port if specified.
 - name: "Set the zmf_port if specified"
   ansible.builtin.set_fact:
-    zmf_host: '{{ zmf_host }}:{{ zmf_port }}'
+    zmf_socket: '{{ zmf_host }}:{{ zmf_port }}'
   when: zmf_port is defined and ':' not in zmf_host
 
 # Using global zone CSI data set name.
 - name: Create the HTTP Request URL
   ansible.builtin.set_fact:
-    request_url: "{{ zmf_host }}/zosmf/swmgmt/csi/csiquery/{{ csi_data_set_name }}"
+    request_url: "{{ zmf_socket }}/zosmf/swmgmt/csi/csiquery/{{ csi_data_set_name }}"
   when: csi_data_set_name is defined
 
 # Using Software Instance UUID.
 - name: Create the HTTP Request URL
   ansible.builtin.set_fact:
-    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/csiquery"
+    request_url: "{{ zmf_socket }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/csiquery"
   when: csi_data_set_name is not defined and software_instance_uuid is defined
 
 # Using Software Instance Name and System.
 - name: Create the HTTP Request URL
   ansible.builtin.set_fact:
-    request_url: "{{ zmf_host }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/csiquery"
+    request_url: "{{ zmf_socket }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/csiquery"
   when: csi_data_set_name is not defined and software_instance_uuid is not defined and software_instance_name is defined
 
 # Encode the HTTP request URL
@@ -109,8 +109,8 @@
     password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
-      Host: "{{ zmf_host }}"
-      Origin: "https://{{ zmf_host }}"
+      Host: "{{ zmf_socket }}"
+      Origin: "https://{{ zmf_socket }}"
     method: POST
     status_code: 202, 400, 403, 404, 409, 500, 503
     validate_certs: false
@@ -176,8 +176,8 @@
     password: "{{ zmf_password | trim }}"
     force_basic_auth: true
     headers:
-      Host: "{{ zmf_host }}"
-      Origin: "https://{{ zmf_host }}"
+      Host: "{{ zmf_socket }}"
+      Origin: "https://{{ zmf_socket }}"
     status_code: 200
     validate_certs: false
     return_content: true

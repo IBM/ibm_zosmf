@@ -1,0 +1,5 @@
+major_changes:
+  - "New Role: ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason - Role gathers and separates HOLDDATA text by HOLD REASON"
+
+minor_changes:
+  - "Updated all z/OSMF Software Management roles to encode the characters in the request URLs"
