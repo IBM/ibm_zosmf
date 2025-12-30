@@ -10,18 +10,31 @@ v1.5.1
 Release Summary
 ---------------
 
-Added new roles for the z/OSMF Software Management Collection
-6 new roles have been added aimed at managing the software update process.
+Added new roles to the z/OSMF Software Management Collection
+7 new roles have been added.
+6 aimed at managing the software update process. 1 aimed at managing system holds.
 
 Major Changes
 -------------
 
-- New Role: ibm.ibm_zosmf.zmf_swupdate_cancel - Role cancels a software update process
-- New Role: ibm.ibm_zosmf.zmf_swupdate_copy - Role copies a software update process
-- New Role: ibm.ibm_zosmf.zmf_swupdate_resume - Role resumes a software update process
-- New Role: ibm.ibm_zosmf.zmf_swupdate_retrieve - Role retrieves a software update process
-- New Role: ibm.ibm_zosmf.zmf_swupdate_retrieve_all - Role retrieves all software update processes
-- New Role: ibm.ibm_zosmf.zmf_swupdate_start - Role starts a software update process
+- Software update roles have been added, aimed at enabling automation.
+
+Minor Changes
+-------------
+
+- Fixed bug where zmf_port wasn't always registered properly.
+- Updated all z/OSMF Software Management roles to encode the characters in the request URLs
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason - Role gathers and separates HOLDDATA text by HOLD REASON
+- ibm.ibm_zosmf.zmf_swupdate_cancel - Role cancels a software update process
+- ibm.ibm_zosmf.zmf_swupdate_copy - Role to copy the saved output for a software update process
+- ibm.ibm_zosmf.zmf_swupdate_resume - Role resumes a software update process
+- ibm.ibm_zosmf.zmf_swupdate_retrieve - Role retrieves a software update process
+- ibm.ibm_zosmf.zmf_swupdate_retrieve_all - Role retrieves all software update processes
+- ibm.ibm_zosmf.zmf_swupdate_start - Role starts a software update process
 
 v1.5.0
 ======
@@ -39,8 +52,8 @@ Minor Changes
 New Roles
 ---------
 
-- ibm.ibm_zosmf.ibm.ibm_zosmf.zmf_swmgmt_csi_query - Role queries a SMP/E global zone CSI data set
-- ibm.ibm_zosmf.ibm.ibm_zosmf.zmf_swmgmt_system_uuid - Role determines a z/OS system's UUID
+- ibm.ibm_zosmf.zmf_swmgmt_csi_query - Role queries a SMP/E global zone CSI data set
+- ibm.ibm_zosmf.zmf_swmgmt_system_uuid - Role determines a z/OS system's UUID
 
 v1.4.2
 ======

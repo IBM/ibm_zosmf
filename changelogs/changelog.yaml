@@ -113,33 +113,51 @@ releases:
     objects:
       role:
       - description: Role queries a SMP/E global zone CSI data set
-        name: ibm.ibm_zosmf.zmf_swmgmt_csi_query
+        name: zmf_swmgmt_csi_query
         namespace: null
       - description: Role determines a z/OS system's UUID
-        name: ibm.ibm_zosmf.zmf_swmgmt_system_uuid
+        name: zmf_swmgmt_system_uuid
         namespace: null
     release_date: '2024-06-07'
   1.5.1:
     changes:
       major_changes:
-      - 'New Role: ibm.ibm_zosmf.zmf_swupdate_cancel - Role cancels a software update
-        process'
-      - 'New Role: ibm.ibm_zosmf.zmf_swupdate_copy - Role copies a software update
-        process'
-      - 'New Role: ibm.ibm_zosmf.zmf_swupdate_resume - Role resumes a software update
-        process'
-      - 'New Role: ibm.ibm_zosmf.zmf_swupdate_retrieve - Role retrieves a software
-        update process'
-      - 'New Role: ibm.ibm_zosmf.zmf_swupdate_retrieve_all - Role retrieves all software
-        update processes'
-      - 'New Role: ibm.ibm_zosmf.zmf_swupdate_start - Role starts a software update
-        process'
-      release_summary: 'Added new roles for the z/OSMF Software Management Collection
+      - Software update roles have been added, aimed at enabling automation.
+      minor_changes:
+      - Fixed bug where zmf_port wasn't always registered properly.
+      - Updated all z/OSMF Software Management roles to encode the characters in the
+        request URLs
+      release_summary: 'Added new roles to the z/OSMF Software Management Collection
 
-        6 new roles have been added aimed at managing the software update process.
+        7 new roles have been added.
 
-        '
+        6 aimed at managing the software update process. 1 aimed at managing system
+        holds.'
     fragments:
     - 15-fixing-changelog.yaml
     - 16-release-summary.yaml
-    release_date: '2025-12-18'
+    - 17-zmf-host-bug.yaml
+    objects:
+      role:
+      - description: Role gathers and separates HOLDDATA text by HOLD REASON
+        name: zmf_swmgmt_holds_for_reason
+        namespace: null
+      - description: Role cancels a software update process
+        name: zmf_swupdate_cancel
+        namespace: null
+      - description: Role to copy the saved output for a software update process
+        name: zmf_swupdate_copy
+        namespace: null
+      - description: Role resumes a software update process
+        name: zmf_swupdate_resume
+        namespace: null
+      - description: Role retrieves a software update process
+        name: zmf_swupdate_retrieve
+        namespace: null
+      - description: Role retrieves all software update processes
+        name: zmf_swupdate_retrieve_all
+        namespace: null
+      - description: Role starts a software update process
+        name: zmf_swupdate_start
+        namespace: null
+    release_date: '2025-12-29'

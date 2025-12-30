@@ -1,4 +1,7 @@
 release_summary: >
-  Added new roles for the z/OSMF Software Management Collection
+  Added new roles to the z/OSMF Software Management Collection
 
-  6 new roles have been added aimed at managing the software update process.
+  7 new roles have been added.
+  
+  6 aimed at managing the software update process.
+  1 aimed at managing system holds.
