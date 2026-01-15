@@ -1,0 +1,108 @@
+# Copyright (c) IBM Corporation 2025
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+# Tasks file for zmf_swupdate_cancel play.
+
+# Issue a failure message and stop the playbook if a software instance/system nickname, UUID, or process ID specified.
+- name: A software instance and system nickname, a UUID, or a software update process ID must be provided to the role
+  ansible.builtin.fail:
+    msg: "Specify a software instance and system nickname, a UUID, or a software update process ID and retry the role."
+  when: >
+    (software_instance_uuid is not defined or software_instance_uuid == '') and (software_instance_name is not defined or software_instance_name == ''
+    or system_nickname is not defined or system_nickname == '') and (swupdate_process_id is not defined or swupdate_process_id == '')
+
+# Create a variable for the cancel software update response content.
+- name: Initialize the container for the cancel software update response content
+  ansible.builtin.set_fact:
+    swupdate_cancel_response: ""
+
+# Ensure there is a colon in the host. Add the z/OSMF server port if specified.
+- name: "Set the zmf_port if specified"
+  ansible.builtin.set_fact:
+    zmf_socket: '{{ zmf_host }}:{{ zmf_port }}'
+  when: zmf_port is defined and ':' not in zmf_host
+
+# Using Software Update Process ID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_socket }}/zosmf/swmgmt/swupdate/cancel/{{ swupdate_process_id }}"
+  when: swupdate_process_id is defined
+
+# Using Software Instance UUID.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_socket }}/zosmf/swmgmt/swi/{{ software_instance_uuid }}/swupdate/cancel"
+  when: swupdate_process_id is not defined and software_instance_uuid is defined
+
+# Using Software Instance Name and System.
+- name: Create the HTTP Request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ zmf_socket }}/zosmf/swmgmt/swi/{{ system_nickname }}/{{ software_instance_name }}/swupdate/cancel"
+  when: swupdate_process_id is not defined and software_instance_uuid is not defined and software_instance_name is defined
+
+# Encode the HTTP request URL
+- name: Encode the request URL
+  ansible.builtin.set_fact:
+    request_url: "{{ request_url | urlencode }}"
+
+###################################################################
+# URI MODULE #1: Cancel the software update process.              #
+###################################################################
+- name: Cancel the software update process
+  ansible.builtin.uri:
+    url: "https://{{ request_url }}"
+    method: POST
+    user: "{{ zmf_user | trim }}"
+    password: "{{ zmf_password | trim }}"
+    force_basic_auth: true
+    headers:
+      Host: "{{ zmf_socket }}"
+      Origin: "https://{{ zmf_socket }}"
+    status_code: 200, 400, 403, 404, 409, 500, 503
+    validate_certs: false
+    return_content: true
+  register: swupdate_cancel_response
+  delegate_to: localhost
+
+# Create a variable for the software update process ID.
+- name: Set the software update process ID
+  ansible.builtin.set_fact:
+    swupdate_process_id: "{{ swupdate_cancel_response.json['processid'] }}"
+  when: swupdate_cancel_response.status == 200
+
+# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
+- name: Display Cancel Software Update REST API failure information
+  ansible.builtin.fail:
+    msg: "There was an error encountered during Cancel Software Update REST API execution. It's possible the host
+      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
+      specified software instance or software update process was not found. These are the failure
+      details: {{ swupdate_cancel_response.json }}"
+  when: swupdate_cancel_response.status == 404 and swupdate_cancel_response.json is defined
+
+# Issue a failure message when user does not have the APAR with the SWU APIs installed on their system.
+- name: Display Cancel Software Update REST API failure information
+  ansible.builtin.fail:
+    msg: "There was an error encountered during Cancel Software Update REST API execution. It's possible the host
+      system is missing required APAR PH62240 which contains the software update REST APIs. Otherwise the
+      specified software instance or software update process was not found. These are the failure
+      details: {{ swupdate_cancel_response }}"
+  when: swupdate_cancel_response.status == 404
+
+# Issue a failure message when user does not have the appropriate authority.
+- name: The user does not have the appropriate authority to complete this request
+  ansible.builtin.fail:
+    msg: "Cancel Software Update failure details: {{ swupdate_cancel_response.json }} "
+  when: swupdate_cancel_response.status == 403 and swupdate_cancel_response.json is defined
+
+# Issue a failure message and stop the playbook.
+- name: Display the cancel software update action failure information
+  ansible.builtin.fail:
+    msg: "Cancel Software Update failure details: {{ swupdate_cancel_response.json }} "
+  when: swupdate_cancel_response.status != 200 and swupdate_cancel_response.json is defined
+
+# Issue a failure message and stop the playbook.
+- name: Display the cancel software update action failure information
+  ansible.builtin.fail:
+    msg: "Cancel Software Update failure details: {{ swupdate_cancel_response }} "
+  when: swupdate_cancel_response.status != 200

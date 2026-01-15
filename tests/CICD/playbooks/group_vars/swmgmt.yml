@@ -13,7 +13,7 @@
 # zmf_password:
 
 software_instance_name: test
-system_nickname: P00
+system_nickname: S2
 missing_critical_updates_response_file: MissingCriticalUpdatesReport.json
 missing_fixcat_updates_response_file: MissingFixcatUpdatesReport.json
 search_software_updates_response_file: SoftwareUpdateSearchReport.json
