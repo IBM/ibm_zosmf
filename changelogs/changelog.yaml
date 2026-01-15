@@ -66,15 +66,15 @@ releases:
     objects:
       role:
         - description: Role to determine if a software instance is missing critical
-           software updates
+            software updates
           name: zmf_swmgmt_identify_missing_critical_updates
           namespace: null
-        - description: Role to determine if a software instance is missing updates
-           for fix categories
+        - description: Role to determine if a software instance is missing updates for
+            fix categories
           name: zmf_swmgmt_identify_missing_fixcat_updates
           namespace: null
-        - description: Role to to search a software instance for one
-           or more software updates
+        - description: Role to to search a software instance for one or more software
+            updates
           name: zmf_swmgmt_search_software_updates
           namespace: null
     release_date: '2023-02-11'
@@ -83,8 +83,8 @@ releases:
       major_changes:
         - Added new roles for z/OS Management Services Catalog
       minor_changes:
-        - Updated module `zmf_workflow` which returns the failed step if the
-          workflow is not completed.
+        - Updated module `zmf_workflow` which returns the failed step if the workflow
+          is not completed.
     objects:
       role:
         - description: Role runs a z/OS Management Service
@@ -100,21 +100,64 @@ releases:
   1.4.2:
     changes:
       minor_changes:
-        - The README has been updated with a new template.
         - Fixed role `zmf_workflow_complete` which previously failed to return final_result.
+        - The README has been updated with a new template.
     release_date: '2024-06-01'
   1.5.0:
     changes:
       major_changes:
         - Added new roles for z/OSMF Software Management
       minor_changes:
-        - Updated the z/OSMF Software Management roles from a previous release to support UUID
+        - Updated the z/OSMF Software Management roles from a previous release to support
+          UUID
     objects:
       role:
         - description: Role queries a SMP/E global zone CSI data set
-          name: ibm.ibm_zosmf.zmf_swmgmt_csi_query
+          name: zmf_swmgmt_csi_query
           namespace: null
         - description: Role determines a z/OS system's UUID
-          name: ibm.ibm_zosmf.zmf_swmgmt_system_uuid
+          name: zmf_swmgmt_system_uuid
           namespace: null
     release_date: '2024-06-07'
+  1.5.1:
+    changes:
+      major_changes:
+        - Software update roles have been added, aimed at enabling automation.
+      minor_changes:
+        - Fixed bug where zmf_port wasn't always registered properly.
+        - Updated all z/OSMF Software Management roles to encode the characters in the
+          request URLs
+      release_summary: 'Added new roles to the z/OSMF Software Management Collection
+
+        7 new roles have been added.
+
+        6 aimed at managing the software update process. 1 aimed at managing system
+        holds.'
+    fragments:
+      - 15-fixing-changelog.yaml
+      - 16-release-summary.yaml
+      - 17-zmf-host-bug.yaml
+    objects:
+      role:
+        - description: Role gathers and separates HOLDDATA text by HOLD REASON
+          name: zmf_swmgmt_holds_for_reason
+          namespace: null
+        - description: Role cancels a software update process
+          name: zmf_swupdate_cancel
+          namespace: null
+        - description: Role to copy the saved output for a software update process
+          name: zmf_swupdate_copy
+          namespace: null
+        - description: Role resumes a software update process
+          name: zmf_swupdate_resume
+          namespace: null
+        - description: Role retrieves a software update process
+          name: zmf_swupdate_retrieve
+          namespace: null
+        - description: Role retrieves all software update processes
+          name: zmf_swupdate_retrieve_all
+          namespace: null
+        - description: Role starts a software update process
+          name: zmf_swupdate_start
+          namespace: null
+    release_date: '2025-12-29'

@@ -1,0 +1,10 @@
+{
+    "docs": "https://docs.ansible.com/ansible-core/2.20/dev_guide/testing/sanity/validate-modules.html", 
+    "results": [
+        {
+            "message": "The test `ansible-test sanity --test validate-modules` [[explain](https://docs.ansible.com/ansible-core/2.20/dev_guide/testing/sanity/validate-modules.html)] failed with 4 errors:", 
+            "output": "plugins/modules/zmf_authenticate.py:0:0: missing-gplv3-license: GPLv3 license header not found in the first 20 lines of the module\nplugins/modules/zmf_sca.py:0:0: missing-gplv3-license: GPLv3 license header not found in the first 20 lines of the module\nplugins/modules/zmf_workflow.py:0:0: missing-gplv3-license: GPLv3 license header not found in the first 20 lines of the module\nplugins/modules/zmf_workflow.py:0:0: no-log-needed: Argument 'workflow_key' in argument_spec could be a secret, though doesn't have `no_log` set"
+        }
+    ], 
+    "verified": false
+}

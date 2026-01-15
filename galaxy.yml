@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2024
+# Copyright (c) IBM Corporation 2025
 
 # IBM collection namespace
 namespace: ibm
@@ -7,22 +7,23 @@ namespace: ibm
 name: ibm_zosmf
 
 # The collection version
-version: 1.5.0
+version: 1.5.1
 
 # Collection README file
 readme: README.md
 
 # Contributors
 authors:
+  - "Taylor Digilio <Taylor.Digilio@ibm.com>"
+  - "Hiren Shah <hiren@us.ibm.com>"
+  - "Aaron Kippins <amkippin@us.ibm.com>"
   - "Yang Cao <caoy@cn.ibm.com>"
   - "Yun Juan Yang <yunyyang@cn.ibm.com>"
-  - "Hiren Shah <hiren@us.ibm.com>"
   - "Allen Zhou <xiao-yu.zhou@ibm.com>"
   - "Xiao Zhen Zhu <zhuxiaoz@cn.ibm.com>"
   - "Yuan Yuan <yuanyuan@cn.ibm.com>"
   - "Qi Li <lqibj@cn.ibm.com>"
   - "Xiao Ming Liu <xmliuxm@cn.ibm.com>"
-  - "Taylor Digilio <Taylor.Digilio@ibm.com>"
 
 # Description
 description: Ansible collection consisting of modules and roles to work with z/OS based on z/OS Management Facility(z/OSMF).
@@ -83,5 +84,10 @@ build_ignore:
   - tests/sanity/ignore-2.12.txt
   - tests/sanity/ignore-2.13.txt
   - tests/sanity/ignore-2.14.txt
+  - tests/sanity/ignore-2.15.txt
+  - tests/sanity/ignore-2.16.txt
+  - tests/sanity/ignore-2.17.txt
+  - tests/sanity/ignore-2.18.txt
+  - tests/sanity/ignore-2.19.txt
   - .idea
   - meta/context

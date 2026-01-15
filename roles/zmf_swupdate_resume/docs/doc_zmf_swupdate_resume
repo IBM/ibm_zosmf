@@ -1,0 +1,283 @@
+# Copyright (c) IBM Corporation 2025
+
+
+DOCUMENTATION = r"""
+role: zmf_swupdate_resume
+short_description: Resume a Software Update Process
+description:
+    - >
+      The B(IBM z/OSMF collection) provides an Ansible role, referred to as
+      B(zmf_swupdate_resume), to resume a currently suspended software update
+      process for a specified software instance. The process ID associated
+      with the software update process that gets resumed is saved in a
+      variable to be referenced by subsequent roles in the playbook.
+author:
+    - Taylor Digilio (Taylor.Digilio@ibm.com)
+options:
+    zmf_host:
+        description:
+            - >
+              Hostname of the z/OSMF server, specified in the inventory file
+              or as an argument on the playbook command.
+        required: True
+        type: str
+    zmf_port:
+        description:
+            - >
+              Port number of the z/OSMF server.
+              If z/OSMF is not using the default port, you need to specify a
+              value for this parameter in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+        default: 443
+    zmf_user:
+        description:
+            - User ID for authenticating with the z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: True
+        type: str
+    zmf_password:
+        description:
+            - Password to be used for authenticating with z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: True
+        type: str
+    software_instance_name:
+        description:
+            - >
+              Name of the software instance whose suspended software update process is
+              resumed.
+            - >
+              A software instance name must be specified when a software instance UUID
+              or a software update process ID are not specified. If a software update
+              process ID is specified in addition to a software instance name and system
+              nickname, then the software update process ID is used by default.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    system_nickname:
+        description:
+            - >
+              Nickname of the z/OSMF host system that has access to the volumes and
+              data sets where the software instance resides.
+            - >
+              A system nickname must be specified when a software instance UUID
+              or a software update process ID are not specified. If a software update
+              process ID is specified in addition to a software instance name and system
+              nickname, then the software update process ID is used by default.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    software_instance_uuid:
+        description:
+            - >
+              A UUID of a software instance whose suspended software update process is
+              resumed. A UUID is assigned to every software instance and can be obtained using
+              the "List the software instances defined to z/OSMF" REST API.
+            - >
+              A UUID can also be obtained using the zmf_swmgmt_zos_system_uuid Ansible role which
+              retrieves the UUID for the software instance that represents the installed software
+              for the specified z/OSMF host system.
+            - >
+              A software instance UUID must be specified when a software instance name
+              or a software update process ID are not specified. If a software update
+              process ID is specified in addition to a software instance UUID, then
+              the software update process ID is used by default.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    swupdate_process_id:
+        description:
+            - >
+              A software update process ID indicating the software update process to be
+              resumed.
+            - >
+              A software update process ID must be specified when a software instance name
+              or a software instance UUID are not specified. If a process ID is specified
+              in addition to a software instance name or UUID, then the process ID
+              is used by default.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    suspend_steps:
+        description:
+            - >
+              The RESOLVE_HOLDS and PRE_INSTALLATION_SUMMARY steps may be specified on the
+              suspend-steps property to allow for review or interaction of the update process.
+              A software update process has 6 steps:
+            - >
+              PREPARING_UPDATES: z/OSMF is performing an APPLY CHECK to identify HOLDs for
+              review and ensure no missing requisites.
+            - >
+              RESOLVE_HOLDS: User reviews and resolves each HOLD, either bypass the HOLD or
+              exclude the update.
+            - >
+              VERIFYING_UPDATES: z/OSMF performs APPLY CHECK to validate the HOLD resolution
+              choices.
+            - >
+              PRE_INSTALLATION_SUMMARY: User reviews the list of updates that will be installed.
+            - >
+              INSTALLATION: z/OSMF performs the APPLY.
+            - >
+              COMPLETE: The installation is complete. User should review any HOLDs that need
+              ACTION after the APPLY.
+            - >
+              The suspend-steps array needs to be in the following format:
+              C('"SUSPEND-STEP1","SUSPEND-STEP2"')
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    exclude_updates:
+        description:
+            - >
+              List of software update names to exclude from the installation.
+            - >
+              Update names must be 7 characters long and are accepted in mixed case and are folded to
+              uppercase automatically. They may consist of alphabetic, numeric, and national
+              characters (@,#,$).
+            - >
+              The exclude-updates array needs to be in the following format:
+              C('"UPDATE1","UPDATE2"')
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    resolve_holds:
+        description:
+            - >
+              List of resolve-options to resolve HOLDs. If resolve-options are not provided, or there are
+              other HOLDs to be resolved, the software update process will suspend at the RESOLVE_HOLDS
+              step and cannot proceed until all HOLDs have been resolved.
+            - >
+              The resolve-holds array needs to be in the following format:
+              C('[{"type":"TYPE1","reason":"REASON1","names":["UPDATE1"]},
+              {"type":"TYPE2","reason":"REASON2","names":["UPDATE2"]}]')
+            - >
+              Below are the descriptions of the resolve-hold object properties:
+            - >
+              type: The hold type of the hold. This property is required if resolve-holds is specified.
+              Valid hold types are "SYSTEM", "ERROR", "FIXCAT", and "USER". For more information about hold
+              types see https://www.ibm.com/docs/en/zos/3.1.0?topic=statements-hold-mcs in z/OS SMP/E
+              Reference.
+            - >
+              reason: The reason value for the hold. The hold reason must be 1-7 characters long and is
+              accepted in mixed case and is folded to uppercase automatically. It may consist of alphabetic,
+              numeric, and national characters (@,#,$). If a hold-reason is not provided, all holds of the
+              specified hold-type will be resolved.
+            - >
+              names: List of update names for which to resolve the specified hold-type and
+              hold-reason. This property is only allowed for the SYSTEM hold-type. If a list of update
+              names is not provided, all holds of the specified hold-type, and hold-reason if specifed,
+              will be resolved.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: arr
+    smpe_userid:
+        description:
+            - The user ID used to run SMP/E operations instead of your z/OSMF user ID.
+            - >
+              Your z/OSMF user ID acts as a surrogate user to run SMP/E on behalf of the specified user.
+            - >
+              If an SMP/E user ID is not specified in the request content, but an SMP/E user ID is specified
+              in the Software Update UI Settings Page, for the logged-in user and selected system, that
+              SMP/E user ID will be used to start the TSO address space and perform the SMP/E operations.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    notes:
+        description:
+            - Notes about the software update process. The maximum length for the notes property is 140 characters.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    remote_zmf_user:
+        description:
+            - >
+              User ID for authenticating with a remote z/OSMF server.  Used only if the software instance resides on
+              a remote z/OSMF server.
+        required: False
+        type: str
+    remote_zmf_password:
+        description:
+            - Password for authenticating with a remote z/OSMF server.
+        required: False
+        type: str
+    proxy_zmf_user:
+        description:
+            - User ID for authenticating with an HTTP proxy server.
+        required: False
+        type: str
+    proxy_zmf_password:
+        description:
+            - Password for authenticating with an HTTP proxy server.
+        required: False
+        type: str
+notes:
+    - >
+      The given example assumes you have an inventory file
+      I(inventory.yml) that contains the values for the variables described above,
+      such as z/OSMF host server, userid, password, software instance name and system,
+      software update process ID, and request content variables.
+    - >
+      Command syntax to call a playbook using an inventory file:
+      C(ansible-playbook -i inventory software_management_swu_resume_CICDtest1.yml)
+    - >
+      Command syntax to call a playbook using command arguments:
+      C(ansible-playbook software_management_swu_resume_CICDtest1.yml -e zmf_user=ibmuser
+      -e zmf_password=ibmuser -e software_instance_name=YourSwiName -e system_nickname=YourSystemName
+      -e resolve_holds='[{"type":"SYSTEM"}]' -e smpe_userid=smpuser
+      -e notes='Resuming a SWU on YourSwiName from Ansible'
+      -e swupdate_retrieve_response_file=/Users/yourUser/AnsibleOutputDir/YourSwiNameRetrieve.json)
+
+"""
+
+EXAMPLES = r"""
+- name: sample of resuming a software update on a software instance
+  hosts: sampleHost
+  gather_facts: no
+  collections:
+    - ibm.ibm_zosmf
+
+  tasks:
+    - include_role :
+        name: zmf_swupdate_resume
+    - set_fact :
+        zmf_user: 'ibmuser'
+        zmf_password: 'ibmuser'
+        software_instance_name: 'YourSwiName'
+        system_nickname: 'YourSystemName'
+        resolve_holds: '[{"type":"SYSTEM"}]'
+
+"""
+
+# Roles don't return anything.
+# But RETURN block must be defined for doc extraction tooling to avoid error.
+# The content in RETURN block will not be display in doc-site.
+RETURN = r"""
+changed:
+    description: Indicates if any change is made during the role operation.
+    returned: always
+    type: bool
+"""

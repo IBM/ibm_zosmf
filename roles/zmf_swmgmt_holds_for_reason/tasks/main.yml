@@ -1,0 +1,163 @@
+# Copyright (c) IBM Corporation 2025
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+---
+# Tasks file for zmf_swmgmt_holds_for_reason play.
+
+# Do not attempt to execute the play without a HOLD REASON.
+- name: A HOLD REASON ID must be provided to the role
+  ansible.builtin.fail:
+    msg: "Specify a HOLD REASON ID and retry the role."
+  when: hold_reason is not defined or hold_reason == ''
+
+###########################################
+# Call the Software Update Retrieve role. #
+###########################################
+- name: Retrieve the most recent Software Update process for the Software Instance
+  ansible.builtin.include_role:
+    name: zmf_swupdate_retrieve
+  when: software_update_holds is not defined or software_update_holds | length == 0
+
+# Save the HOLDs array from the Software Update Retrieve response to a local variable.
+- name: Save the HOLDs array from the software update process
+  ansible.builtin.set_fact:
+    software_update_holds: "{{ swupdate_retrieve_response.json['update-processes'][0]['holds'] }}"
+    software_instance_uuid: "{{ swupdate_retrieve_response.json['uuid'] }}"
+    software_instance_name: "{{ swupdate_retrieve_response.json['name'] }}"
+  when: >
+        swupdate_retrieve_response is defined and
+        (swupdate_retrieve_response.status == 200) and
+        (swupdate_retrieve_response.json['update-processes'][0]['status'] is defined) and
+        (swupdate_retrieve_response.json['update-processes'][0]['status'] != 'RUNNING') and
+        (swupdate_retrieve_response.json['update-processes'][0]['holds'] is defined)
+
+# Do not attempt to execute the play without any Software Update HOLDs.
+- name: Check if there are any HOLDs found for the software update process
+  ansible.builtin.fail:
+    msg: "There are no HOLDs for the software update process."
+  when: software_update_holds is not defined or software_update_holds | length == 0
+
+# Initialize the lists of HOLDS & PTFs.
+- name: Initialize the lists of HOLDs & PTFs for the specified HOLD REASON
+  ansible.builtin.set_fact:
+    holds_with_specified_reason: []
+    filter_param_value: "holdreason='{{ hold_reason }}'"
+
+# Save only the HOLDs for the specified REASON ID
+- name: Getting the HOLDs for reason ID <{{ hold_reason }}>
+  ansible.builtin.set_fact:
+    holds_with_specified_reason: "{{ holds_with_specified_reason + software_update_holds | selectattr('holdReason', 'equalto', hold_reason) | list }}"
+
+# Assume there were no HOLDs found for the specified HOLD REASON
+- name: Default HOLDs found for the specified HOLD REASON to false
+  ansible.builtin.set_fact:
+    holds_found_for_reason: false
+
+# Ensure there is at least one HOLD for the specified HOLD REASON.
+- name: Check if there are any HOLDs found for the specified HOLD REASON
+  ansible.builtin.set_fact:
+    holds_found_for_reason: true
+  when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 0
+
+#################################################################################################
+# Build the request and call the CSI Query role when at least one HOLD is found for the REASON. #
+#################################################################################################
+- name: Build the CSI Query request and call the CSI Query role
+  when: holds_found_for_reason
+  block:
+    # Add the singular PTF to the filter.
+    - name: Add the PTF to the CSI Query filter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value }} & (ename='{{ holds_with_specified_reason[0]['name'] }}')"
+      when: holds_with_specified_reason is defined and holds_with_specified_reason | length == 1
+
+    # Add the first PTF to the filter.
+    - name: Add the 1st PTF to the CSI Query filter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value }} & ("
+      when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
+
+    # Add each PTF to the filter.
+    - name: Add the rest of the PTFs to the CSI Query filter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value }}ename='{{ holds_with_specified_reason[index]['name'] }}' | "
+      loop: "{{ holds_with_specified_reason }}"
+      loop_control:
+        index_var: index
+      when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
+
+    # Add the ending parenthesis to end the list of PTFs in the filter parameter.
+    - name: Finalize the CSI Query filter parameter
+      ansible.builtin.set_fact:
+        filter_param_value: "{{ filter_param_value[:-3] + ')' }}"
+      when: filter_param_value | length > 3 and holds_with_specified_reason is defined and holds_with_specified_reason | length > 1
+
+    # Set the lists of zones and entries to pass as request content to the CSI Query role.
+    - name: Initializing CSI Query request content parameters
+      ansible.builtin.set_fact:
+        zones: '["GLOBAL"]'
+        entries: '["HOLDDATA"]'
+        subentries: '["HOLDDATA"]'
+        filter: "{{ filter_param_value }}"
+
+    ############################
+    # Call the CSI Query role. #
+    ############################
+    - name: Query a CSI data set for HOLD REASON ID <{{ hold_reason }}>
+      ansible.builtin.include_role:
+        name: zmf_swmgmt_csi_query
+
+    # Initialize lists to contain the HOLDDATA text.
+    - name: Initialize lists
+      ansible.builtin.set_fact:
+        entries: "{{ csi_query_response.json['entries'] }}"
+        subentries: []
+        holddata_text_list: []
+      when: csi_query_response is defined
+
+    # Consolidate a list of subentries.
+    - name: Getting the subentries out of the CSI query response
+      ansible.builtin.set_fact:
+        subentries: "{{ subentries + csi_query_response.json['entries'][index]['subentries'] }}"
+      loop: "{{ csi_query_response.json['entries'] }}"
+      loop_control:
+        index_var: index
+      when: csi_query_response.json['entries'] is defined and csi_query_response.json['entries'] | length > 0
+
+    # Create a list for the HOLDDATA text where each index contains one line of the text.
+    - name: Loop through the subentries to get the HOLDDATA text
+      ansible.builtin.set_fact:
+        holddata_text_list: "{{ holddata_text_list + subentries[index]['HOLDDATA'] }}"
+      loop: "{{ subentries }}"
+      loop_control:
+        index_var: index
+      when: subentries is defined and subentries | length > 0
+
+    # Ensure the directory specification ends in a slash.
+    - name: Add an ending slash to the directory if it doesn't already end with a slash
+      ansible.builtin.set_fact:
+        holds_for_reason_dir: "{{ holds_for_reason_dir }}/"
+      when: holds_for_reason_dir[-1] != '/'
+
+    # Create the filename to write the HOLDDATA text to.
+    - name: Create the name of the file to contain the HOLDDATA text
+      ansible.builtin.set_fact:
+        holds_for_reason_file: "{{ holds_for_reason_dir }}{{ hold_reason }}-HOLDDATA.txt"
+
+    # Convert the array of HOLDDATA text into a string with a newline after each array index.
+    - name: Formatting the HOLDDATA text
+      ansible.builtin.set_fact:
+        holddata_text_string: "{{ holddata_text_list | join('\n') }}"
+
+    # Write the HOLDDATA text to the file.
+    - name: "Writing the HOLDDATA text to {{ holds_for_reason_file }}"
+      ansible.builtin.copy:
+        content: '{{ holddata_text_string }}'
+        dest: '{{ holds_for_reason_file }}'
+        mode: '0644'
+      delegate_to: localhost
+
+    # Show the path to the HOLDDATA text file.
+    - name: Display the path to the file containing the HOLDDATA text
+      ansible.builtin.debug:
+        msg: "Output filename= {{ holds_for_reason_file }}"

@@ -200,6 +200,9 @@ dmypy.json
 .keep
 shell_exploits.txt
 tests/collections
+.ansible/
+.pre-commit-config.yaml
+.whitesource
 
 # changelog
 changelogs/.plugin-cache.yaml

@@ -1,0 +1,7 @@
+add object.role:
+  - name: zmf_swmgmt_holds_for_reason
+    description: Role gathers and separates HOLDDATA text by HOLD REASON
+
+minor_changes:
+  - "Updated all z/OSMF Software Management roles to encode the characters in the request URLs"
+  - "Fixed bug where zmf_port wasn't always registered properly."

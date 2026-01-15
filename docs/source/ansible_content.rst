@@ -2,6 +2,8 @@
 .. © Copyright IBM Corporation 2021                                          .
 .. ...........................................................................
 
+.. _ibm-zosmf-collection:
+
 ==========
 IBM z/OSMF
 ==========
@@ -22,5 +24,5 @@ RESTful services.
    :maxdepth: 1
    :caption: Collection Content
 
-   source/modules
-   source/roles
+   modules
+   roles

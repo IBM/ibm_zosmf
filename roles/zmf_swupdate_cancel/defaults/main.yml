@@ -1,0 +1,6 @@
+# Copyright (c) IBM Corporation 2025
+
+---
+# defaults file for zmf_swupdate_cancel
+async_thread_check_times: 15
+async_thread_check_delay: 5
