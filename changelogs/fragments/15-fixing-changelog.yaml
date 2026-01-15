@@ -1,0 +1,16 @@
+add object.role:
+  - name: zmf_swupdate_cancel
+    description: Role cancels a software update process
+  - name: zmf_swupdate_copy
+    description: Role to copy the saved output for a software update process
+  - name: zmf_swupdate_resume
+    description: Role resumes a software update process
+  - name: zmf_swupdate_retrieve
+    description: Role retrieves a software update process
+  - name: zmf_swupdate_retrieve_all
+    description: Role retrieves all software update processes
+  - name: zmf_swupdate_start
+    description: Role starts a software update process
+
+major_changes:
+  - "Software update roles have been added, aimed at enabling automation."

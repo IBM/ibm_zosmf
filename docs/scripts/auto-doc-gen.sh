@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ################################################################################
 # © Copyright IBM Corporation 2021
@@ -17,12 +17,12 @@
 # Script and actions called before generating doc, helpful in cases where
 # customization is needed but does not apply to all collections
 ################################################################################
-SCRIPT_PATH=`dirname "$0"`
-DOC_DIR=`( cd "$SCRIPT_PATH" && pwd )| sed 's|\(.*\)/.*|\1|'`
+SCRIPT_PATH=$(dirname "$0")
+DOC_DIR=$( ( cd "$SCRIPT_PATH" && pwd )| sed 's|\(.*\)/.*|\1|')
 echo ".. debug ..enter"
-echo ".. dirname = " $0
-echo ".. DOC_DIRSCRIPT_PATH = " $DOC_DIRSCRIPT_PATH
-echo ".. DOC_DIR = " $DOC_DIR
+echo ".. dirname = $0"
+echo ".. DOC_DIRSCRIPT_PATH = $DOC_DIRSCRIPT_PATH"
+echo ".. DOC_DIR = $DOC_DIR"
 # `pwd| sed 's|\(.*\)/.*|\1|'`
 
 ################################################################################

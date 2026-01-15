@@ -147,7 +147,7 @@
     # Convert the array of HOLDDATA text into a string with a newline after each array index.
     - name: Formatting the HOLDDATA text
       ansible.builtin.set_fact:
-        holddata_text_string : "{{ holddata_text_list | join('\n') }}"
+        holddata_text_string: "{{ holddata_text_list | join('\n') }}"
 
     # Write the HOLDDATA text to the file.
     - name: "Writing the HOLDDATA text to {{ holds_for_reason_file }}"

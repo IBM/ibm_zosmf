@@ -1,40 +1,36 @@
-===========================
-Ibm.Ibm_Zosmf Release Notes
-===========================
+============================
+ibm.ibm\_zosmf Release Notes
+============================
 
 .. contents:: Topics
 
-v1.5.2
+v1.5.1
 ======
+
+Release Summary
+---------------
+
+Added new roles to the z/OSMF Software Management Collection
+7 new roles have been added.
+6 aimed at managing the software update process. 1 aimed at managing system holds.
 
 Major Changes
 -------------
 
-- Added a new role for z/OSMF Software Management
+- Software update roles have been added, aimed at enabling automation.
 
 Minor Changes
 -------------
 
+- Fixed bug where zmf_port wasn't always registered properly.
 - Updated all z/OSMF Software Management roles to encode the characters in the request URLs
 
 New Roles
 ---------
 
 - ibm.ibm_zosmf.zmf_swmgmt_holds_for_reason - Role gathers and separates HOLDDATA text by HOLD REASON
-
-v1.5.1
-======
-
-Major Changes
--------------
-
-- Added new roles for z/OSMF Software Management
-
-New Roles
----------
-
 - ibm.ibm_zosmf.zmf_swupdate_cancel - Role cancels a software update process
-- ibm.ibm_zosmf.zmf_swupdate_copy - Role copies a software update process
+- ibm.ibm_zosmf.zmf_swupdate_copy - Role to copy the saved output for a software update process
 - ibm.ibm_zosmf.zmf_swupdate_resume - Role resumes a software update process
 - ibm.ibm_zosmf.zmf_swupdate_retrieve - Role retrieves a software update process
 - ibm.ibm_zosmf.zmf_swupdate_retrieve_all - Role retrieves all software update processes
@@ -65,8 +61,8 @@ v1.4.2
 Minor Changes
 -------------
 
-- The README has been updated with a new template.
 - Fixed role `zmf_workflow_complete` which previously failed to return final_result.
+- The README has been updated with a new template.
 
 v1.4.1
 ======
@@ -93,7 +89,7 @@ Minor Changes
 New Roles
 ---------
 
-- ibm.ibm_zosmf.zmf_zmsc_run_management_service - Role runs a z/OS management service 
+- ibm.ibm_zosmf.zmf_zmsc_run_management_service - Role runs a z/OS Management Service
 
 v1.3.0
 ======
@@ -106,9 +102,9 @@ Major Changes
 New Roles
 ---------
 
-- ibm.ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates - Role identifies missing critical updates
-- ibm.ibm_zosmf.zmf_swmgmt_identify_missing_fixcat_updates - Role identifies missing fixcat updates
-- ibm.ibm_zosmf.zmf_swmgmt_search_software_updates - Role searches for software updates
+- ibm.ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates - Role to determine if a software instance is missing critical software updates
+- ibm.ibm_zosmf.zmf_swmgmt_identify_missing_fixcat_updates - Role to determine if a software instance is missing updates for fix categories
+- ibm.ibm_zosmf.zmf_swmgmt_search_software_updates - Role to to search a software instance for one or more software updates
 
 v1.2.1
 ======
