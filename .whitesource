@@ -1,15 +1,3 @@
 {
-    "settingsInheritedFrom": "whitesource-config/whitesource-config@master",
-    "scanSettingsSAST": {
-        "enableScan": true,
-        "scanPullRequests": true,
-        "incrementalScan": true,
-        "baseBranches": [
-            "main"
-        ]
-    },
-    "issueSettingsSAST": {
-        "issueType": "finding",
-        "minSeverityLevel": "low"
-    }
+  "settingsInheritedFrom": "ibm-mend-config/mend-config@main"
 }
