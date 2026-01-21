@@ -431,8 +431,8 @@ Step 4: Run a playbook
 ======================
 
 .. dropdown:: The following section discusses how to run an run an Ansible playbook ... (expand for more)
-   :color: primary
-   :icon: command-palette
+    :color: primary
+    :icon: command-palette
 
    The following section discusses how to use the IBM z/OSMF collection in an Ansible playbook.
    An `Ansible playbook`_ consists of organized instructions that define work for a managed
