@@ -172,261 +172,6 @@ Step 3: User
               specify must be protected by a profile in the ACCTNUM general resource class, and
               the user must be granted READ access to the profile.
 
-.. Step 6: Security
-.. ================
-
-.. .. dropdown:: The following section discusses how the collection secures interaction using RACF ... (expand for more)
-..     :color: primary
-..     :icon: command-palette
-
-..     The following section discusses how the collection secures interaction using RACF.
-..     Some of the modules in the collection will perform operations that require the
-..     playbook user to have appropriate authority with various RACF resource classes.
-..     Each module documents which access is needed in the **notes** section. A user
-..     is described as the remote SSH user executing playbook tasks, who can also
-..     obtain escalated privileges to execute as another user.
-
-..     In RACF, a *class* refers to a collection of resources that share similar
-..     characteristics, while a *resource class profile* is a set of access controls
-..     belonging a class. In other words, a class is a group of related things, and a
-..     resource class profile are rules managing access to those things within that group.
-
-..     .. dropdown:: Enabling RACF resource classes for module *zos_apf* ... (expand for more)
-..         :color: info
-..         :icon: command-palette
-
-..         Enabling RACF resource classes for module ``zos_apf`` requires that
-..         library *libname*, you have **UPDATE** authority to the RACF **FACILITY**
-..         resource class entity **CSVAPF.libname**, or there must be no **FACILITY**
-..         class profile that protects that entity. Once access for **CSVAPF.libname**
-..         has been determined:
-
-..         .. dropdown:: To control who can make the APF list dynamic ... (expand for more)
-..             :icon: command-palette
-
-..             To control who can make the **APF list dynamic** using module ``zos_apf``,
-..             the RACF security administrator can:
-
-..             Establish a profile for the following FACILITY class with command:
-
-..             .. code-block:: sh
-
-..                 RDEFINE FACILITY CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC UACC(NONE)
-
-..             Then permit the RACF-defined user or group profile *iiiiiiii* to use the class
-..             with command:
-
-..             .. code-block:: sh
-
-..                 PERMIT CSVAPF.MVS.SETPROG.FORMAT.DYNAMIC CLASS(FACILITY) ID(iiiiiiii) ACCESS(UPDATE)
-
-
-..             If the FACILITY class is not active, issue the command:
-
-..             .. code-block:: sh
-
-..                 SETROPTS CLASSACT(FACILITY)
-
-
-..             To verify the FACILITY class is active, issue command:
-
-..             .. code-block:: sh
-
-..                 SETROPTS LIST
-
-..             To refresh the FACILITY resource class, issue command:
-
-..             .. code-block:: sh
-
-..                 SETROPTS RACLIST(FACILITY) REFRESH
-
-..         .. dropdown:: To control who can make the APF list static ... (expand for more)
-..             :icon: command-palette
-
-..             To control who can make the **APF list dynamic** using module ``zos_apf``,
-..             the RACF security administrator can:
-
-..             Establish a profile for the following FACILITY class with command:
-
-..             .. code-block:: sh
-
-..                 RDEFINE FACILITY CSVAPF.MVS.SETPROG.FORMAT.STATIC UACC(NONE)
-
-..             Then permit the RACF-defined user or group profile *iiiiiiii* to use the class
-..             with command:
-
-..             .. code-block:: sh
-
-..                 PERMIT CSVAPF.MVS.SETPROG.FORMAT.STATIC CLASS(FACILITY) ID(iiiiiiii) ACCESS(UPDATE)
-
-
-..             If the FACILITY class is not active, issue the command:
-
-..             .. code-block:: sh
-
-..                 SETROPTS CLASSACT(FACILITY)
-
-
-..             To verify the FACILITY class is active, issue command:
-
-..             .. code-block:: sh
-
-..                 SETROPTS LIST
-
-..             To refresh the FACILITY resource class, issue command:
-
-..             .. code-block:: sh
-
-..                 SETROPTS RACLIST(FACILITY) REFRESH
-
-
-..         To learn more about enabling users APF dynamic and static access, see
-..         controlling `static and dynamic access`_.
-
-..     .. dropdown:: Enabling RACF resource class for module *zos_backup_restore* ... (expand for more)
-..         :color: info
-..         :icon: command-palette
-
-..         Enabling RACF resource class for module ``zos_backup_restore`` requires that
-..         library **STGADMIN.ADR.DUMP.TOLERATE.ENQF** have **READ** authority or there
-..         must be no **FACILITY** class profile that protects that entity to use the
-..         module option recover=true.
-
-..         Establish a profile for the following FACILITY class with command:
-
-..         .. code-block:: sh
-
-..             RDEFINE FACILITY STGADMIN.ADR.DUMP.TOLERATE.ENQF UACC(NONE)
-
-..         Then permit the RACF-defined user or group profile *iiiiiiii* to use the class
-..         with command:
-
-..         .. code-block:: sh
-
-..             PERMIT STGADMIN.ADR.DUMP.TOLERATE.ENQF CLASS(FACILITY) ID(iiiiiiii) ACCESS(READ)
-
-..         If the FACILITY class is not active, issue the command:
-
-..         .. code-block:: sh
-
-..             SETROPTS CLASSACT(FACILITY)
-
-..         To verify the FACILITY class is active, issue command:
-
-..         .. code-block:: sh
-
-..             SETROPTS LIST
-
-..         To refresh the FACILITY resource class, issue command:
-
-..         .. code-block:: sh
-
-..             SETROPTS RACLIST(FACILITY) REFRESH
-
-..     .. dropdown:: Enabling RACF resource class for module *zos_copy* ... (expand for more)
-..         :color: info
-..         :icon: command-palette
-
-..         Enabling RACF resource class for module ``zos_copy`` requires that library
-..         **MVS.MCSOPER.ZOAU** have **READ** authority or there must be no **OPERCMDS**
-..         class profile that protects that entity to use the module.
-
-..         Establish a profile for the following OPERCMDS class with command:
-
-..         .. code-block:: sh
-
-..             RDEFINE OPERCMDS MVS.MCSOPER.ZOAU UACC(NONE)
-
-..         Then permit the RACF-defined user or group profile *iiiiiiii* to use the class
-..         with command:
-
-..         .. code-block:: sh
-
-..             PERMIT MVS.MCSOPER.ZOAU CLASS(OPERCMDS) ID(iiiiiiii) ACCESS(READ)
-
-..         If the OPERCMDS class is not active, issue the command:
-
-..         .. code-block:: sh
-
-..             SETROPTS CLASSACT(OPERCMDS)
-
-..         To verify the OPERCMDS class is active, issue command:
-
-..         .. code-block:: sh
-
-..             SETROPTS LIST
-
-..         To refresh the OPERCMDS resource class, issue command:
-
-..         .. code-block:: sh
-
-..             SETROPTS RACLIST(OPERCMDS) REFRESH
-
-..     .. dropdown:: Enabling RACF resource class for module *zos_volume_init* ... (expand for more)
-..         :color: info
-..         :icon: command-palette
-
-..         Enabling RACF resource class for module ``zos_volume_init`` requires
-..         that library **STGADMIN.ICK.INIT** have **READ** authority or there must
-..         be no **FACILITY** class profile that protects that entity to use the module.
-
-..         Establish a profile for the following FACILITY class with command:
-
-..         .. code-block:: sh
-
-..             RDEFINE FACILITY STGADMIN.ICK.INIT UACC(NONE)
-
-..         Then permit the RACF-defined user or group profile *iiiiiiii* to use the class
-..         with command:
-
-..         .. code-block:: sh
-
-..             PERMIT STGADMIN.ICK.INIT CLASS(FACILITY) ID(iiiiiiii) ACCESS(READ)
-
-..         If the FACILITY class is not active, issue the command:
-
-..         .. code-block:: sh
-
-..             SETROPTS CLASSACT(FACILITY)
-
-..         To verify the FACILITY class is active, issue command:
-
-..         .. code-block:: sh
-
-..             SETROPTS LIST
-
-..         To refresh the FACILITY resource class, issue command:
-
-..         .. code-block:: sh
-
-..             SETROPTS RACLIST(FACILITY) REFRESH
-
-
-..     .. dropdown:: Use the RLIST command to display information on resources ... (expand for more)
-..         :color: success
-..         :icon: info
-
-..         Use the RLIST command to display information on resources belonging to RACF classes.
-
-..         To see information on class OPERCMDS, resource class profile MVS.MCSOPER.ZOAU,
-..         issue command:
-
-..         .. code-block:: sh
-
-..             RLIST OPERCMDS MVS.MCSOPER.ZOAU
-
-..         RLIST command result:
-
-..         .. code-block:: sh
-
-..             CLASS      NAME
-..             -----      ----
-..             OPERCMDS   MVS.MCSOPER.ZOAU
-
-..             LEVEL  OWNER      UNIVERSAL ACCESS  YOUR ACCESS  WARNING
-..             -----  --------   ----------------  -----------  -------
-..             00     RACEC      READ              READ         NO
-
 Step 4: Run a playbook
 ======================
 
@@ -434,13 +179,15 @@ Step 4: Run a playbook
     :color: primary
     :icon: command-palette
 
-   The following section discusses how to use the IBM z/OSMF collection in an Ansible playbook.
-   An `Ansible playbook`_ consists of organized instructions that define work for a managed
-   node (host) to be managed with Ansible.
+    The following section discusses how to use the IBM z/OSMF collection in an Ansible playbook.
+    An `Ansible playbook`_ consists of organized instructions that define work for a managed
+    node (host) to be managed with Ansible.
 
-   If you have completed steps 1 - 3 above, then you are ready to run a playbook. In the folllowing playbook, there is one task, the task will look for missing critical software updates for a given software instance using `ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates`_
+    If you have completed steps 1 - 3 above, then you are ready to run a playbook. In the folllowing
+    playbook, there is one task, the task will look for missing critical software updates for a given
+    software instance using `ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates`_
 
-   .. code-block:: shell
+    .. code-block:: shell
 
          # Copyright (c) IBM Corporation 2025
          # This playbook demonstrates using roles:
@@ -458,11 +205,11 @@ Step 4: Run a playbook
                ansible.builtin.include_role:
                name: ibm.ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates
 
-   Copy the above playbook into a file, call it **sample.yaml**.
+    Copy the above playbook into a file, call it **sample.yaml**.
 
-   We're then going to create a variables file to use in conjunction with that playbook.
+    We're then going to create a variables file to use in conjunction with that playbook.
 
-   .. code-block:: yaml
+    .. code-block:: yaml
 
        # This variable file is used for the missing_crit.yaml playbook
 
@@ -487,26 +234,30 @@ Step 4: Run a playbook
        # Output file created from this playbook.
        missing_critical_updates_response_file: "/user/directory/on/ansible/control/node" # Missing critical updates response information
 
-   Copy the above variables template into a file, fill it out, call it **variables.yaml**.
+    Copy the above variables template into a file, fill it out, call it **variables.yaml**.
 
-   We're then gonna run that playbook with this variables file, use the Ansible command ``ansible-playbook`` with the inventory you defined. 
+    We're then going to run that playbook with this variables file, use the Ansible
+    command ``ansible-playbook`` with the inventory you defined.
 
-   When working with this collection the inventory isn't as relevant since we're primarily working with the z/OSMF REST APIs. When working with Ansible we always need an inventory regardless. 
+    When working with this collection the inventory isn't as relevant since we're primarily
+    working with the z/OSMF REST APIs. When working with Ansible we always need an inventory regardless.
 
-   .. note:: Note: We don't recommend storing passwords in plain text. Use whatever password management strategy is relevant for your company.
+    The command syntax is ``ansible-playbook -i <inventory> -e @<variables> <playbook>``, for example;
 
-   The command syntax is ``ansible-playbook -i <inventory> -e @<variables> <playbook>``, for example;
+         .. code-block:: shell
 
- .. note:: Note: When working with variable files and the ``-e`` extra variables flag. When referencing a file the @symbol is needed. Otherwise ansible will not take in that file full of variables.
+             ansible-playbook -i inventory -e @variables.yml sample.yaml
 
-    .. code-block:: shell
-
-        ansible-playbook -i inventory -e @variables.yml sample.yaml
+    .. note::
+         - Storing passwords in plain text is not recommended. Use whatever password management
+           strategy is relevant for your company.
+         - When working with variable files and the ``-e`` extra variables flag. When referencing
+           a file the **@** symbol is needed. Otherwise ansible will not take in that file full of
+           variables.
 
     You can avoid a password prompt by configuring SSH keys, see `setting up SSH keys`_.
 
-    For further reading, review `run your first command and playbook`_ and follow up
-    with `Ansible playbooks`_.
+    For further reading, review `run your first command and playbook`_ and follow up with `Ansible playbooks`_.
 
 
     .. dropdown:: Optionally, you can configure the console logging verbosity ... (expand for more)
