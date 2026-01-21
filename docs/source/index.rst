@@ -68,10 +68,8 @@ automate tasks on z/OS.
 ..
    The Ansible for IBM Z documentation UX research teams sponsored users had decided
    that if there is no added value in contribution guides, it is best not to have it
-   shown. In this case, the current doc just states does not accept and to open a git
-   issue feature request. If this changes, or the UX research decides otherwise, we
-   can pull this once again, so it is best to leave it commented out for now.
-   that adds value, its best
+   shown. If this changes, or the UX research decides otherwise, we can pull this once
+   again, so it is best to leave it commented out for now.
    .. toctree::
    :maxdepth: 1
    :caption: Contribution
