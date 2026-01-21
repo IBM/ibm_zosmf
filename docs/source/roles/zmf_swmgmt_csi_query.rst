@@ -15,7 +15,7 @@ zmf_swmgmt_csi_query -- Query a SMP/E CSI data set
 
 Synopsis
 --------
-- The \ :strong:`IBM z/OSMF collection`\  provides an Ansible role, referred to as \ :strong:`zmf\_swmgmt\_csi\_query`\ , to query a SMP/E global zone CSI data set directly or to query the CSI associated with a software instance.
+- The **IBM z/OSMF collection** provides an Ansible role, referred to as **zmf_swmgmt_csi_query**, to query a SMP/E global zone CSI data set directly or to query the CSI associated with a software instance.
 
 
 
@@ -109,7 +109,7 @@ software_instance_uuid
   A UUID of a software instance. A UUID is assigned to every software instance and can be obtained using the "List the software instances defined to z/OSMF" REST API.
 
 
-  A UUID can also be obtained using the zmf\_swmgmt\_zos\_system\_uuid Ansible role which retrieves the UUID for the software instance that represents the installed software for the specified z/OSMF host system.
+  A UUID can also be obtained using the zmf_swmgmt_zos_system_uuid Ansible role which retrieves the UUID for the software instance that represents the installed software for the specified z/OSMF host system.
 
 
   A software instance UUID name must be specified when a software instance or a CSI data set name are not specified. If a software instance or a CSI data set name are specified, then the software instance UUID is used by default.
@@ -153,10 +153,10 @@ zones
   ALLDZONES (To query all DLIB zones)
 
 
-  \* (To query the global zone and all zones defined in the global zone's ZONEINDEX)
+  * (To query the global zone and all zones defined in the global zone's ZONEINDEX)
 
 
-  Zone names are accepted in mixed case and are folded to uppercase automatically. This list variable needs to be in following format: \ :literal:`'"GLOBAL","ALLTZONES","ALLDZONES"'`\ 
+  Zone names are accepted in mixed case and are folded to uppercase automatically. This list variable needs to be in following format: ``'"GLOBAL","ALLTZONES","ALLDZONES"'``
 
 
   This variable can be specified in the inventory file or as an argument on the playbook command.
@@ -169,7 +169,7 @@ zones
  
 
 entries
-  The list of entry types to be queried. You may provide one or more entry types, or asterisk ('\*') can be used to indicate all entry types will be queried. Entry types are accepted in mixed case and are folded to uppercase automatically.
+  The list of entry types to be queried. You may provide one or more entry types, or asterisk ('*') can be used to indicate all entry types will be queried. Entry types are accepted in mixed case and are folded to uppercase automatically.
 
 
   Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=command-valid-entry-types for the list of valid types.
@@ -185,7 +185,7 @@ entries
  
 
 subentries
-  The list of subentry types to be returned. You may provide one or more subentry types, or asterisk ('\*') can be used to indicate all subentry types will be returned. Subentry types are accepted in mixed case and are folded to uppercase automatically. If no subentries are provided, then only the entry name and zone will be returned for matching entries.
+  The list of subentry types to be returned. You may provide one or more subentry types, or asterisk ('*') can be used to indicate all subentry types will be returned. Subentry types are accepted in mixed case and are folded to uppercase automatically. If no subentries are provided, then only the entry name and zone will be returned for matching entries.
 
 
   Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=command-valid-subentry-types for the list of valid types.
@@ -201,7 +201,7 @@ subentries
  
 
 filter
-  The list of conditions with which to limit the entries to be returned. A condition is in the form: subentry operator 'value' For example, FMID = 'HP10230' or INSTALLDATE \>= '23203'. The subentry type of a filter condition is accepted in mixed case and is folded to uppercase automatically. The value of a filter condition is case sensitive and is not folded to uppercase. If a filter is not provided then all entries of the specified type in the specified zones will be returned.
+  The list of conditions with which to limit the entries to be returned. A condition is in the form: subentry operator 'value' For example, FMID = 'HP10230' or INSTALLDATE >= '23203'. The subentry type of a filter condition is accepted in mixed case and is folded to uppercase automatically. The value of a filter condition is case sensitive and is not folded to uppercase. If a filter is not provided then all entries of the specified type in the specified zones will be returned.
 
 
   Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=command-filter-parameter-syntax for a detailed description of the syntax for the filter.
@@ -291,16 +291,16 @@ Notes
 -----
 
 .. note::
-   - The given example assumes you have an inventory file \ :emphasis:`inventory.yml`\  that contains the values for the variables described above, such as z/OSMF host server, userid, password, software instance name and system, and response file name.
+   - The given example assumes you have an inventory file *inventory.yml* that contains the values for the variables described above, such as z/OSMF host server, userid, password, software instance name and system, and response file name.
 
 
-   - Command syntax to call a playbook using an inventory file: \ :literal:`ansible-playbook -i inventory software\_management\_csi\_query\_CICDtest1.yml`\ 
+   - Command syntax to call a playbook using an inventory file: ``ansible-playbook -i inventory software_management_csi_query_CICDtest1.yml``
 
 
-   - Command syntax to call a playbook using command arguments: \ :literal:`ansible-playbook software\_management\_csi\_query\_CICDtest1.yml -e zmf\_user=zosmf\*\* -e zmf\_password=zosmf\*\*`\ 
+   - Command syntax to call a playbook using command arguments: ``ansible-playbook software_management_csi_query_CICDtest1.yml -e zmf_user=zosmf** -e zmf_password=zosmf**``
 
 
-   - When the role is executed, a message shown in following example is displayed, \ :literal:`"msg": "Output filename= /tmp/xxx/csi\_query\_response.json"`\ . This message includes a file path and file name where the csi query information for the requested software instance is returned.
+   - When the role is executed, a message shown in following example is displayed, ``"msg": "Output filename= /tmp/xxx/csi_query_response.json"``. This message includes a file path and file name where the csi query information for the requested software instance is returned.
 
 
 
