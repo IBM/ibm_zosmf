@@ -463,35 +463,36 @@ Step 4: Run a playbook
    We're then going to create a variables file to use in conjunction with that playbook.
 
    .. code-block:: yaml
-      # This variable file is used for the missing_crit.yaml playbook
 
-      # We've added comments to help build this variable file out.
-      # This variable file is from a past update but serves as a good litmus for being setup properly
+       # This variable file is used for the missing_crit.yaml playbook
 
-      # Ansible host that you'd like to work from. 
-      # The z/OSMF collection is connecting through the z/OSMF REST APIs so localhost is likely sufficient here unless you're combining with other collections.
-      nodes: "localhost"
+       # We've added comments to help build this variable file out.
+       # This variable file is from a past update but serves as a good litmus for being setup properly
 
-      # Information needed to connect to z/OSMF
-      zmf_host: "your.zosmf.instance.url.com" # z/OSMF Host Name
-      zmf_port: 0000                          # z/OSMF Port Number
-      zmf_user: "demouser"                    # z/OSMF User that will be used for the connection
-      zmf_password: "password"                # z/OSMF Password
+       # Ansible host that you'd like to work from.
+       # The z/OSMF collection is connecting through the z/OSMF REST APIs so localhost is likely sufficient here unless you're combining with other collections.
+       nodes: "localhost"
+
+       # Information needed to connect to z/OSMF
+       zmf_host: "your.zosmf.instance.url.com" # z/OSMF Host Name
+       zmf_port: 0000                          # z/OSMF Port Number
+       zmf_user: "demouser"                    # z/OSMF User that will be used for the connection
+       zmf_password: "password"                # z/OSMF Password
 
 
-      # Software instance information
-      software_instance_name: "demo_instance_name"     # Software instance to be updated
-      system_nickname: "favorite_lpar"                 # The name of the LPAR to be used
+       # Software instance information
+       software_instance_name: "demo_instance_name"     # Software instance to be updated
+       system_nickname: "favorite_lpar"                 # The name of the LPAR to be used
 
-      # Output file created from this playbook.  
-      missing_critical_updates_response_file: "/user/directory/on/ansible/control/node" # Missing critical updates response information
-   
+       # Output file created from this playbook.
+       missing_critical_updates_response_file: "/user/directory/on/ansible/control/node" # Missing critical updates response information
+
    Copy the above variables template into a file, fill it out, call it **variables.yaml**.
 
    We're then gonna run that playbook with this variables file, use the Ansible command ``ansible-playbook`` with the inventory you defined. 
 
    When working with this collection the inventory isn't as relevant since we're primarily working with the z/OSMF REST APIs. When working with Ansible we always need an inventory regardless. 
-   
+
    .. note:: Note: We don't recommend storing passwords in plain text. Use whatever password management strategy is relevant for your company.
 
    The command syntax is ``ansible-playbook -i <inventory> -e @<variables> <playbook>``, for example;
