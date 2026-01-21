@@ -63,7 +63,7 @@ automate tasks on z/OS.
    :caption: Help & Troubleshooting
    :hidden:
 
-   resources
+   supplementary_content
 
 ..
    The Ansible for IBM Z documentation UX research teams sponsored users had decided
