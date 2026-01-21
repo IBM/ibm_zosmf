@@ -1,9 +1,10 @@
 .. ...........................................................................
-.. © Copyright IBM Corporation 2021                                          .
+.. © Copyright IBM Corporation 2021, 2026                                    .
 .. ...........................................................................
 
+=======================================
 IBM z/OS Management Facility Collection
-======================================= 
+=======================================
 
 The **IBM z/OS Management Facility (z/OSMF) collection**, also represented as
 **ibm_zosmf** in this document, is part of the broader initiative to bring
@@ -35,37 +36,48 @@ Features
 The **IBM z/OSMF collection** includes `modules`_, `roles`_ and ansible-doc to
 automate tasks on z/OS.
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Getting Started
-
-   installation
-   requirements-single
-   playbooks
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Ansible Content
-
-   modules
-   roles
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Release Notes
-
-   release_notes
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Reference
-
-   resources
-   community_guides
-   license
-
-
 .. _modules:
     https://github.com/IBM/ibm_zosmf/tree/master/plugins/modules/
 .. _roles:
     https://github.com/IBM/ibm_zosmf/tree/master/roles/
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Installation & Execution
+   :hidden:
+
+   collection-requirements
+   configuration
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Collections & content
+   :hidden:
+
+   release_notes
+   life-cycle
+   ansible_content
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Help & Troubleshooting
+   :hidden:
+
+   resources
+
+..
+   The Ansible for IBM Z documentation UX research teams sponsored users had decided
+   that if there is no added value in contribution guides, it is best not to have it
+   shown. In this case, the current doc just states does not accept and to open a git
+   issue feature request. If this changes, or the UX research decides otherwise, we
+   can pull this once again, so it is best to leave it commented out for now.
+   that adds value, its best
+   .. toctree::
+   :maxdepth: 1
+   :caption: Contribution
+   :hidden:
+
+   community_guides
+
+
+
