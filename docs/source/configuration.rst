@@ -1,5 +1,5 @@
 .. ...........................................................................
-.. © Copyright IBM Corporation 2020, 2025
+.. © Copyright IBM Corporation 2020, 2026
 ..
 .. This is an orphaned page because its not included in any toctree
 .. 'orphan' if set, warnings about this file not being included in any toctree
@@ -112,7 +112,7 @@ Step 3: User
     The following section discusses how the collection connects to the
     managed node using the z/OSMF Web APIs via the zOSMF user defined in inventory or optionally from
     the command line, thus requiring access to z/OS Management Facility (z/OSMF) as well as access to the additional resources you're trying to access.
-    
+
     From a security perspective, the collection will require TSO segment in the users profile. It's recommended to have an OMVS segment as well.
 
     With the RACF **ADDGROUP** command you can:
