@@ -12,7 +12,8 @@
 Configuration
 =============
 
-After installing the IBM z/OSMF collection, usage of the collection should be fairly simple. You will need to be sure that users attempting to utilize the collection have access to z/OSMF on the managed node (LPARs).
+After installing the IBM z/OSMF collection, you will need ensure that users attempting to
+utilize the collection have access to z/OSMF on the managed node (LPARs).
 
 Step 1: Directory Structure
 ===========================
