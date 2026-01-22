@@ -114,7 +114,7 @@ Step 3: User
     managed node using the z/OSMF Web APIs via the zOSMF user defined in inventory or optionally from
     the command line, thus requiring access to z/OS Management Facility (z/OSMF) as well as access to the additional resources you're trying to access.
 
-    From a security perspective, the collection will require TSO segment in the users profile. It's recommended to have an OMVS segment as well.
+    From a security perspective, the collection will require a TSO segment in the users profile. It's recommended to have an OMVS segment as well.
 
     With the RACF **ADDGROUP** command you can:
 
@@ -190,58 +190,46 @@ Step 4: Run a playbook
 
     .. code-block:: shell
 
-         # Copyright (c) IBM Corporation 2025
-         # This playbook demonstrates using roles:
-         # 'zmf_swmgmt_identify_missing_critical_updates'
-         # This serves as a litmus playbook to test your system setup
-
-         #######################################################################################
-         # PLAY #1: Get Missing Critical Updates.                                              #
-         #######################################################################################
+         ---
          - name: Sample of identifying missing critical software updates for a software instance
-         hosts: "{{ nodes | default([]) }}"
-         gather_facts: false
-         tasks:
-            - name: Get Missing Critical Updates
+           hosts: "{{ nodes | default([]) }}"
+           gather_facts: false
+
+           tasks:
+             - name: Get Missing Critical Updates
                ansible.builtin.include_role:
                name: ibm.ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates
 
-    Copy the above playbook into a file, call it **sample.yaml**.
+    Copy the above playbook into a file, call it **sample.yml**.
 
-    We're then going to create a variables file to use in conjunction with that playbook.
+    We're then going to create a variables file to use in conjunction with the **sample.yml** playbook.
 
     .. code-block:: yaml
 
-       # This variable file is used for the missing_crit.yaml playbook
+       # This variable file serves as a good litmus for configuring the collection.
 
-       # We've added comments to help build this variable file out.
-       # This variable file is from a past update but serves as a good litmus for being setup properly
-
-       # Ansible host that you'd like to work from.
-       # The z/OSMF collection is connecting through the z/OSMF REST APIs so localhost is likely sufficient here unless you're combining with other collections.
+       # The Ansible host where the playbook will execute from.
+       # The z/OSMF collection is connecting through the z/OSMF REST APIs so localhost is sufficient
+       # here unless you're combining with other collections.
        nodes: "localhost"
 
        # Information needed to connect to z/OSMF
-       zmf_host: "your.zosmf.instance.url.com" # z/OSMF Host Name
-       zmf_port: 0000                          # z/OSMF Port Number
-       zmf_user: "demouser"                    # z/OSMF User that will be used for the connection
-       zmf_password: "password"                # z/OSMF Password
-
+       zmf_host: "your.zosmf.instance.url.com"         # z/OSMF Host Name
+       zmf_port: 0000                                  # z/OSMF Port Number
+       zmf_user: "demouser"                            # z/OSMF User that will be used for the connection
+       zmf_password: "password"                        # z/OSMF Password
 
        # Software instance information
        software_instance_name: "demo_instance_name"     # Software instance to be updated
        system_nickname: "favorite_lpar"                 # The name of the LPAR to be used
 
-       # Output file created from this playbook.
-       missing_critical_updates_response_file: "/user/directory/on/ansible/control/node" # Missing critical updates response information
+       # Output file created from this playbook containing missing critical updates response information
+       missing_critical_updates_response_file: "/user/directory/on/ansible/control/node"
 
-    Copy the above variables template into a file, fill it out, call it **variables.yaml**.
+    Copy and configure the above variables template into a file, call it **variables.yaml**.
 
-    We're then going to run that playbook with this variables file, use the Ansible
-    command ``ansible-playbook`` with the inventory you defined.
-
-    When working with this collection the inventory isn't as relevant since we're primarily
-    working with the z/OSMF REST APIs. When working with Ansible we always need an inventory regardless.
+    To run the playbook with the variables file, use the Ansible command ``ansible-playbook``
+    with the inventory you defined.
 
     The command syntax is ``ansible-playbook -i <inventory> -e @<variables> <playbook>``, for example;
 
