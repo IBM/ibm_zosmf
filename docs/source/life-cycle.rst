@@ -20,11 +20,13 @@ Review this matrix for the status of the IBM z/OS core collection version, its c
 +------------+----------------+-----------------------+-------------------+-------------------+------------------------+
 | Version    | Status         | Changelogs            | GA Date           | EOL Date          | Life Cycle Phase       |
 +============+================+=======================+===================+===================+========================+
-| 1.5.x      | Released       | `1.5.x changelogs`_   | 6 June 2024       | 6 June 2026       | `Full support`_        |
+| 1.6.x      | Released       | `1.6.x changelogs`_   | x January 2026    | x January 2028    | `Full support`_        |
 +------------+----------------+-----------------------+-------------------+-------------------+------------------------+
-| 1.4.x      | Released       | `1.4.x changelogs`_   | 17 May 2023       | 9  May 2025       | `Full support`_        |
+| 1.5.x      | Released       | `1.5.x changelogs`_   | 6 June 2024       | 6 June 2026       | `Maintenance support`_ |
 +------------+----------------+-----------------------+-------------------+-------------------+------------------------+
-| 1.3.x      | Released       | `1.3.x changelogs`_   | 9  May 2023       | 9  May 2025       | `Full support`_        |
+| 1.4.x      | Released       | `1.4.x changelogs`_   | 17 May 2023       | 9  May 2025       | `End of life`_         |
++------------+----------------+-----------------------+-------------------+-------------------+------------------------+
+| 1.3.x      | Released       | `1.3.x changelogs`_   | 8 February 2023   | 9  February 2025  | `End of life`_         |
 +------------+----------------+-----------------------+-------------------+-------------------+------------------------+
 
 .. .............................................................................
@@ -41,4 +43,6 @@ Review this matrix for the status of the IBM z/OS core collection version, its c
 .. _Full support:
     ../../../collections_content/collection-life-cycles.html#life-cycle-phase
 .. _Maintenance support:
+    ../../../collections_content/collection-life-cycles.html#life-cycle-phase
+.. _End of life:
     ../../../collections_content/collection-life-cycles.html#life-cycle-phase
