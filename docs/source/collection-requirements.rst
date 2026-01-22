@@ -64,9 +64,6 @@ Managed Node
 
       - `z/OS Management Facility`_
 
-   Different releases of **ansible-core** and the collection can require different
-   dependencies such as is the case with **Python** and **IBM Open Enterprise SDK for Python**
-
 .. _ibm-zosmf-collection-requirements-dependency-matrix:
 
 Dependency Matrix
