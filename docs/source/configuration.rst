@@ -276,8 +276,6 @@ Step 4: Run a playbook
    https://github.com/ansible-collections/ibm_zos_core/discussions/657
 .. _Open Enterprise SDK for Python:
    https://www.ibm.com/products/open-enterprise-python-zos
-.. _Z Open Automation Utilities:
-   https://www.ibm.com/docs/en/zoau/latest
 .. _inventory:
    https://ibm.github.io/z_ansible_collections_doc/welcome/basic-concepts.html#term-Inventory
 .. _Building Ansible inventories:
@@ -290,12 +288,8 @@ Step 4: Run a playbook
    https://www.ibm.com/docs/en/zos/3.1.0?topic=lists-controlling-how-change-apf-list-format
 .. _Ansible playbook:
    https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#playbooks-intro
-.. _ibm_zos_core.zos_ping:
-    https://ibm.github.io/z_ansible_collections_doc/ibm_zos_core/docs/source/modules/zos_ping.html
 .. _ibm_zosmf.zmf_swmgmt_identify_missing_critical_updates:
     https://ibm.github.io/z_ansible_collections_doc/ibm_zosmf/docs/source/roles/zmf_swmgmt_identify_missing_critical_updates.html
-.. _ibm_zos_core.zos_operator:
-   https://ibm.github.io/z_ansible_collections_doc/ibm_zos_core/docs/source/modules/zos_operator.html
 .. _setting up SSH keys:
    https://docs.ansible.com/ansible/latest/inventory_guide/connection_details.html#setting-up-ssh-keys
 .. _Ansible playbooks:
