@@ -8,6 +8,7 @@ zmf_workflow -- Operate z/OS workflows
 ======================================
 
 
+
 .. contents::
    :local:
    :depth: 1
@@ -22,11 +23,10 @@ Synopsis
 
 
 
+
 Parameters
 ----------
 
-
- 
 
 zmf_credential
   Authentication credentials, returned by module **zmf_authenticate**, for successful authentication with the z/OSMF server.
@@ -39,8 +39,6 @@ zmf_credential
   | **type**: dict
 
 
- 
-
   ltpa_token_2
     The value of the Lightweight Third Party Access (LTPA) token, which supports strong encryption.
 
@@ -51,8 +49,6 @@ zmf_credential
     | **required**: False
     | **type**: str
 
-
- 
 
   jwt_token
     The value of the JSON web token, which supports strong encryption.
@@ -65,16 +61,12 @@ zmf_credential
     | **type**: str
 
 
- 
-
   zmf_host
     Hostname of the z/OSMF server.
 
     | **required**: True
     | **type**: str
 
-
- 
 
   zmf_port
     Port number of the z/OSMF server.
@@ -83,8 +75,6 @@ zmf_credential
     | **type**: int
 
 
-
- 
 
 zmf_host
   Hostname of the z/OSMF server.
@@ -97,8 +87,6 @@ zmf_host
   | **type**: str
 
 
- 
-
 zmf_port
   Port number of the z/OSMF server.
 
@@ -107,8 +95,6 @@ zmf_port
   | **required**: False
   | **type**: int
 
-
- 
 
 zmf_user
   User name to be used for authenticating with z/OSMF server.
@@ -125,8 +111,6 @@ zmf_user
   | **type**: str
 
 
- 
-
 zmf_password
   Password to be used for authenticating with z/OSMF server.
 
@@ -142,8 +126,6 @@ zmf_password
   | **type**: str
 
 
- 
-
 zmf_crt
   Location of the PEM-formatted certificate chain file to be used for HTTPS client authentication.
 
@@ -158,8 +140,6 @@ zmf_crt
   | **type**: str
 
 
- 
-
 zmf_key
   Location of the PEM-formatted file with your private key to be used for HTTPS client authentication.
 
@@ -172,8 +152,6 @@ zmf_key
   | **required**: False
   | **type**: str
 
-
- 
 
 state
   The desired final state for the specified workflow.
@@ -222,8 +200,6 @@ state
   | **choices**: existed, started, deleted, check
 
 
- 
-
 workflow_name
   Descriptive name of the workflow.
 
@@ -242,16 +218,12 @@ workflow_name
   | **type**: str
 
 
- 
-
 workflow_file
   Location of the workflow definition file.
 
   | **required**: False
   | **type**: str
 
-
- 
 
 workflow_host
   Nickname of the target z/OS system on which the workflow is to be performed.
@@ -264,8 +236,6 @@ workflow_host
   | **type**: str
 
 
- 
-
 workflow_owner
   User name of the workflow owner.
 
@@ -275,8 +245,6 @@ workflow_owner
   | **type**: str
 
 
- 
-
 workflow_file_system
   Nickname of the system on which the specified workflow definition file and any related files reside.
 
@@ -285,8 +253,6 @@ workflow_file_system
   | **type**: str
 
 
- 
-
 workflow_vars_file
   Location of the optional properties file to be used to pre-specify the values of one or more variables that are defined in workflow definition file.
 
@@ -294,8 +260,6 @@ workflow_vars_file
   | **required**: False
   | **type**: str
 
-
- 
 
 workflow_vars
   Values of one or more workflow variables in JSON format.
@@ -307,8 +271,6 @@ workflow_vars
   | **type**: dict
 
 
- 
-
 workflow_resolve_global_conflict_by_using
   Version of the variable to be used if the supplied workflow variable conflicts with an existing global variable in z/OSMF Workflows task.
 
@@ -319,8 +281,6 @@ workflow_resolve_global_conflict_by_using
   | **choices**: global, input
 
 
- 
-
 workflow_comments
   User-specified information to be associated with the workflow at creation time.
 
@@ -328,8 +288,6 @@ workflow_comments
   | **required**: False
   | **type**: str
 
-
- 
 
 workflow_assign_to_owner
   Specifies whether the workflow steps are assigned to the workflow owner when the workflow is created.
@@ -339,8 +297,6 @@ workflow_assign_to_owner
   | **type**: bool
   | **default**: True
 
-
- 
 
 workflow_access_type
   Access type for the workflow when the workflow is created.
@@ -354,8 +310,6 @@ workflow_access_type
   | **choices**: Public, Restricted, Private
 
 
- 
-
 workflow_account_info
   For a workflow step that submits a batch job, this variable specifies the account information for the JCL JOB statement.
 
@@ -363,8 +317,6 @@ workflow_account_info
   | **required**: False
   | **type**: str
 
-
- 
 
 workflow_job_statement
   For a workflow that submits a batch job, this variable specifies the JOB statement JCL for the job.
@@ -374,8 +326,6 @@ workflow_job_statement
   | **type**: str
 
 
- 
-
 workflow_delete_completed_jobs
   For a workflow that submits a batch job, this variable specifies whether the job is deleted from the JES spool after it completes.
 
@@ -384,8 +334,6 @@ workflow_delete_completed_jobs
   | **type**: bool
   | **default**: False
 
-
- 
 
 workflow_resolve_conflict_by_using
   Specifies how to handle variable conflicts if any are detected at workflow creation time.
@@ -400,8 +348,6 @@ workflow_resolve_conflict_by_using
   | **choices**: outputFileValue, existingValue, leaveConflict
 
 
- 
-
 workflow_step_name
   Name of the workflow step at which automation processing is to begin when the workflow is started.
 
@@ -409,8 +355,6 @@ workflow_step_name
   | **required**: False
   | **type**: str
 
-
- 
 
 workflow_perform_subsequent
   Specifies whether the subsequent automated steps are performed when the workflow is started.
@@ -421,8 +365,6 @@ workflow_perform_subsequent
   | **default**: True
 
 
- 
-
 workflow_notification_url
   URL to be used for receiving notifications when the workflow is started.
 
@@ -430,8 +372,6 @@ workflow_notification_url
   | **required**: False
   | **type**: str
 
-
- 
 
 workflow_category
   Category of the workflow, which is general or configuration.
@@ -441,16 +381,12 @@ workflow_category
   | **choices**: general, configuration
 
 
- 
-
 workflow_vendor
   Name of the vendor that provided the workflow definition file.
 
   | **required**: False
   | **type**: str
 
-
- 
 
 workflow_key
   A string value, generated by z/OSMF to uniquely identify the workflow instance.
@@ -461,6 +397,8 @@ workflow_key
 
   | **required**: False
   | **type**: str
+
+
 
 
 
@@ -516,20 +454,20 @@ Examples
 
 
 
+
 Notes
 -----
 
 .. note::
-   - Submitting a z/OSMF workflow found on Ansible control node is currently not supported.
+   Submitting a z/OSMF workflow found on Ansible control node is currently not supported.
 
 
-   - Only automated steps are supported when starting a z/OSMF workflow.
+   Only automated steps are supported when starting a z/OSMF workflow.
 
-   - This module is considered to be "weakly" idempotent. That is, this module achieves an idempotent result for the final state of the workflow instance, rather than for the target z/OS systems. A strong idempotent result for the final state of the target z/OS systems depends on the idempotency of the workflow instance steps.
+   This module is considered to be "weakly" idempotent. That is, this module achieves an idempotent result for the final state of the workflow instance, rather than for the target z/OS systems. A strong idempotent result for the final state of the target z/OS systems depends on the idempotency of the workflow instance steps.
 
 
-   - This module does not support check mode.
-
+   This module does not support check mode.
 
 
 
@@ -541,116 +479,113 @@ Return Values
 -------------
 
 
-      changed
-        Indicates if any change is made during the module operation.
+changed
+  Indicates if any change is made during the module operation.
 
-        If `state=existed/check`, always return false.
+  If `state=existed/check`, always return false.
 
-        If `state=started` and the workflow is started, return true.
+  If `state=started` and the workflow is started, return true.
 
-        If `state=deleted` and the workflow is deleted, return true.
+  If `state=deleted` and the workflow is deleted, return true.
 
-        | **returned**: always
-        | **type**: bool
+  | **returned**: always
+  | **type**: bool
 
-      message
-        The output message generated by the module.
+message
+  The output message generated by the module.
 
-        If `state=existed`, indicate whether a workflow with the given name does not exist, or exists with same or different definition file, variables and properties.
-
-
-        If `state=started`, indicate whether the workflow is started.
-
-        If `state=deleted`, indicate whether the workflow to be deleted does not exist or is deleted.
+  If `state=existed`, indicate whether a workflow with the given name does not exist, or exists with same or different definition file, variables and properties.
 
 
-        If `state=check`, indicate whether the workflow is completed, is not completed, or is still in progress.
+  If `state=started`, indicate whether the workflow is started.
+
+  If `state=deleted`, indicate whether the workflow to be deleted does not exist or is deleted.
 
 
-        | **returned**: on success
-        | **type**: str
-        | **sample**:
-
-          Workflow instance named: ansible_sample_workflow_SY1 with same definition file, variables and properties is found.
-
-          Workflow instance named: ansible_sample_workflow_SY1 with different definition file is found.
-
-          Workflow instance named: ansible_sample_workflow_SY1 is found. While it could not be compared since the argument: workflow_file is required, and please supply variables by the argument: workflow_vars rather than the argument:  workflow_vars_file."
-
-          Workflow instance named: ansible_sample_workflow_SY1 is started, you can use state=check to check its final status.
-
-          Workflow instance named: ansible_sample_workflow_SY1 is still in progress. Current step is: 1.2 Step title. Percent complete is 28%.
-
-          Workflow instance named: ansible_sample_workflow_SY1 is completed.
-
-          Workflow instance named: ansible_sample_workflow_SY1 is not completed. No step is started.
-
-          Workflow instance named: ansible_sample_workflow_SY1 is not completed. Failed step is: 1.2 Step title. IZUWF0145E: Automation processing for the workflow `ansible_sample_workflow_SY1` stopped at step `Step title`. This step cannot be performed automatically. You can manually complete this step in z/OSMF Workflows task, and start this workflow instance again with next step name: subStep3 specified in argument: workflow_step_name.
-
-          Workflow instance named: ansible_sample_workflow_SY1 is not completed. Failed step is: 1.2 Step title. IZUWF0162I: Automation processing for workflow `ansible_sample_workflow_SY1` is complete. While one or more steps may be skipped.
-
-          Workflow instance named: ansible_sample_workflow_SY1 is deleted.
-
-          Workflow instance named: ansible_sample_workflow_SY1 does not exist.
+  If `state=check`, indicate whether the workflow is completed, is not completed, or is still in progress.
 
 
-      workflow_key
-        Generated key to uniquely identify the existing or started workflow.
+  | **returned**: on success
+  | **type**: str
+  | **sample**:
 
-        | **returned**: on success when `state=existed/started/check/deleted`
-        | **type**: str
-        | **sample**: 2535b19e-a8c3-4a52-9d77-e30bb920f912
+    Workflow instance named: ansible_sample_workflow_SY1 with same definition file, variables and properties is found.
 
+    Workflow instance named: ansible_sample_workflow_SY1 with different definition file is found.
 
-      workflow_name
-        Descriptive name of the workflow.
+    Workflow instance named: ansible_sample_workflow_SY1 is found. While it could not be compared since the argument: workflow_file is required, and please supply variables by the argument: workflow_vars rather than the argument:  workflow_vars_file."
 
-        | **returned**: on success when `state=existed/started/check/deleted`
-        | **type**: str
-        | **sample**: ansible_sample_workflow_SY1
+    Workflow instance named: ansible_sample_workflow_SY1 is started, you can use state=check to check its final status.
 
+    Workflow instance named: ansible_sample_workflow_SY1 is still in progress. Current step is: 1.2 Step title. Percent complete is 28%.
 
-      same_workflow_instance
-        Indicate whether the existing workflow has the same or different definition file, variables and properties.
+    Workflow instance named: ansible_sample_workflow_SY1 is completed.
 
+    Workflow instance named: ansible_sample_workflow_SY1 is not completed. No step is started.
 
-        | **returned**: on success when `state=existed`
-        | **type**: bool
+    Workflow instance named: ansible_sample_workflow_SY1 is not completed. Failed step is: 1.2 Step title. IZUWF0145E: Automation processing for the workflow `ansible_sample_workflow_SY1` stopped at step `Step title`. This step cannot be performed automatically. You can manually complete this step in z/OSMF Workflows task, and start this workflow instance again with next step name: subStep3 specified in argument: workflow_step_name.
 
-      workflow_waiting
-        Indicate whether it needs to wait and check again because the workflow is still in progress. Return True if the status of the workflow is 'automation-in-progress'. Otherwise (the workflow is either completed or paused/failed at some step), return False.
+    Workflow instance named: ansible_sample_workflow_SY1 is not completed. Failed step is: 1.2 Step title. IZUWF0162I: Automation processing for workflow `ansible_sample_workflow_SY1` is complete. While one or more steps may be skipped.
 
+    Workflow instance named: ansible_sample_workflow_SY1 is deleted.
 
-        | **returned**: on success when `state=check`
-        | **type**: bool
-
-      workflow_completed
-        Indicate whether the workflow is completed. Return True if the status of the workflow is 'complete'. Otherwise, return False.
+    Workflow instance named: ansible_sample_workflow_SY1 does not exist.
 
 
-        | **returned**: on success when `state=existed/check`
-        | **type**: bool
+workflow_key
+  Generated key to uniquely identify the existing or started workflow.
 
-      workflow_failed_step
-        Indicate what the failed step is if the workflow is not completed, including the step number, step name and step title.
+  | **returned**: on success when `state=existed/started/check/deleted`
+  | **type**: str
+  | **sample**: 2535b19e-a8c3-4a52-9d77-e30bb920f912
 
+workflow_name
+  Descriptive name of the workflow.
 
-        | **returned**: on success when `state=check`
-        | **type**: dict
-        | **sample**:
+  | **returned**: on success when `state=existed/started/check/deleted`
+  | **type**: str
+  | **sample**: ansible_sample_workflow_SY1
 
-           .. code-block:: json
-
-              {
-                  "step_name": "createInstanceDirectory",
-                  "step_number": "1.2",
-                  "step_title": "Create a new instance directory"
-              }
+same_workflow_instance
+  Indicate whether the existing workflow has the same or different definition file, variables and properties.
 
 
-      deleted
-        Indicate whether the workflow is deleted.
+  | **returned**: on success when `state=existed`
+  | **type**: bool
 
-        | **returned**: on success when `state=deleted`
-        | **type**: bool
+workflow_waiting
+  Indicate whether it needs to wait and check again because the workflow is still in progress. Return True if the status of the workflow is 'automation-in-progress'. Otherwise (the workflow is either completed or paused/failed at some step), return False.
+
+
+  | **returned**: on success when `state=check`
+  | **type**: bool
+
+workflow_completed
+  Indicate whether the workflow is completed. Return True if the status of the workflow is 'complete'. Otherwise, return False.
+
+
+  | **returned**: on success when `state=existed/check`
+  | **type**: bool
+
+workflow_failed_step
+  Indicate what the failed step is if the workflow is not completed, including the step number, step name and step title.
+
+
+  | **returned**: on success when `state=check`
+  | **type**: dict
+  | **sample**:
+
+    .. code-block:: json
+
+        {
+            "step_name": "createInstanceDirectory",
+            "step_number": "1.2",
+            "step_title": "Create a new instance directory"
+        }
+
+deleted
+  Indicate whether the workflow is deleted.
+
+  | **returned**: on success when `state=deleted`
+  | **type**: bool
 
