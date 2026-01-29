@@ -15,7 +15,7 @@ zmf_swmgmt_identify_missing_fixcat_updates -- Identify Missing Fixcat Software U
 
 Synopsis
 --------
-- The \ :strong:`IBM z/OSMF collection`\  provides an Ansible role, referred to as \ :strong:`zmf\_swmgmt\_identify\_missing\_fixcat\_updates`\ , to determine if a software instance is missing updates for fix categories that might be applicable to the software instance.  It also helps you identify the SYSMODs that resolve the missing updates.
+- The **IBM z/OSMF collection** provides an Ansible role, referred to as **zmf_swmgmt_identify_missing_fixcat_updates**, to determine if a software instance is missing updates for fix categories that might be applicable to the software instance.  It also helps you identify the SYSMODs that resolve the missing updates.
 
 
 
@@ -109,7 +109,7 @@ software_instance_uuid
   A UUID of a software instance. A UUID is assigned to every software instance and  can be obtained using the "List the software instances defined to z/OSMF" REST API.
 
 
-  A UUID can also be obtained using the zmf\_swmgmt\_zos\_system\_uuid Ansible role which retrieves the UUID for the software instance that represents the installed software for the specified z/OSMF host system.
+  A UUID can also be obtained using the zmf_swmgmt_zos_system_uuid Ansible role which retrieves the UUID for the software instance that represents the installed software for the specified z/OSMF host system.
 
 
   A software instance UUID must be specified when a software instance name is not specified. If both a software instance UUID and name are specified, then the software instance UUID is used by default.
@@ -199,16 +199,16 @@ Notes
 -----
 
 .. note::
-   - The given example assumes you have an inventory file \ :emphasis:`inventory.yml`\  that contains the values for the variables described above, such as z/OSMF host server, userid, password, software instance name and system, and response file name.
+   - The given example assumes you have an inventory file *inventory.yml* that contains the values for the variables described above, such as z/OSMF host server, userid, password, software instance name and system, and response file name.
 
 
-   - Command syntax to call a playbook using an inventory file: \ :literal:`ansible-playbook -i inventory software\_management\_reports\_CICDtest1.yml`\ 
+   - Command syntax to call a playbook using an inventory file: ``ansible-playbook -i inventory software_management_reports_CICDtest1.yml``
 
 
-   - Command syntax to call a playbook using command arguments: \ :literal:`ansible-playbook software\_management\_reports\_CICDtest1.yml -e zmf\_user=zosmf\*\* -e zmf\_password=zosmf\*\*`\ 
+   - Command syntax to call a playbook using command arguments: ``ansible-playbook software_management_reports_CICDtest1.yml -e zmf_user=zosmf** -e zmf_password=zosmf**``
 
 
-   - When the role is executed, a message shown in following example is displayed, \ :literal:`"msg": "Output filename= /tmp/xxx/missing\_fixcat\_updates\_response.json"`\ . This message includes a file path and file name where the missing fixcat updates report for the requested software instance is returned.
+   - When the role is executed, a message shown in following example is displayed, ``"msg": "Output filename= /tmp/xxx/missing_fixcat_updates_response.json"``. This message includes a file path and file name where the missing fixcat updates report for the requested software instance is returned.
 
 
    - Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=services-missing-fixcat-updates for more information on the REST API's request and response JSON.

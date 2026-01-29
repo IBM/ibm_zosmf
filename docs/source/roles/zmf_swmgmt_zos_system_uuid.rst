@@ -15,7 +15,7 @@ zmf_swmgmt_zos_system_uuid -- Retrieve the z/OS system UUID
 
 Synopsis
 --------
-- The \ :strong:`IBM z/OSMF collection`\  provides an Ansible role, referred to as \ :strong:`zmf\_swmgmt\_zos\_system\_uuid`\ , to retrieve the z/OS system UUID for the specified system nickname. The UUID identifies the software instance object that corresponds to the installed software for the specified z/OSMF host system.  The UUID can be used to uniquely identify a software instance object to be acted upon by other Ansible roles.
+- The **IBM z/OSMF collection** provides an Ansible role, referred to as **zmf_swmgmt_zos_system_uuid**, to retrieve the z/OS system UUID for the specified system nickname. The UUID identifies the software instance object that corresponds to the installed software for the specified z/OSMF host system.  The UUID can be used to uniquely identify a software instance object to be acted upon by other Ansible roles.
 
 
 
@@ -147,16 +147,16 @@ Notes
 -----
 
 .. note::
-   - The given example assumes you have an inventory file \ :emphasis:`inventory.yml`\  that contains the values for the variables described above, such as z/OSMF host server, userid, password, system, and response file name.
+   - The given example assumes you have an inventory file *inventory.yml* that contains the values for the variables described above, such as z/OSMF host server, userid, password, system, and response file name.
 
 
-   - Command syntax to call a playbook using an inventory file: \ :literal:`ansible-playbook -i inventory software\_management\_system\_uuid\_CICDtest1.yml`\ 
+   - Command syntax to call a playbook using an inventory file: ``ansible-playbook -i inventory software_management_system_uuid_CICDtest1.yml``
 
 
-   - Command syntax to call a playbook using command arguments: \ :literal:`ansible-playbook software\_management\_system\_uuid\_CICDtest1.yml -e zmf\_user=zosmf\*\* -e zmf\_password=zosmf\*\*`\ 
+   - Command syntax to call a playbook using command arguments: ``ansible-playbook software_management_system_uuid_CICDtest1.yml -e zmf_user=zosmf** -e zmf_password=zosmf**``
 
 
-   - When the role is executed, a message shown in following example is displayed, \ :literal:`"msg": "Output filename= /tmp/xxx/zos\_system\_uuid\_response.json"`\ . This message includes a file path and file name where the z/OS system UUID is saved.
+   - When the role is executed, a message shown in following example is displayed, ``"msg": "Output filename= /tmp/xxx/zos_system_uuid_response.json"``. This message includes a file path and file name where the z/OS system UUID is saved.
 
 
    - Refer to https://www.ibm.com/docs/en/zos/3.1.0?topic=services-retrieve-zos-system-uuid for more information on the REST API's request and response JSON.

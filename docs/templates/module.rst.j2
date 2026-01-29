@@ -1,5 +1,5 @@
 {# ------------------------------------------------------------------------ #}
-{# Copyright (c) IBM Corporation 2021                                       #}
+{# © Copyright IBM Corporation 2020                                         #}
 {# ------------------------------------------------------------------------ #}
 
 :github_url: https://github.com/IBM/ibm_zosmf/tree/master/plugins/modules/{{ module }}.py
@@ -13,6 +13,13 @@
 {% set title = module + ' -- ' + short_description | rst_ify %}
 {{ title }}
 {{ '=' * title | length }}
+
+{# Disble this syle formatting in leu of list style #}
+{#    {%   for desc in description %}
+    {{ desc | rst_ify }}
+
+    {%   endfor %}
+#}
 
 {# ------------------------------------------------------------------------ #}
 {# Generate top level links                                                 #}
@@ -28,10 +35,12 @@
 
 Synopsis
 --------
-{% if description %}
+{% if description -%}
+
 {%   for desc in description %}
 - {{ desc | rst_ify }}
 {%   endfor %}
+
 {% endif %}
 
 {# ------------------------------------------------------------------------ #}
@@ -43,25 +52,18 @@ Synopsis
 {%   set sorted = false %}
 {%   for name, spec in (opts | dictsort if sorted else opts.items()) if not name.startswith('_') %}
 
-{# Need to convert defalut value from bool or int to string for html display #} 
-{%     if spec.type == 'bool' or spec.type == 'int' %}
-{%       set default_str = (spec.default | string ) %}
-{%     else %}
-{%       set default_str = spec.default if spec.default else "" %}
-{%     endif %}
-
 {{ "  " * level }}{{ name }}
 {%     for para in spec.description %}
   {{ "  " * level }}{{ para | rst_ify }}
 
 {%     endfor %}
-  {{ "  " * level }}| **required**: {{ spec.required | string | default("False") }}
+  {{ "  " * level }}| **required**: {{ spec.required | default("False") }}
   {{ "  " * level }}| **type**: {{ spec.type | default("str") }}
 {%     if spec.elements %}
   {{ "  " * level }}| **elements**: {{ spec.elements }}
 {%     endif %}
-{%     if default_str != "" and default_str != "None" %}
-  {{ "  " * level }}| **default**: {{ default_str }}
+{%     if 'default' in spec and spec.default is not none and spec.default != ''%}
+  {{ "  " * level }}| **default**: {{ spec.default }}
 {%     endif %}
 {%     if spec.choices %}
   {{ "  " * level }}| **choices**: {{ ", ".join(spec.choices) }}
@@ -77,11 +79,26 @@ Synopsis
 {# Generate the options doc                                      #}
 {# ------------------------------------------------------------- #}
 
-{% if options %}
+{% if options -%}
 Parameters
 ----------
 
 {{ option_generation(options, 0) }}
+{% endif %}
+
+{# ------------------------------------------------------------- #}
+{# Generate the attributes doc                                      #}
+{# ------------------------------------------------------------- #}
+
+{% if attributes -%}
+Attributes
+----------
+{% for name, spec in attributes.items() %}
+{{ name }}
+  | **support**: {{ spec.support}}
+  | **description**: {{ spec.description }}
+{% endfor %}
+
 {% endif %}
 
 {# ------------------------------------------------------------- #}
@@ -95,36 +112,35 @@ Examples
 
 {{ examples | indent(3, True) }}
 
+
 {# ------------------------------------------------------------- #}
 {# Generate the notes doc                                        #}
 {# ------------------------------------------------------------- #}
 
-{% if notes %}
+{% if notes -%}
 Notes
 -----
 
 .. note::
 {%   for note in notes %}
-   - {{ note | rst_ify }}
+   {{ note | rst_ify }}
 
 {%   endfor %}
-
 {% endif %}
 
 {# ------------------------------------------------------------- #}
 {# Generate the set also doc                                     #}
 {# ------------------------------------------------------------- #}
 
-{% if seealso %}
+{% if seealso -%}
 See Also
 --------
 
 .. seealso::
-{%   for item in seealso %}
+
+{% for item in seealso %}
    - :ref:`{{ item.module }}_module`
-
-{%   endfor %}
-
+{% endfor %}
 {% endif %}
 
 {# ------------------------------------------------------------- #}
@@ -154,41 +170,35 @@ See Also
   {{ "  " * level }}| **returned**: {{ _returned }}
 {%     endif %}
 {%     if _type %}
-  {{ "  " * level }}| **type**: {{ _type | default("str") }}
+  {{ "  " * level }}| **type**: {{ _type }}
 {%     endif %}
 {%     if _elements %}
   {{ "  " * level }}| **elements**: {{ _elements }}
 {%     endif %}
 {%     if _sample %}
 {%       if _sample.sample1 %}
-{%         if _type != 'str' and _type != 'int' %}
   {{ "  " * level }}| **sample**:
+{%         for _samplex in _sample %}
+{%           if _type != 'str' and _type != 'int' %}
 
-{%           for _samplex in _sample %}
-  {{ "  " * level }}   .. code-block:: json
+  {{ "  " * level }}  .. code-block:: json
 
   {{ "  " * level }}      {{ _sample[_samplex] | tojson(4) | indent(2*level+8) }}
+{%           else %}
 
-{%           endfor %}
-{%         else %}
-  {{ "  " * level }}| **sample**:
-
-{%           for _samplex in _sample %}
   {{ "  " * level }}  {{ _sample[_samplex] }}
+{%           endif %}
+{%         endfor %}
 
-{%           endfor %}
-{%         endif %}
 {%       else %}
 {%         if _type != 'str' and _type != 'int' %}
   {{ "  " * level }}| **sample**:
 
-  {{ "  " * level }}   .. code-block:: json
+  {{ "  " * level }}  .. code-block:: json
 
   {{ "  " * level }}      {{ _sample | tojson(4) | indent(2*level+8) }}
-
 {%         else %}
   {{ "  " * level }}| **sample**: {{ _sample }}
-
 {%         endif %}
 {%       endif %}
 {%     endif %}
@@ -206,5 +216,5 @@ See Also
 Return Values
 -------------
 
-{{ result_generation(returndocs, 3) }}
+{{ result_generation(returndocs, 0) }}
 {% endif %}

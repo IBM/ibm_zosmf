@@ -8,6 +8,7 @@ zmf_authenticate -- Authenticate with z/OSMF server
 ===================================================
 
 
+
 .. contents::
    :local:
    :depth: 1
@@ -24,11 +25,10 @@ Synopsis
 
 
 
+
 Parameters
 ----------
 
-
- 
 
 zmf_host
   Hostname of the z/OSMF server.
@@ -37,16 +37,12 @@ zmf_host
   | **type**: str
 
 
- 
-
 zmf_port
   Port number of the z/OSMF server.
 
   | **required**: False
   | **type**: int
 
-
- 
 
 zmf_user
   User name to be used for authenticating with z/OSMF server.
@@ -60,8 +56,6 @@ zmf_user
   | **type**: str
 
 
- 
-
 zmf_password
   Password to be used for authenticating with z/OSMF server.
 
@@ -74,8 +68,6 @@ zmf_password
   | **type**: str
 
 
- 
-
 zmf_crt
   Location of the PEM-formatted certificate chain file to be used for HTTPS client authentication.
 
@@ -86,8 +78,6 @@ zmf_crt
   | **type**: str
 
 
- 
-
 zmf_key
   Location of the PEM-formatted file with your private key to be used for HTTPS client authentication.
 
@@ -96,6 +86,8 @@ zmf_key
 
   | **required**: False
   | **type**: str
+
+
 
 
 
@@ -141,42 +133,41 @@ Examples
 
 
 
+
 Return Values
 -------------
 
 
-      changed
-        Indicates if any change is made during the module operation.
+changed
+  Indicates if any change is made during the module operation.
 
-        | **returned**: always
-        | **type**: bool
+  | **returned**: always
+  | **type**: bool
 
-      ltpa_token_2
-        The value of Lightweight Third Party Access (LTPA) token, which supports strong encryption.
-
-
-        | **returned**: on success
-        | **type**: str
-        | **sample**: yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCa......
+ltpa_token_2
+  The value of Lightweight Third Party Access (LTPA) token, which supports strong encryption.
 
 
-      jwt_token
-        The value of JSON Web token, which supports strong encryption.
+  | **returned**: on success
+  | **type**: str
+  | **sample**: yDS7uJxqrd3h8v5WXq9pf1yPtztQ4JzroZN3XQKF26ZicXgHc7mdzgycMCa......
 
-        | **returned**: on success
-        | **type**: str
-        | **sample**: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlmVhcmVyIiwicie......
+jwt_token
+  The value of JSON Web token, which supports strong encryption.
 
+  | **returned**: on success
+  | **type**: str
+  | **sample**: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlmVhcmVyIiwicie......
 
-      zmf_host
-        Hostname of the z/OSMF server.
+zmf_host
+  Hostname of the z/OSMF server.
 
-        | **returned**: on success
-        | **type**: str
+  | **returned**: on success
+  | **type**: str
 
-      zmf_port
-        Port number of the z/OSMF server.
+zmf_port
+  Port number of the z/OSMF server.
 
-        | **returned**: on success
-        | **type**: int
+  | **returned**: on success
+  | **type**: int
 

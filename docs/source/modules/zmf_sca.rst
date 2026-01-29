@@ -8,6 +8,7 @@ zmf_sca -- Automate z/OS security requirements validation and provision
 =======================================================================
 
 
+
 .. contents::
    :local:
    :depth: 1
@@ -22,11 +23,10 @@ Synopsis
 
 
 
+
 Parameters
 ----------
 
-
- 
 
 state
   The desired final state.
@@ -43,8 +43,6 @@ state
   | **choices**: check, provisioned
 
 
- 
-
 target_userid
   User ID or group ID to be validated or provisioned for the security requirements documented by the security descriptor JSON file that is specified by the parameter path_of_security_requirements.
 
@@ -56,8 +54,6 @@ target_userid
   | **type**: str
 
 
- 
-
 location
   The location of path_of_security_requirements.
 
@@ -67,8 +63,6 @@ location
   | **choices**: remote, local
 
 
- 
-
 path_of_security_requirements
   Absolute path of the security descriptor JSON file that contains the security requirements to be validated or provisioned.
 
@@ -76,8 +70,6 @@ path_of_security_requirements
   | **required**: True
   | **type**: str
 
-
- 
 
 expected_result
   Expected validation result of the security requirements.
@@ -99,8 +91,6 @@ expected_result
   | **choices**: all-failed, all-passed
 
 
- 
-
 zmf_credential
   Authentication credentials, returned by module **zmf_authenticate**, for successful authentication with the z/OSMF server.
 
@@ -111,8 +101,6 @@ zmf_credential
   | **required**: False
   | **type**: dict
 
-
- 
 
   ltpa_token_2
     The value of the Lightweight Third Party Access (LTPA) token, which supports strong encryption.
@@ -125,8 +113,6 @@ zmf_credential
     | **type**: str
 
 
- 
-
   jwt_token
     The value of the JSON web token, which supports strong encryption.
 
@@ -138,16 +124,12 @@ zmf_credential
     | **type**: str
 
 
- 
-
   zmf_host
     Hostname of the z/OSMF server.
 
     | **required**: True
     | **type**: str
 
-
- 
 
   zmf_port
     Port number of the z/OSMF server.
@@ -156,8 +138,6 @@ zmf_credential
     | **type**: int
 
 
-
- 
 
 zmf_host
   Hostname of the z/OSMF server.
@@ -170,8 +150,6 @@ zmf_host
   | **type**: str
 
 
- 
-
 zmf_port
   Port number of the z/OSMF server.
 
@@ -180,8 +158,6 @@ zmf_port
   | **required**: False
   | **type**: int
 
-
- 
 
 zmf_user
   User name to be used for authenticating with z/OSMF server.
@@ -198,8 +174,6 @@ zmf_user
   | **type**: str
 
 
- 
-
 zmf_password
   Password to be used for authentication with z/OSMF server.
 
@@ -215,8 +189,6 @@ zmf_password
   | **type**: str
 
 
- 
-
 zmf_crt
   Location of the PEM-formatted certificate chain file to be used for HTTPS client authentication.
 
@@ -231,8 +203,6 @@ zmf_crt
   | **type**: str
 
 
- 
-
 zmf_key
   Location of the PEM-formatted file with your private key to be used for HTTPS client authentication.
 
@@ -244,6 +214,8 @@ zmf_key
 
   | **required**: False
   | **type**: str
+
+
 
 
 
@@ -303,167 +275,158 @@ Examples
 
 
 
+
 Return Values
 -------------
 
 
-      changed
-        Indicates whether any change is made during the module operation.
+changed
+  Indicates whether any change is made during the module operation.
 
-        | **returned**: always
-        | **type**: bool
+  | **returned**: always
+  | **type**: bool
 
-      msg
-        Error message.
+msg
+  Error message.
 
-        | **returned**: always on error
-        | **type**: str
+  | **returned**: always on error
+  | **type**: str
 
-      resourceItems
-        Array of security requirements that need attention.
+resourceItems
+  Array of security requirements that need attention.
 
-        If `state=check`, indicate security requirements which do not match with the expected result.
+  If `state=check`, indicate security requirements which do not match with the expected result.
 
-        If `state=provisioned`, indicate security requirements that are failed to provision.
+  If `state=provisioned`, indicate security requirements that are failed to provision.
 
-        | **returned**: always on fail
-        | **type**: list
-        | **elements**: dict
+  | **returned**: always on fail
+  | **type**: list
+  | **elements**: dict
 
-        itemId
-          Item ID.
+  itemId
+    Item ID.
 
-          | **type**: str
-          | **sample**: 5695DF18658I10001000
+    | **type**: str
+    | **sample**: 5695DF18658I10001000
 
+  itemType
+    Item type.
 
-        itemType
-          Item type.
+    | **type**: str
+    | **sample**: PROGRAMMABLE
 
-          | **type**: str
-          | **sample**: PROGRAMMABLE
+  itemCategory
+    Item category.
 
+    | **type**: str
+    | **sample**: CHANGEDATASET VX
 
-        itemCategory
-          Item category.
+  itemDescription
+    Item description.
 
-          | **type**: str
-          | **sample**: CHANGEDATASET VX
+    | **type**: str
+    | **sample**: DFSMSrmm inventory management CHANGEDATASET VX command protection.
 
+  resourceProfile
+    Name of the security resource profile.
 
-        itemDescription
-          Item description.
+    At current stage,
 
-          | **type**: str
-          | **sample**: DFSMSrmm inventory management CHANGEDATASET VX command protection.
+    Variable in the name is not supported.
 
+    Generic resource name is not supported.
 
-        resourceProfile
-          Name of the security resource profile.
+    | **returned**: always
+    | **type**: str
+    | **sample**: STGADMIN.EDG.CD.VX
 
-          At current stage,
+  resourceClass
+    SAF resource class.
 
-          Variable in the name is not supported.
+    | **returned**: always
+    | **type**: str
+    | **sample**: FACILITY
 
-          Generic resource name is not supported.
+  access
+    Level of access that is required for the security resource for the specified user ID or group ID.
 
-          | **returned**: always
-          | **type**: str
-          | **sample**: STGADMIN.EDG.CD.VX
+    Value can be the following
 
+    | **returned**: always
+    | **type**: str
+    | **sample**: ['READ', 'UPDATE', 'CONTROL', 'ALTER']
 
-        resourceClass
-          SAF resource class.
+  action
+    \"validate\" will be returned if SCA only did validation for this security requirement.
 
-          | **returned**: always
-          | **type**: str
-          | **sample**: FACILITY
+    \"provision\" will be returned if SCA provisioned the security requirement.
 
+    | **returned**: always
+    | **type**: str
+    | **sample**: ['validate', 'provision']
 
-        access
-          Level of access that is required for the security resource for the specified user ID or group ID.
+  actionObjectId
+    The object ID of this action. For validation action, this ID is the same as validatedId below.
 
-          Value can be the following
+    This field can also be used for other actions in future versions.
 
-          | **returned**: always
-          | **type**: str
-          | **sample**: ['READ', 'UPDATE', 'CONTROL', 'ALTER']
+    | **returned**: always
+    | **type**: str
 
+  validatedId
+    User ID or group ID that is used for resource validation.
 
-        action
-          \"validate\" will be returned if SCA only did validation for this security requirement.
+    | **returned**: always
+    | **type**: str
 
-          \"provision\" will be returned if SCA provisioned the security requirement.
+  status
+    Validation result
 
-          | **returned**: always
-          | **type**: str
-          | **sample**: ['validate', 'provision']
+    | **returned**: always
+    | **type**: str
+    | **sample**: ['Passed', 'Failed', 'Unknown']
 
+  additionalInfo
+    Additional info.
 
-        actionObjectId
-          The object ID of this action. For validation action, this ID is the same as validatedId below.
+    | **type**: str
 
-          This field can also be used for other actions in future versions.
+  whoNeedsAccess
+    Users (security groups) who require access to this resource.
 
-          | **returned**: always
-          | **type**: str
+    The Security Configuration Assistant does not verify that security groups are defined;
 
-        validatedId
-          User ID or group ID that is used for resource validation.
+    your security administrator must verify that the groups exist.
 
-          | **returned**: always
-          | **type**: str
+    | **type**: str
+    | **sample**: <Inventory Management>
 
-        status
-          Validation result
+  messageId
+    Message Id.
 
-          | **returned**: always
-          | **type**: str
-          | **sample**: ['Passed', 'Failed', 'Unknown']
+    | **type**: str
 
+  messageText
+    Message text.
 
-        additionalInfo
-          Additional info.
+    | **type**: str
 
-          | **type**: str
+  httpStatus
+    http status code if error.
 
-        whoNeedsAccess
-          Users (security groups) who require access to this resource.
+    | **returned**: on error
+    | **type**: str
 
-          The Security Configuration Assistant does not verify that security groups are defined;
+  requestMethod
+    http request method if error.
 
-          your security administrator must verify that the groups exist.
+    | **returned**: on error
+    | **type**: str
 
-          | **type**: str
-          | **sample**: <Inventory Management>
+  requestUri
+    Request uri if error.
 
-
-        messageId
-          Message Id.
-
-          | **type**: str
-
-        messageText
-          Message text.
-
-          | **type**: str
-
-        httpStatus
-          http status code if error.
-
-          | **returned**: on error
-          | **type**: str
-
-        requestMethod
-          http request method if error.
-
-          | **returned**: on error
-          | **type**: str
-
-        requestUri
-          Request uri if error.
-
-          | **returned**: on error
-          | **type**: str
+    | **returned**: on error
+    | **type**: str
 
 

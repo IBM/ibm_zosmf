@@ -1,5 +1,5 @@
 .. ...........................................................................
-.. © Copyright IBM Corporation 2021                                          .
+.. © Copyright IBM Corporation 2021, 2026                                    .
 .. ...........................................................................
 
 .. _ibm-zosmf-collection:
@@ -14,12 +14,12 @@ Ansible Automation to IBM Z® through the offering
 **Red Hat® Ansible Certified Content for IBM Z**.
 
 The **IBM z/OSMF collection** supports automation tasks such as operating z/OS
-workflows, provisioning and managing z/OS middlewares/softwares, via z/OSMF
-RESTful services. 
+workflows, provisioning and managing z/OS middlewares abd software via z/OSMF
+RESTful services.
 
 .. _ibm_zosmf:
    https://galaxy.ansible.com/ui/repo/published/ibm/ibm_zosmf
-   
+
 .. toctree::
    :maxdepth: 1
    :caption: Collection Content
