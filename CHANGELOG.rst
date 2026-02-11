@@ -4,7 +4,7 @@ ibm.ibm\_zosmf Release Notes
 
 .. contents:: Topics
 
-v1.5.1
+v1.6.0
 ======
 
 Release Summary

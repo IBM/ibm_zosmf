@@ -6,6 +6,36 @@
 Releases
 ========
 
+Version 1.6.0
+=============
+
+Notes
+-----
+
+* Added new roles to the z/OSMF Software Management Collection
+* 7 new roles have been added.
+* 6 aimed at managing the software update process. 1 aimed at managing system holds.
+* Software update roles have been added, aimed at enabling automation.
+* Fixed bug where zmf_port wasn't always registered properly.
+* Updated all z/OSMF Software Management roles to encode the characters in the request URLs
+
+* New roles
+  
+  * `zmf_swmgmt_holds_for_reason`_
+  * `zmf_swupdate_cancel`_
+  * `zmf_swupdate_copy`_
+  * `zmf_swupdate_resume`_
+  * `zmf_swupdate_retrieve`_
+  * `zmf_swupdate_retrieve_all`_
+  * `zmf_swupdate_start`_
+
+Availability
+------------
+
+* `Automation Hub`_
+* `Galaxy`_
+* `GitHub`_
+
 Version 1.5.0
 =============
 
@@ -307,6 +337,27 @@ Reference
 
 .. _zmf_swmgmt_system_uuid:
    roles/zmf_swmgmt_system_uuid.html
+
+.. _zmf_swmgmt_holds_for_reason:
+   roles/zmf_swmgmt_holds_for_reason.html
+
+.. _zmf_swupdate_cancel:
+   roles/zmf_swupdate_cancel.html
+
+.. _zmf_swupdate_copy:
+   roles/zmf_swupdate_copy.html
+
+.. _zmf_swupdate_resume:
+   roles/zmf_swupdate_resume.html
+
+.. _zmf_swupdate_retrieve:
+   roles/zmf_swupdate_retrieve.html
+
+.. _zmf_swupdate_retrieve_all:
+   roles/zmf_swupdate_retrieve_all.html
+
+.. _zmf_swupdate_start:
+   roles/zmf_swupdate_start.html
 
 .. _Automation Hub:
    https://www.ansible.com/products/automation-hub

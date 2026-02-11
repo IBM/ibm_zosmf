@@ -80,12 +80,14 @@ Dependency Matrix
    you can search for products using the product's name, version or ID on
    the `IBM Support product lifecycle`_ page.
 
-   For the lifecycle of **IBM Open Enterprise SDK for Python**, search on product
-   ID `5655-PYT`_
-
    +---------+----------------------------+-----------------------------------------------------+
    | Version | Control Node               | Managed Node                                        |
    +=========+============================+=====================================================+
+   | 1.6.x   |- `ansible-core`_ >=2.15.x  |- `z/OS`_ V2R5 - V3Rx                                |
+   |         |- `Ansible`_ >=8.0.x        |- `z/OS Management Facility`_                        |
+   |         |- `AAP`_ >=2.4              |                                                     |
+   |         |                            |                                                     |
+   +---------+----------------------------+-----------------------------------------------------+
    | 1.5.x   |- `ansible-core`_ >=2.15.x  |- `z/OS`_ V2R5 - V3Rx                                |
    |         |- `Ansible`_ >=8.0.x        |- `z/OS Management Facility`_                        |
    |         |- `AAP`_ >=2.4              |                                                     |

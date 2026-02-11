@@ -1,0 +1,10 @@
+{
+    "docs": "https://docs.ansible.com/ansible-core/2.20/dev_guide/testing/sanity/pep8.html", 
+    "results": [
+        {
+            "message": "The test `ansible-test sanity --test pep8` [[explain](https://docs.ansible.com/ansible-core/2.20/dev_guide/testing/sanity/pep8.html)] failed with 3 errors:", 
+            "output": "docs/source/conf.py:67:1: E302: expected 2 blank lines, found 1\ndocs/source/conf.py:70:1: E305: expected 2 blank lines after class or function definition, found 1\ndocs/source/conf.py:70:31: W291: trailing whitespace"
+        }
+    ], 
+    "verified": false
+}
