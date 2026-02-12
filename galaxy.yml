@@ -7,23 +7,16 @@ namespace: ibm
 name: ibm_zosmf
 
 # The collection version
-version: 1.5.1
+version: 1.6.0
 
 # Collection README file
 readme: README.md
 
 # Contributors
 authors:
-  - "Taylor Digilio <Taylor.Digilio@ibm.com>"
-  - "Hiren Shah <hiren@us.ibm.com>"
-  - "Aaron Kippins <amkippin@us.ibm.com>"
-  - "Yang Cao <caoy@cn.ibm.com>"
-  - "Yun Juan Yang <yunyyang@cn.ibm.com>"
-  - "Allen Zhou <xiao-yu.zhou@ibm.com>"
-  - "Xiao Zhen Zhu <zhuxiaoz@cn.ibm.com>"
-  - "Yuan Yuan <yuanyuan@cn.ibm.com>"
-  - "Qi Li <lqibj@cn.ibm.com>"
-  - "Xiao Ming Liu <xmliuxm@cn.ibm.com>"
+  - "Taylor Digilio @TaylorDigilio"
+  - "Hiren Shah @shreeji818"
+  - "Aaron Kippins @AKippins"
 
 # Description
 description: Ansible collection consisting of modules and roles to work with z/OS based on z/OS Management Facility(z/OSMF).
@@ -66,7 +59,7 @@ issues: https://github.com/IBM/ibm_zosmf/issues
 
 # Ignore files and directories matching the following patterns
 build_ignore:
-  - Jenkinsfile
+  - Jenkinsfile*
   - ansible.cfg
   - .gitignore
   - .github
@@ -84,10 +77,9 @@ build_ignore:
   - tests/sanity/ignore-2.12.txt
   - tests/sanity/ignore-2.13.txt
   - tests/sanity/ignore-2.14.txt
-  - tests/sanity/ignore-2.15.txt
-  - tests/sanity/ignore-2.16.txt
-  - tests/sanity/ignore-2.17.txt
-  - tests/sanity/ignore-2.18.txt
-  - tests/sanity/ignore-2.19.txt
   - .idea
   - meta/context
+  - changelogs
+  - importer_result.json
+  - tests/output
+  - tests/scripts

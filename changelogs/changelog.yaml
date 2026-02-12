@@ -47,8 +47,7 @@ releases:
   1.2.0:
     changes:
       major_changes:
-        - Updated module `zmf_sca` which adds support for the security requirements
-          provision.
+        - Updated module `zmf_sca` which adds support for the security requirements provision.
     modules:
       - description: Automate z/OS security requirements validation and provision
         name: zmf_sca
@@ -83,8 +82,7 @@ releases:
       major_changes:
         - Added new roles for z/OS Management Services Catalog
       minor_changes:
-        - Updated module `zmf_workflow` which returns the failed step if the workflow
-          is not completed.
+        - Updated module `zmf_workflow` which returns the failed step if the workflow is not completed.
     objects:
       role:
         - description: Role runs a z/OS Management Service
@@ -119,7 +117,7 @@ releases:
           name: zmf_swmgmt_system_uuid
           namespace: null
     release_date: '2024-06-07'
-  1.5.1:
+  1.6.0:
     changes:
       major_changes:
         - Software update roles have been added, aimed at enabling automation.
@@ -132,7 +130,9 @@ releases:
         7 new roles have been added.
 
         6 aimed at managing the software update process. 1 aimed at managing system
-        holds.'
+        holds.
+
+        '
     fragments:
       - 15-fixing-changelog.yaml
       - 16-release-summary.yaml
@@ -160,4 +160,4 @@ releases:
         - description: Role starts a software update process
           name: zmf_swupdate_start
           namespace: null
-    release_date: '2025-12-29'
+    release_date: '2026-01-28'
