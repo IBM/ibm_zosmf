@@ -6,8 +6,6 @@
 # For more information on requirements files,
 # see https://pip.pypa.io/en/latest/user_guide/#requirements-files
 
-ansible
-ansible-lint
 flake8
 pylint
 voluptuous
