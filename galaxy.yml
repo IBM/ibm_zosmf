@@ -59,16 +59,42 @@ issues: https://github.com/IBM/ibm_zosmf/issues
 
 # Ignore files and directories matching the following patterns
 build_ignore:
-  - Jenkinsfile*
-  - ansible.cfg
-  - .gitignore
-  - .github
-  - .git
+  - .ansible
+  - .ansible-lint
+  - .ansible-test-ignore
   - .cache
+  - .DS_Store
+  - .flake8
+  - .git
+  - .github
+  - .gitignore
+  - .idea
+  - .pre-commit-config.yaml
+  - .python-version
+  - .pytest_cache
+  - .secrets.baseline
+  - .vscode
+  - .whitesource
+  - meta/context
+  - tests/scripts
   - '*.tar.gz'
-  - docs
+  - __pycache__
+  - Jenkinsfile
+  - Jenkinsfile.old
+  - ansible.cfg
+  - changelogs
   - collections
-  - venv
+  - docs
+  - importer_result.json
+  - test_config.yml
+  - tests/*.ini
+  - tests/*.py
+  - tests/.pytest_cache
+  - tests/__pycache__
+  - tests/functional
+  - tests/helpers
+  - tests/requirements.txt
+  - tests/unit
   - tests/CICD
   - tests/output
   - tests/sanity/ignore-2.9.txt
@@ -77,9 +103,9 @@ build_ignore:
   - tests/sanity/ignore-2.12.txt
   - tests/sanity/ignore-2.13.txt
   - tests/sanity/ignore-2.14.txt
-  - .idea
-  - meta/context
-  - changelogs
-  - importer_result.json
-  - tests/output
-  - tests/scripts
+  - venv*
+  - ansible_collections
+  - '*.log'
+  - '*.sh'
+  - ac
+  - branch_protection_rules.json

@@ -1,6 +1,29 @@
 exclude_paths:
   - tests/
   - docs/
+  - .tar.gz
+  - __pycache__/
+  - .ansible-lint
+  - .cache/
+  - .DS_Store
+  - .git/
+  - .github/
+  - .gitignore
+  - .python-version
+  - .pytest_cache/
+  - .vscode/
+  - Jenkinsfile
+  - ac
+  - ansible.cfg
+  - changelogs/
+  - collections/
+  - docs/
+  - importer_result.json
+  - scripts/
+  - test_config.yml
+  - venv*
+  - ansible_collections/
+  - ./*.log
 skip_list:
   - name[template]
   - schema[meta]

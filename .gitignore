@@ -203,6 +203,8 @@ tests/collections
 .ansible/
 .pre-commit-config.yaml
 .whitesource
+importer_result.json
+
 
 # changelog
 changelogs/.plugin-cache.yaml
