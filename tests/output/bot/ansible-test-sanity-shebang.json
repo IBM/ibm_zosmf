@@ -2,8 +2,8 @@
     "docs": "https://docs.ansible.com/ansible-core/2.20/dev_guide/testing/sanity/shebang.html", 
     "results": [
         {
-            "message": "The test `ansible-test sanity --test shebang` [[explain](https://docs.ansible.com/ansible-core/2.20/dev_guide/testing/sanity/shebang.html)] failed with 1 error:", 
-            "output": "docs/scripts/auto-doc-gen.sh:1:1: unexpected non-module shebang: b'#!/bin/bash'"
+            "message": "The test `ansible-test sanity --test shebang` [[explain](https://docs.ansible.com/ansible-core/2.20/dev_guide/testing/sanity/shebang.html)] failed with 4 errors:", 
+            "output": "docs/scripts/auto-doc-gen.sh:1:1: unexpected non-module shebang: b'#!/bin/bash'\ntests/sanity/ignore-2.20.txt:5:1: Ignoring 'plugins/modules/zmf_authenticate.py' is unnecessary\ntests/sanity/ignore-2.20.txt:6:1: Ignoring 'plugins/modules/zmf_workflow.py' is unnecessary\ntests/sanity/ignore-2.20.txt:7:1: Ignoring 'plugins/modules/zmf_sca.py' is unnecessary"
         }
     ], 
     "verified": false
