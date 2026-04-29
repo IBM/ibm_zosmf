@@ -14,7 +14,7 @@ Ansible Automation to IBM Z® through the offering
 **Red Hat® Ansible Certified Content for IBM Z**.
 
 The **IBM z/OSMF collection** supports automation tasks such as operating z/OS
-workflows, provisioning and managing z/OS middlewares abd software via z/OSMF
+workflows, provisioning and managing z/OS middlewares and software via z/OSMF
 RESTful services.
 
 .. _ibm_zosmf:
