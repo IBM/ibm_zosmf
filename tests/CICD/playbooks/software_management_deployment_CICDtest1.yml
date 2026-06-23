@@ -1,0 +1,23 @@
+# Copyright (c) IBM Corporation 2026
+# This playbook demonstrates using role
+# 'zmf_swmgmt_deployment' to complete the software management
+# Deployment V2 REST API.
+
+#######################################################################################
+# PLAY #1: Start a deployment on the source software.                                 #
+#######################################################################################
+- name: Software Management Deployment
+  hosts: swmgmt
+  gather_facts: false
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    # Use the 'QQQ' high level qualifier (HLQ) and STANDARD storage class for all
+    # target data sets in the deployment by default.
+    - name: Setting the deployment HLQ and storage class parameters
+      ansible.builtin.set_fact:
+        deployment_hlq: QQQ
+        deployment_storage_class: STANDARD
+    - name: Start the software management deployment
+      include_role:
+        name: zmf_swmgmt_deployment

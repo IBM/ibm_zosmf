@@ -1,0 +1,40 @@
+# Copyright (c) IBM Corporation 2026
+# This playbook demonstrates using roles:
+# 'zmf_swmgmt_add_pswi' and 'zmf_swmgmt_deployment'
+# to complete the software management Add PSWI and
+# Deployment V2 REST APIs.
+
+#######################################################################################
+# PLAY #1: Add a portable software instance.                                          #
+#######################################################################################
+- name: Software Management Add PSWI
+  hosts: swmgmt
+  gather_facts: false
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    - name: Add a portable software instance
+      include_role:
+        name: zmf_swmgmt_add_pswi
+
+#######################################################################################
+# PLAY #2: Start a deployment on the portable software instance.                      #
+#######################################################################################
+- name: Software Management Deployment
+  hosts: swmgmt
+  gather_facts: false
+  collections:
+    - ibm.ibm_zosmf
+  tasks:
+    # For the Polaris Preview Deployment, only local portable software instances are
+    # supported. Deploy the portable software instance added above in the 1st play.
+    - name: Setting the deployment parameters
+      ansible.builtin.set_fact:
+        deployment_source_type: PSWI
+        deployment_source_name: "{{ pswi_name }}"
+        deployment_source_system: "{{ pswi_system }}"
+        deployment_target_name: "{{ pswi_name }}AnsibleTarget"
+        deployment_target_system: "{{ pswi_system }}"
+    - name: Start the software management deployment
+      include_role:
+        name: zmf_swmgmt_deployment
