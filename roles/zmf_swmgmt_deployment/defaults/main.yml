@@ -1,0 +1,7 @@
+# Copyright (c) IBM Corporation 2026
+
+---
+# defaults file for zmf_swmgmt_deployment
+status_retrieval_retries: 600
+status_retrieval_delay: 1
+zmf_validate_certs: false
