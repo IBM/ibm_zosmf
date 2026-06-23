@@ -16,7 +16,7 @@ options:
     zmf_host:
         description:
             - >
-              Hostname of the z/OSMF server, specified in the inventory file
+              Socket (hostname:port) of the z/OSMF server, specified in the inventory file
               or as an argument on the playbook command.
         required: True
         type: str

@@ -134,9 +134,9 @@
       {{ (zmf_host + (':' + zmf_port|string if zmf_port is defined and ':' not in zmf_host else ''))
       + '/zosmf/swmgmt/v2/dep' }}
 
-##########################################################################################
-# URI MODULE #1: Start a software management deployment request.                         #
-##########################################################################################
+#####################################################################
+# URI MODULE #1: Start a software management deployment request.    #
+#####################################################################
 - name: Start a software management deployment
   ansible.builtin.uri:
     url: "https://{{ request_url }}"

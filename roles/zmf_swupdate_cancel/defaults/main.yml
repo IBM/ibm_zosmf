@@ -2,5 +2,6 @@
 
 ---
 # defaults file for zmf_swupdate_cancel
-async_thread_check_times: 15
-async_thread_check_delay: 5
+status_retrieval_retries: 15
+status_retrieval_delay: 5
+zmf_validate_certs: false

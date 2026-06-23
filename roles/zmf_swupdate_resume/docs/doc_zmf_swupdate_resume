@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2025
+# Copyright (c) IBM Corporation 2025, 2026
 
 
 DOCUMENTATION = r"""
@@ -17,7 +17,7 @@ options:
     zmf_host:
         description:
             - >
-              Hostname of the z/OSMF server, specified in the inventory file
+              Socket (hostname:port) of the z/OSMF server, specified in the inventory file
               or as an argument on the playbook command.
         required: True
         type: str
@@ -136,7 +136,7 @@ options:
               ACTION after the APPLY.
             - >
               The suspend-steps array needs to be in the following format:
-              C('"SUSPEND-STEP1","SUSPEND-STEP2"')
+              C('["SUSPEND-STEP1","SUSPEND-STEP2"]')
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
@@ -152,7 +152,7 @@ options:
               characters (@,#,$).
             - >
               The exclude-updates array needs to be in the following format:
-              C('"UPDATE1","UPDATE2"')
+              C('["UPDATE1","UPDATE2"]')
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
@@ -234,6 +234,28 @@ options:
             - Password for authenticating with an HTTP proxy server.
         required: False
         type: str
+    status_retrieval_retries:
+        description:
+            - >
+              The maximum number of attempts to retrieve the software update resume operation status.
+              The role will poll the software update status until it completes or this
+              maximum is reached.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: int
+        default: 60
+    status_retrieval_delay:
+        description:
+            - >
+              The delay in seconds between each attempt to retrieve the software update resume operation status.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: int
+        default: 1
 notes:
     - >
       The given example assumes you have an inventory file

@@ -99,9 +99,9 @@
       {{ (zmf_host + (':' + zmf_port|string if zmf_port is defined and ':' not in zmf_host else ''))
       + '/zosmf/swmgmt/pswi' | urlencode }}
 
-##########################################################################################
-# URI MODULE #1: Start an add PSWI async request.                                        #
-##########################################################################################
+#####################################################################
+# URI MODULE #1: Start an add PSWI async request.                   #
+#####################################################################
 - name: Add a portable software instance (PSWI)
   ansible.builtin.uri:
     url: "https://{{ request_url }}"
@@ -134,9 +134,9 @@
       {{ addpswi_response.json | default(addpswi_response) }}
   when: addpswi_response.status != 202
 
-###################################################################
-# URI MODULE #2: Check the status of the add PSWI async request. #
-###################################################################
+#####################################################################
+# URI MODULE #2: Check the status of the add PSWI async request.    #
+#####################################################################
 
 # Wait for the asynchronous thread to finish and return a response.
 - name: >

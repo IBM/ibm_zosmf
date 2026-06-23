@@ -2,5 +2,6 @@
 
 ---
 # defaults file for zmf_swupdate_retrieve
-async_thread_check_times: 100
-async_thread_check_delay: 2
+status_retrieval_retries: 100
+status_retrieval_delay: 2
+zmf_validate_certs: false

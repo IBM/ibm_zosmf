@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2023
+# Copyright (c) IBM Corporation 2023, 2026
 
 
 DOCUMENTATION = r"""
@@ -15,7 +15,7 @@ options:
     zmf_host:
         description:
             - >
-              Hostname of the z/OSMF server, specified in the inventory file
+              Socket (hostname:port) of the z/OSMF server, specified in the inventory file
               or as an argument on the playbook command.
         required: True
         type: str
@@ -108,7 +108,7 @@ options:
             - >
               The list of software update (SYSMOD) IDs to be searched in the subject software instance.
             - >
-              This list variable needs to be in following format: C('"SYSMOD1","SYSMOD2","SYSMOD3"')
+              This list variable needs to be in following format: C('["SYSMOD1","SYSMOD2","SYSMOD3"]')
         required: True
         type: arr
     remote_zmf_user:

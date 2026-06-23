@@ -15,7 +15,7 @@ options:
     zmf_host:
         description:
             - >
-              Hostname of the z/OSMF server, specified in the inventory file
+              Socket (hostname:port) of the z/OSMF server, specified in the inventory file
               or as an argument on the playbook command.
         required: True
         type: str
@@ -140,6 +140,28 @@ options:
               the playbook command.
         required: True
         type: str
+    status_retrieval_retries:
+        description:
+            - >
+              The maximum number of attempts to retrieve the software update copy operation status.
+              The role will poll the copy operation status until it completes or this
+              maximum is reached.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: int
+        default: 15
+    status_retrieval_delay:
+        description:
+            - >
+              The delay in seconds between each attempt to retrieve the software update copy operation status.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: int
+        default: 5
 notes:
     - >
       The given example assumes you have an inventory file
