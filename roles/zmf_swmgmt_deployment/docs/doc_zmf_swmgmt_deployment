@@ -3,12 +3,12 @@
 
 DOCUMENTATION = r"""
 role: zmf_swmgmt_deployment
-short_description: Deploy software to a target system
+short_description: Deploy a portable software instance
 description:
     - >
       The B(IBM z/OSMF collection) provides an Ansible role, referred to as
-      B(zmf_swmgmt_deployment), to deploy software from a source software instance
-      or portable software instance to a target system using z/OSMF Software Management.
+      B(zmf_swmgmt_deployment), to deploy a portable software instance
+      to the host system using z/OSMF Software Management.
 author:
     - Taylor Digilio (Taylor.Digilio@ibm.com)
 options:
@@ -85,19 +85,10 @@ options:
               the playbook command.
         required: False
         type: bool
-    deployment_source_type:
-        description:
-            - >
-              The type of source object for the deployment: software instance (swi) or
-              portable software instance (pswi).
-            - >
-              This variable can be specified in the inventory file or as an argument on
-              the playbook command.
-        required: True
-        type: str
+        default: true
     deployment_source_name:
         description:
-            - The name for the source software instance or portable software instance.
+            - The name of the portable software instance to deploy.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
@@ -106,9 +97,9 @@ options:
     deployment_source_system:
         description:
             - >
-              Nickname of the z/OSMF host system where the source software instance or
-              portable software instance reside. Use the nickname for the system definition
-              in the z/OSMF Systems task.
+              Nickname of the z/OSMF host system where the source portable software
+              instance resides. Use the nickname for the system definition in the z/OSMF
+              Systems task.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
@@ -122,33 +113,14 @@ options:
               the playbook command.
         required: True
         type: str
-    deployment_target_system:
-        description:
-            - >
-              Nickname of the z/OSMF host system where the target software instance data sets
-              will reside. Use the nickname for the system definition in the z/OSMF Systems task.
-            - >
-              This variable can be specified in the inventory file or as an argument on
-              the playbook command.
-        required: True
-        type: str
-    deployment_configuration:
-        description:
-            - >
-              The properties to modify the deployment configuration which defines the target
-              software instance. The deployment configuration is initialized from the source
-              software and then modified as described by the following properties.
-            - >
-              This variable can be specified in the inventory file or as an argument on
-              the playbook command.
-            - >
-              Note: If both C(deployment_configuration) and C(deployment_hlq
-              & deployment_storage_class) are specified, C(deployment_configuration) takes precedence.
-        required: False
-        type: dict
     deployment_hlq:
         description:
-            - High Level Qualifier (HLQ) for all target data sets in the deployment. TODO
+            - High Level Qualifier (HLQ) for all target data sets in the deployment.
+            - >
+              This is a simplified alternative to specifying C(deployment_configuration).
+              When C(deployment_hlq) is provided (without C(deployment_configuration)),
+              the role constructs a data set if/then directive with the specified high-level qualifier
+              for all target data sets in the deployment configuration.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
@@ -156,22 +128,120 @@ options:
         type: str
     deployment_storage_class:
         description:
-            - Storage class for all target data sets in the deployment. TODO
+            - Storage class for all target data sets in the deployment.
+            - >
+              This is a simplified alternative to specifying C(deployment_configuration).
+              When C(deployment_storage_class) is provided (without C(deployment_configuration)),
+              the role constructs a data set if/then directive with the specified storage class for
+              all target data sets in the deployment configuration.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
         required: False
         type: str
-    deployment_systemsettings:
+    deployment_volume:
         description:
+            - Volume for all target data sets in the deployment.
             - >
-              Settings used to generate the deployment JCL that may be unique between the
-              source and target z/OSMF host systems.
+              This is a simplified alternative to specifying C(deployment_configuration).
+              When C(deployment_volume) is provided (without C(deployment_configuration)),
+              the role constructs a data set if/then directive with the specified volume for
+              all target data sets in the deployment configuration.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
-        required: True
-        type: dict
+        required: False
+        type: str
+    deployment_jcldataset:
+        description:
+            - >
+              Name of the partitioned data set on the target system to contain the generated
+              deployment JCL. The data set name must comply with z/OS data set naming
+              conventions. z/OSMF creates the data set on the target system if it does not
+              exist.
+            - >
+              This is a simplified alternative to specifying C(deployment_systemsettings).
+              When C(deployment_jcldataset) is provided (without C(deployment_systemsettings)),
+              the role constructs a single-entry C(systemsettings) list for the target system.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    deployment_jobstatement:
+        description:
+            - >
+              The JOB statement for the generated JCL. If specified, it must be a list of
+              JCL records, each up to 72 characters long. Columns 1 and 2 of each record
+              must be "//" or "/*" and the job name must be 1-8 characters. If not
+              provided, the default is "//IZUDnntt JOB (ACCOUNT),'NAME'".
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: list
+        elements: str
+    deployment_workdsnprefix:
+        description:
+            - >
+              Data set name prefix for work data sets created and deleted during the
+              generated JCL run. The prefix can contain up to 26 characters, including
+              periods, and must comply with z/OS data set naming conventions. If not
+              specified, a default of C(userid.WRKDSN) is used.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    deployment_workvolumes:
+        description:
+            - >
+              Volume serial for work data sets created and deleted during the generated JCL
+              run. Must contain 1-6 characters. Valid characters are uppercase alphabetic
+              (A-Z), numeric (0-9), and national ($, #, @). Mutually exclusive with
+              C(deployment_workstorclas) and C(deployment_workdataclas).
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: list
+    deployment_workstorclas:
+        description:
+            - >
+              Storage class for work data sets created and deleted during the generated JCL
+              run. Can contain up to eight characters. Valid characters are alphabetic
+              (A-Z, a-z), numeric (0-9), and national ($, #, @). Mutually exclusive with
+              C(deployment_workvolumes).
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    deployment_workdataclas:
+        description:
+            - >
+              Data class for work data sets created and deleted during the generated JCL
+              run. Can contain up to eight characters. Valid characters are alphabetic
+              (A-Z, a-z), numeric (0-9), and national ($, #, @). Mutually exclusive with
+              C(deployment_workvolumes).
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    deployment_worksmsmanaged:
+        description:
+            - >
+              When C(true), work data sets created and deleted during the generated JCL run
+              will be SMS managed and the system determines how and where to allocate them.
+              Mutually exclusive with C(deployment_workvolumes), C(deployment_workstorclas),
+              and C(deployment_workdataclas).
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: bool
+        default: false
     deployment_response_file:
         description:
             - The path to the file that will contain the results from the deployment operation.
@@ -185,28 +255,6 @@ options:
               the playbook command.
         required: True
         type: str
-    remote_zmf_user:
-        description:
-            - >
-              User ID for authenticating with a remote z/OSMF server. Used only if the source
-              software instance resides on a remote z/OSMF server.
-        required: False
-        type: str
-    remote_zmf_password:
-        description:
-            - Password for authenticating with a remote z/OSMF server.
-        required: False
-        type: str
-    proxy_zmf_user:
-        description:
-            - User ID for authenticating with an HTTP proxy server.
-        required: False
-        type: str
-    proxy_zmf_password:
-        description:
-            - Password for authenticating with an HTTP proxy server.
-        required: False
-        type: str
     status_retrieval_retries:
         description:
             - >
@@ -218,7 +266,7 @@ options:
               the playbook command.
         required: False
         type: int
-        default: 600
+        default: 200
     status_retrieval_delay:
         description:
             - >
@@ -228,7 +276,42 @@ options:
               the playbook command.
         required: False
         type: int
-        default: 1
+        default: 3
+    deployment_configuration:
+        description:
+            - >
+              B(Advanced Deployment Configuration Input) - See sample for advanced input below
+              in the Examples section.
+            - >
+              The properties to modify the deployment configuration which defines the target
+              software instance. The deployment configuration is initialized from the source
+              software and then modified as described by the following properties.
+            - >
+              When both C(deployment_configuration) and C(deployment_hlq
+              & deployment_storage_class or deployment_volume) are specified, C(deployment_configuration) takes precedence.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: dict
+    deployment_systemsettings:
+        description:
+            - >
+              B(Advanced System Settings Input) - See sample for advanced input below
+              in the Examples section.
+            - >
+              Settings used to generate the deployment JCL that may be unique between the
+              source and target z/OSMF host systems. Each entry in the list corresponds to
+              one system and contains the sub-properties described below.
+            - >
+              When both C(deployment_systemsettings) and the simplified flat parameters
+              (C(deployment_jcldataset), C(deployment_jobstatement), etc.) are specified,
+              C(deployment_systemsettings) takes precedence.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: list
 notes:
     - >
       The given example assumes you have an inventory file
@@ -251,14 +334,32 @@ notes:
 """
 
 EXAMPLES = r"""
-- name: sample of deploying software to a target system using original format
+- name: Sample for simple input
   hosts: sampleHost
   gather_facts: no
   collections:
     - ibm.ibm_zosmf
 
   tasks:
-    - name: Set deployment configuration using original format
+    - name: Set the deployment configuration and system settings
+      ansible.builtin.set_fact:
+        deployment_hlq: HLQ
+        deployment_storage_class: STANDARD
+        deployment_jcldataset: ZOSMF**.P123456.T123456.CNTL
+        deployment_workvolumes: ['VOLSER']
+    
+    - name: Run the deployment role
+      ansible.builtin.include_role:
+        name: zmf_swmgmt_deployment
+
+- name: Sample for advanced input
+  hosts: sampleHost
+  gather_facts: no
+  collections:
+    - ibm.ibm_zosmf
+
+  tasks:
+    - name: Set the deployment configuration and system settings
       ansible.builtin.set_fact:
         deployment_configuration:
           datasets:
@@ -269,23 +370,12 @@ EXAMPLES = r"""
                   to: "*.HLQ.**"
                 - property: "storclas"
                   to: "STANDARD"
+        deployment_systemsettings:
+          deployment_jcldataset: ZOSMF**.P123456.T123456.CNTL
+          deployment_workvolumes: ['VOLSER']
     
-    - include_role:
-        name: zmf_swmgmt_deployment
-
-- name: sample of deploying software using simplified deployment_configuration_datasets format
-  hosts: sampleHost
-  gather_facts: no
-  collections:
-    - ibm.ibm_zosmf
-
-  tasks:
-    - name: Set deployment configuration using data set HLQ and storage class
-      ansible.builtin.set_fact:
-        deployment_hlq: HLQ
-        deployment_storage_class: STANDARD
-    
-    - include_role:
+    - name: Run the deployment role
+      ansible.builtin.include_role:
         name: zmf_swmgmt_deployment
 
 """

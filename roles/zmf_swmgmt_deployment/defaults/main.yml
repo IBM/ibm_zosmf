@@ -2,6 +2,6 @@
 
 ---
 # defaults file for zmf_swmgmt_deployment
-status_retrieval_retries: 600
-status_retrieval_delay: 1
+status_retrieval_retries: 200
+status_retrieval_delay: 3
 zmf_validate_certs: false

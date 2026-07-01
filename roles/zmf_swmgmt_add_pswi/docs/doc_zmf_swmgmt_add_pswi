@@ -100,7 +100,7 @@ options:
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
         required: False
-        type: arr
+        type: list
     signature_keyring:
         description:
             - >
@@ -139,21 +139,33 @@ options:
             - >
               User ID for authenticating with a remote z/OSMF server.  Used only if the portable
               software instance resides on a remote z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
         required: False
         type: str
     remote_zmf_password:
         description:
             - Password for authenticating with a remote z/OSMF server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
         required: False
         type: str
     proxy_zmf_user:
         description:
             - User ID for authenticating with an HTTP proxy server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
         required: False
         type: str
     proxy_zmf_password:
         description:
             - Password for authenticating with an HTTP proxy server.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
         required: False
         type: str
     status_retrieval_retries:
@@ -186,10 +198,10 @@ notes:
       and response file name.
     - >
       Command syntax to call a playbook using an inventory file:
-      C(ansible-playbook -i inventory software_management_add_pswi_CICDtest1.yml)
+      C(ansible-playbook -i inventory software_management_pswi_add_and_deploy_CICDtest1.yml)
     - >
       Command syntax to call a playbook using command arguments:
-      C(ansible-playbook software_management_add_pswi_CICDtest1.yml -e zmf_user=zosmf**
+      C(ansible-playbook software_management_pswi_add_and_deploy_CICDtest1.yml -e zmf_user=zosmf**
       -e zmf_password=zosmf**)
     - >
       When the role is executed, a message shown in following example is
@@ -200,14 +212,15 @@ notes:
 """
 
 EXAMPLES = r"""
-- name: sample of adding a portable software instance
+- name: Sample of adding a portable software instance
   hosts: sampleHost
   gather_facts: no
   collections:
     - ibm.ibm_zosmf
 
   tasks:
-    - include_role :
+    - name: Run the add portable software instance role
+      ansible.builtin.include_role:
         name: zmf_swmgmt_add_pswi
 
 """

@@ -5,107 +5,138 @@
 # Tasks file for zmf_swmgmt_deployment play.
 
 # Do not attempt to execute the play without a deployment name.
-- name: Validate deployment_name is defined
+- name: Verifying a deployment name is provided
   ansible.builtin.fail:
     msg: "deployment_name: Specify a deployment name and retry the role."
   when: deployment_name is not defined or deployment_name == ''
 
-# Do not attempt to execute the play without a deployment source type.
-- name: Validate deployment_source_type is defined and not empty
-  ansible.builtin.fail:
-    msg: "deployment_source_type: Specify a deployment source type and retry the role."
-  when: deployment_source_type is not defined or deployment_source_type == ''
-
 # Do not attempt to execute the play without a deployment source name.
-- name: Validate deployment_source_name is defined and not empty
+- name: Verifying the source portable software instance name is provided
   ansible.builtin.fail:
     msg: "deployment_source_name: Specify a deployment source software instance name and retry the role."
   when: deployment_source_name is not defined or deployment_source_name == ''
 
 # Do not attempt to execute the play without a deployment source system.
-- name: Validate deployment_source_system is defined and not empty
+- name: Verifying the system nickname for the source portable software instance is provided
   ansible.builtin.fail:
     msg: "deployment_source_system: Specify a deployment source system nickname and retry the role."
   when: deployment_source_system is not defined or deployment_source_system == ''
 
 # Do not attempt to execute the play without a deployment target name.
-- name: Validate deployment_target_name is defined and not empty
+- name: Verifying a target software instance name is provided
   ansible.builtin.fail:
     msg: "deployment_target_name: Specify a deployment target software instance name and retry the role."
   when: deployment_target_name is not defined or deployment_target_name == ''
 
-# Do not attempt to execute the play without a deployment target system.
-- name: Validate deployment_target_system is defined and not empty
-  ansible.builtin.fail:
-    msg: "deployment_target_system: Specify a deployment target system nickname and retry the role."
-  when: deployment_target_system is not defined or deployment_target_system == ''
-
 # Do not attempt to execute the play without a deployment configuration or both a deployment
-# high level qualifier (HLQ) and a deployment storage class.
-- name: Validate deployment configuration or HLQ/storage class combination
+# high level qualifier (HLQ) and either a deployment storage class or volume.
+- name: Verifying a data set HLQ and either a storclas or volume, or a complete deployment configuration are provided
   ansible.builtin.fail:
-    msg: "Specify a deployment configuration or both deployment HLQ and storage class and retry the role."
+    msg: "Specify a deployment configuration or both deployment HLQ and either a storage class or a volume and retry the role."
   when: >
     ((deployment_configuration | default('')) | length == 0) and
     (((deployment_hlq | default('')) | length == 0) or
-     ((deployment_storage_class | default('')) | length == 0))
+     (((deployment_storage_class | default('')) | length == 0) and
+      ((deployment_volume | default('')) | length == 0)))
 
-# Do not attempt to execute the play without deployment system settings.
-- name: Validate deployment_systemsettings is defined and not empty
+# Do not attempt to execute the play without a deployment system settings or JCL data set.
+- name: Verifying the target system settings are provided
   ansible.builtin.fail:
-    msg: "deployment_systemsettings: Specify deployment system settings and retry the role."
-  when: deployment_systemsettings is not defined or deployment_systemsettings == ''
+    msg: "Specify a deployment system settings or a deployment JCL data set and retry the role."
+  when: >
+    ((deployment_systemsettings | default('')) | length == 0) and
+    ((deployment_jcldataset | default('')) | length == 0)
 
 # Do not attempt to execute the play without a deployment response file.
-- name: Validate deployment_response_file is defined and not empty
+- name: Verifying a response file is provided
   ansible.builtin.fail:
     msg: "deployment_response_file: Specify a deployment response file and retry the role."
   when: deployment_response_file is not defined or deployment_response_file == ''
 
 # Do not attempt to execute the play without a z/OSMF host.
-- name: Validate zmf_host is defined and not empty
+- name: Verifying a z/OSMF server host name is specified
   ansible.builtin.fail:
     msg: "zmf_host: Specify a z/OSMF host name and retry the role."
   when: zmf_host is not defined or zmf_host == ''
 
-# Create a variable for the deployment response content.
-- name: Initialize the container for the deployment response content
-  ansible.builtin.set_fact:
-    deployment_response: ""
-
-# Build deployment_configuration from the deployment HLQ and storage class when a
+# Build deployment_configuration from the deployment HLQ and storage class/volume when a
 # deployment configuration was not specified.
-- name: Build deployment_configuration using the deployment HLQ and storage class
+- name: Build the deployment configuration using the specified HLQ and storage class/volume
   ansible.builtin.set_fact:
     deployment_configuration:
       datasets:
         - if: "dsname=*.**"
-          then:
-            - property: "dsname"
-              from: "*.**"
-              to: "*.{{ deployment_hlq }}.**"
-            - property: "storclas"
-              to: "{{ deployment_storage_class }}"
+          then: "{{ [{'property': 'dsname', 'from': '*.**', 'to': '*.' + deployment_hlq + '.**'}]
+                    + ([{'property': 'storclas', 'to': deployment_storage_class}] if deployment_storage_class is defined else [])
+                    + ([{'property': 'volume', 'to': deployment_volume}] if deployment_volume is defined else []) }}"
   when:
     - deployment_configuration is not defined
     - deployment_hlq is defined
-    - deployment_storage_class is defined
+    - deployment_storage_class is defined or deployment_volume is defined
+
+# Build deployment_systemsettings from the deployment JCL data set when
+# deployment systemsettings was not specified.
+- name: Build the deployment system settings using the specified JCL data set
+  ansible.builtin.set_fact:
+    deployment_systemsettings: >-
+      {{
+        [
+          {
+            'system': deployment_source_system,
+            'jcldataset': deployment_jcldataset
+          }
+          | combine(
+              (deployment_jobstatement is defined)
+              | ternary({'jobstatement': deployment_jobstatement}, {}),
+              recursive=True
+            )
+          | combine(
+              (deployment_workdsnprefix is defined)
+              | ternary({'workdsnprefix': deployment_workdsnprefix}, {}),
+              recursive=True
+            )
+          | combine(
+              (deployment_workvolumes is defined)
+              | ternary({'workvolumes': deployment_workvolumes}, {}),
+              recursive=True
+            )
+          | combine(
+              (deployment_workstorclas is defined)
+              | ternary({'workstorclas': deployment_workstorclas}, {}),
+              recursive=True
+            )
+          | combine(
+              (deployment_workdataclas is defined)
+              | ternary({'workdataclas': deployment_workdataclas}, {}),
+              recursive=True
+            )
+          | combine(
+              (deployment_worksmsmanaged is defined)
+              | ternary({'worksmsmanaged': deployment_worksmsmanaged}, {}),
+              recursive=True
+            )
+        ]
+      }}
+  when:
+    - deployment_systemsettings is not defined
+    - deployment_jcldataset is defined
 
 # Build the deployment request body.
-- name: Build the deployment request content body
+- name: Build the deployment request content body from the specified inputs
   ansible.builtin.set_fact:
+    deployment_response: ""
     deployment_request_body: >-
       {{
         {
           'name': deployment_name,
           'source': {
-            'type': deployment_source_type,
+            'type': 'PSWI',
             'name': deployment_source_name,
             'system': deployment_source_system
           },
           'targetswi': {
             'name': deployment_target_name,
-            'system': deployment_target_system
+            'system': deployment_source_system
           },
           'systemsettings': deployment_systemsettings
         }
@@ -125,19 +156,18 @@
             recursive=True
           )
       }}
-  no_log: true
 
 # Create and encode the HTTP Request URL with optional port
-- name: Create the Deployment HTTP Request URL
+- name: Create the Deployment HTTP Request URL from the specified server host name
   ansible.builtin.set_fact:
     request_url: >-
-      {{ (zmf_host + (':' + zmf_port|string if zmf_port is defined and ':' not in zmf_host else ''))
-      + '/zosmf/swmgmt/v2/dep' }}
+      {{ (zmf_host + (':' + zmf_port | string if zmf_port is defined and ':' not in zmf_host else ''))
+      + '/zosmf/swmgmt/v2/dep' | urlencode }}
 
 #####################################################################
 # URI MODULE #1: Start a software management deployment request.    #
 #####################################################################
-- name: Start a software management deployment
+- name: Call the z/OSMF server to start the deployment request
   ansible.builtin.uri:
     url: "https://{{ request_url }}"
     return_content: true
@@ -148,21 +178,22 @@
       Host: "{{ zmf_host }}"
       Origin: "https://{{ zmf_host }}"
     method: POST
-    status_code: 202, 400, 403, 404, 409, 500, 503
+    status_code: [202, 400, 403, 404, 409, 500, 503]
     validate_certs: "{{ zmf_validate_certs }}"
     body_format: json
     body: "{{ deployment_request_body }}"
   delegate_to: localhost
+  no_log: true
   register: deployment_response
 
 # Create a variable for the deployment status monitor URL.
-- name: Set the deployment status monitor URL
+- name: Getting the deployment status monitor URL from the server response
   ansible.builtin.set_fact:
     swmgmt_deployment_status_monitor_url: "{{ deployment_response.json['statusurl'] }}"
   when: deployment_response.status == 202
 
 # Issue a failure message when the request fails.
-- name: Display Deployment REST API failure information
+- name: An error was detected after calling the z/OSMF server
   ansible.builtin.fail:
     msg: >-
       Deployment REST API failure details:
@@ -175,8 +206,8 @@
 
 # Wait for the asynchronous thread to finish and return a response.
 - name: >
-    Check the status of the deployment operation every {{ status_retrieval_delay }}
-    second(s) until it finishes or the maximum {{ status_retrieval_retries }} retries(s) is reached
+    Checking the status of the deployment operation every {{ status_retrieval_delay }}
+    second(s) until it finishes or the maximum {{ status_retrieval_retries }} retries are reached
   ansible.builtin.uri:
     url: "{{ swmgmt_deployment_status_monitor_url }}"
     method: GET
@@ -186,11 +217,12 @@
     headers:
       Host: "{{ zmf_host }}"
       Origin: "https://{{ zmf_host }}"
-    status_code: 200, 400, 403, 404, 409, 500, 503
+    status_code: [200, 400, 403, 404, 409, 500, 503]
     validate_certs: "{{ zmf_validate_certs }}"
     return_content: true
   register: deployment_response
   delegate_to: localhost
+  no_log: true
   until: >
     (deployment_response is failed) or
     (deployment_response.status != 200) or
@@ -199,32 +231,35 @@
   delay: "{{ status_retrieval_delay }}"
 
 # Save the deployment operation's response in a file.
-- name: Write the results for the deployment operation to a JSON file
+- name: Getting the results for the deployment request
   when: >
         deployment_response.status == 200 and
         deployment_response.json['status'] is defined and
         deployment_response.json['status'] == 'complete'
   block:
-    - name: Copy the deployment results to a JSON file
+    - name: "Writing the deployment results to the specified file {{ deployment_response_file }}"
       ansible.builtin.copy:
         content: '{{ deployment_response.json | default("") | to_nice_json(indent=2) }}'
         dest: '{{ deployment_response_file }}'
         mode: '0644'
       delegate_to: localhost
-    
-    - name: Create a variable to hold the deployment response json
+
+    - name: Saving the deployment results to a variable for use by subsequent steps
       ansible.builtin.set_fact:
         deployment_response_json: "{{ deployment_response.json }}"
 
+    # Show the path to the deployment REST API results file.
+    - name: Display the location of the file containing the results from the deployment operation
+      ansible.builtin.debug:
+        msg: "Output filename= {{ deployment_response_file }}"
+
 # Issue a failure message and stop the playbook.
-- name: Display Retrieve Deployment Status REST API failure information
+- name: Checking for errors from the deployment request
   ansible.builtin.fail:
     msg: >-
       {% if deployment_response.status == 404 %}
       There was an error encountered during Retrieve Deployment Status REST API execution. It's possible the host
-      system is missing required USERMOD which contains the deployment V2 REST API. Otherwise the
-      specified software was not found.
+      system is missing required USERMOD which contains the deployment V2 REST API.
       {% endif %}
       Retrieve Deployment Status failure details: {{ deployment_response.json | default(deployment_response) }}
   when: deployment_response.status != 200
-  

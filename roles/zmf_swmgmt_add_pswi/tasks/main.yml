@@ -5,43 +5,39 @@
 # Tasks file for zmf_swmgmt_add_pswi play.
 
 # Do not attempt to execute the play without a PSWI name.
-- name: Validate pswi_name is defined and not empty
+- name: Verifying a portable software instance name is provided
   ansible.builtin.fail:
     msg: "pswi_name: Specify a PSWI name and retry the role."
   when: pswi_name is not defined or pswi_name == ''
 
 # Do not attempt to execute the play without a PSWI system.
-- name: Validate pswi_system is defined and not empty
+- name: Verifying a portable software instance system is provided
   ansible.builtin.fail:
     msg: "pswi_system: Specify a PSWI system nickname and retry the role."
   when: pswi_system is not defined or pswi_system == ''
 
 # Do not attempt to execute the play without a PSWI directory.
-- name: Validate pswi_directory is defined and not empty
+- name: Verifying a portable software instance directory is provided
   ansible.builtin.fail:
     msg: "pswi_directory: Specify a PSWI directory and retry the role."
   when: pswi_directory is not defined or pswi_directory == ''
 
 # Do not attempt to execute the play without a PSWI response file.
-- name: Validate addpswi_response_file is defined
+- name: Verifying a response file is provided
   ansible.builtin.fail:
     msg: "addpswi_response_file: Specify an add PSWI response file and retry the role."
   when: addpswi_response_file is not defined or addpswi_response_file == ''
 
 # Do not attempt to execute the play without a z/OSMF host.
-- name: Validate zmf_host is defined and not empty
+- name: Verifying a z/OSMF server host name is specified
   ansible.builtin.fail:
     msg: "zmf_host: Specify a z/OSMF host name and retry the role."
   when: zmf_host is not defined or zmf_host == ''
 
-# Create a variable for the add PSWI response content.
-- name: Initialize the container for the add PSWI response content
+# Build the add PSWI request body.
+- name: Build the Add PSWI request content body from the specified inputs
   ansible.builtin.set_fact:
     addpswi_response: ""
-
-# Build the add PSWI request body.
-- name: Build the add PSWI request content body
-  ansible.builtin.set_fact:
     addpswi_request_body: >-
       {{
         {
@@ -93,16 +89,16 @@
   no_log: true
 
 # Create and encode the HTTP Request URL with optional port
-- name: Create the Add PSWI HTTP Request URL
+- name: Create the Add PSWI HTTP Request URL from the specified server host name
   ansible.builtin.set_fact:
     request_url: >-
-      {{ (zmf_host + (':' + zmf_port|string if zmf_port is defined and ':' not in zmf_host else ''))
+      {{ (zmf_host + (':' + zmf_port | string if zmf_port is defined and ':' not in zmf_host else ''))
       + '/zosmf/swmgmt/pswi' | urlencode }}
 
 #####################################################################
 # URI MODULE #1: Start an add PSWI async request.                   #
 #####################################################################
-- name: Add a portable software instance (PSWI)
+- name: Call the z/OSMF server to start the Add PSWI request
   ansible.builtin.uri:
     url: "https://{{ request_url }}"
     return_content: true
@@ -113,21 +109,22 @@
       Host: "{{ zmf_host }}"
       Origin: "https://{{ zmf_host }}"
     method: POST
-    status_code: 202, 400, 403, 404, 409, 500, 503
+    status_code: [202, 400, 403, 404, 409, 500, 503]
     validate_certs: "{{ zmf_validate_certs }}"
     body_format: json
     body: "{{ addpswi_request_body }}"
   delegate_to: localhost
+  no_log: true
   register: addpswi_response
 
 # Create a variable for the add PSWI status monitor URL.
-- name: Set the add PSWI status monitor URL
+- name: Getting the Add PSWI status monitor URL from the server response
   ansible.builtin.set_fact:
     addpswi_status_monitor_url: "{{ addpswi_response.json['statusurl'] }}"
   when: addpswi_response.status == 202
 
 # Issue a failure message when the request fails.
-- name: Display the add PSWI action failure information
+- name: An error was detected after calling the z/OSMF server
   ansible.builtin.fail:
     msg: >-
       Add PSWI failure details:
@@ -140,8 +137,8 @@
 
 # Wait for the asynchronous thread to finish and return a response.
 - name: >
-    Check the status of the add PSWI operation every {{ status_retrieval_delay }} second(s)
-    until it finishes or the maximum {{ status_retrieval_retries }} retries(s) is reached
+    Check the status of the Add PSWI operation every {{ status_retrieval_delay }} second(s)
+    until it finishes or the maximum {{ status_retrieval_retries }} retries are reached
   ansible.builtin.uri:
     url: "{{ addpswi_status_monitor_url }}"
     method: GET
@@ -151,11 +148,12 @@
     headers:
       Host: "{{ zmf_host }}"
       Origin: "https://{{ zmf_host }}"
-    status_code: 200
+    status_code: [200, 400, 403, 404, 409, 500, 503]
     validate_certs: "{{ zmf_validate_certs }}"
     return_content: true
   register: addpswi_response
   delegate_to: localhost
+  no_log: true
   until: >
     (addpswi_response is failed) or
     (addpswi_response.status != 200) or
@@ -164,10 +162,14 @@
   delay: "{{ status_retrieval_delay }}"
 
 # Save the add PSWI operation's response in a file.
-- name: Write the results for the add PSWI operation to a JSON file
+- name: Getting the results for the Add PSWI request
+  when: >
+    addpswi_response.status == 200 and
+    addpswi_response.json['status'] is defined and
+    addpswi_response.json['status'] == 'complete'
   block:
     # Perform the copy of the add PSWI response to the file.
-    - name: "Copy the add PSWI results to JSON file <{{ addpswi_response_file }}>"
+    - name: "Writing the Add PSWI results to the specified file {{ addpswi_response_file }}"
       ansible.builtin.copy:
         content: '{{ addpswi_response.json | default("") | to_nice_json(indent=2) }}'
         dest: '{{ addpswi_response_file }}'
@@ -175,6 +177,17 @@
       delegate_to: localhost
 
     # Save the response content into a local variable.
-    - name: Create a variable to hold the value of the add PSWI results
+    - name: Saving the Add PSWI results to a variable for use by subsequent steps
       ansible.builtin.set_fact:
         addpswi_response_json: "{{ addpswi_response.json }}"
+
+    # Show the path to the Add PSWI REST API results file.
+    - name: Display the location of the file containing the results from the add portable software instance operation
+      ansible.builtin.debug:
+        msg: "Output filename= {{ addpswi_response_file }}"
+
+# Issue a failure message and stop the playbook.
+- name: Checking for errors from the Add PSWI request
+  ansible.builtin.fail:
+    msg: "Retrieve Add Portable Software Instance Status failure details: {{ addpswi_response.json | default(addpswi_response) }}"
+  when: addpswi_response.status != 200
