@@ -10,18 +10,14 @@ v1.7.0
 Release Summary
 ---------------
 
-Added new roles to the z/OSMF Software Management Collection.
-5 new roles have been added. 2 for adding and deploying a portable
-software instance and 3 for sorting software instances by product
-end of service date.
+Added 2 new roles to the z/OSMF Software Management Collection for adding
+and deploying a portable software instance.
 
 Major Changes
 -------------
 
 - Deployment role added
 - Add Portable Software Instance role added
-- SWI List and Read roles added
-- SWI Sort by product end of service date role added
 
 Minor Changes
 -------------
