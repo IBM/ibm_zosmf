@@ -7,20 +7,20 @@
 #######################################################################################
 # PLAY #1: Add a portable software instance.                                          #
 #######################################################################################
-- name: Software Management Add PSWI
+- name: Add a portable software instance
   hosts: swmgmt
   gather_facts: false
   collections:
     - ibm.ibm_zosmf
   tasks:
-    - name: Add a portable software instance
-      include_role:
+    - name: Start the portable software instance add
+      ansible.builtin.include_role:
         name: zmf_swmgmt_add_pswi
 
 #######################################################################################
 # PLAY #2: Start a deployment on the portable software instance.                      #
 #######################################################################################
-- name: Software Management Deployment
+- name: Deploy the portable software instance
   hosts: swmgmt
   gather_facts: false
   collections:
@@ -30,11 +30,9 @@
     # supported. Deploy the portable software instance added above in the 1st play.
     - name: Setting the deployment parameters
       ansible.builtin.set_fact:
-        deployment_source_type: PSWI
         deployment_source_name: "{{ pswi_name }}"
         deployment_source_system: "{{ pswi_system }}"
-        deployment_target_name: "{{ pswi_name }}AnsibleTarget"
-        deployment_target_system: "{{ pswi_system }}"
-    - name: Start the software management deployment
-      include_role:
+        deployment_target_name: "{{ pswi_name }}AnsibleTgtSWI"
+    - name: Start the deployment
+      ansible.builtin.include_role:
         name: zmf_swmgmt_deployment
