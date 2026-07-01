@@ -4,6 +4,39 @@ ibm.ibm\_zosmf Release Notes
 
 .. contents:: Topics
 
+v1.7.0
+======
+
+Release Summary
+---------------
+
+Added new roles to the z/OSMF Software Management Collection.
+5 new roles have been added. 2 for adding and deploying a portable
+software instance and 3 for sorting software instances by product
+end of service date.
+
+Major Changes
+-------------
+
+- Deployment role added
+- Add Portable Software Instance role added
+- SWI List and Read roles added
+- SWI Sort by product end of service date role added
+
+Minor Changes
+-------------
+
+- Alternate z/OSMF authentication option using a certificate
+- Support for gathering HOLDs by date installed in addition to HOLD REASON
+- Reduced number of tasks per role
+- Documentation enhancements
+
+New Roles
+---------
+
+- ibm.ibm_zosmf.zmf_swmgmt_add_pswi - Role adds a portable software instance
+- ibm.ibm_zosmf.zmf_swmgmt_deployment - Role deploys a portable software instance
+
 v1.6.0
 ======
 
