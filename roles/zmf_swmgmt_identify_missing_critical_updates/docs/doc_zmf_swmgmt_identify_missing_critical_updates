@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2023
+# Copyright (c) IBM Corporation 2026
 
 
 DOCUMENTATION = r"""
@@ -34,18 +34,57 @@ options:
         description:
             - User ID for authenticating with the z/OSMF server.
             - >
+              Required when not using client certificate authentication
+              (C(zmf_client_cert)).
+            - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
-        required: True
+        required: False
         type: str
     zmf_password:
         description:
             - Password to be used for authenticating with z/OSMF server.
             - >
+              Required when not using client certificate authentication
+              (C(zmf_client_cert)).
+            - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
-        required: True
+        required: False
         type: str
+    zmf_client_cert:
+        description:
+            - >
+              Path to a PEM-encoded client certificate file used for authenticating
+              with the z/OSMF server.
+            - >
+              Mutually exclusive with C(zmf_user) and C(zmf_password). When specified,
+              basic authentication credentials are not sent.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    zmf_client_key:
+        description:
+            - >
+              Path to the PEM-encoded private key file corresponding to C(zmf_client_cert).
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    zmf_validate_certs:
+        description:
+            - >
+              If set to C(true), the SSL certificate of the z/OSMF server will be validated.
+              If set to C(false), the SSL certificate will not be validated.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: bool
+        default: false
     software_instance_name:
         description:
             - Name of the software instance.
@@ -104,6 +143,27 @@ options:
               the playbook command.
         required: True
         type: str
+    status_retrieval_retries:
+        description:
+            - >
+              The maximum number of attempts to retrieve the missing critical updates status.
+              The role will poll the status until it completes or this maximum is reached.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: int
+        default: 60
+    status_retrieval_delay:
+        description:
+            - >
+              The delay in seconds between each attempt to retrieve the missing critical updates status.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: int
+        default: 1
     remote_zmf_user:
         description:
             - >

@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2025
+# Copyright (c) IBM Corporation 2026
 
 
 DOCUMENTATION = r"""
@@ -35,17 +35,45 @@ options:
         description:
             - User ID for authenticating with the z/OSMF server.
             - >
+              Required when not using client certificate authentication
+              (C(zmf_client_cert)).
+            - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
-        required: True
+        required: False
         type: str
     zmf_password:
         description:
             - Password to be used for authenticating with z/OSMF server.
             - >
+              Required when not using client certificate authentication
+              (C(zmf_client_cert)).
+            - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
-        required: True
+        required: False
+        type: str
+    zmf_client_cert:
+        description:
+            - >
+              Path to a PEM-encoded client certificate file used for authenticating
+              with the z/OSMF server.
+            - >
+              Mutually exclusive with C(zmf_user) and C(zmf_password). When specified,
+              basic authentication credentials are not sent.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    zmf_client_key:
+        description:
+            - >
+              Path to the PEM-encoded private key file corresponding to C(zmf_client_cert).
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
         type: str
     zmf_validate_certs:
         description:
@@ -86,6 +114,36 @@ options:
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
         required: True
+        type: str
+    hold_start_date:
+        description:
+            - >
+              The start date of a date range used to filter HOLDs by install date.
+              When specified together with C(hold_end_date), only HOLDs with an
+              C(INSTALLDATE) greater than or equal to this value are included.
+            - >
+              The date must be specified in Julian date format C(yyddd), where C(yy)
+              is the two-digit year and C(ddd) is the three-digit day of the year.
+              For example, specify C(25365) to represent December 31, 2025.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    hold_end_date:
+        description:
+            - >
+              The end date of a date range used to filter HOLDs by install date.
+              When specified together with C(hold_start_date), only HOLDs with an
+              C(INSTALLDATE) less than or equal to this value are included.
+            - >
+              The date must be specified in Julian date format C(yyddd), where C(yy)
+              is the two-digit year and C(ddd) is the three-digit day of the year.
+              For example, specify C(25212) to represent July 31, 2025.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
         type: str
     holds_for_reason_dir:
         description:

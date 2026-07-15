@@ -5,4 +5,4 @@ is collected using the CSI Query REST API for all Software Updates (PTFs) being 
 For guides and reference, see [Docs Site](https://ibm.github.io/z_ansible_collections_doc/ibm_zosmf/docs/source/roles/zmf_swmgmt_holds_for_reason.html).
 
 ## Copyright
-© Copyright IBM Corporation 2025
+© Copyright IBM Corporation 2026

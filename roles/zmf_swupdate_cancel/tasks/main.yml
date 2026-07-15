@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2025
+# Copyright (c) IBM Corporation 2025, 2026
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
 ---
@@ -42,9 +42,11 @@
   ansible.builtin.uri:
     url: "https://{{ request_url }}"
     method: POST
-    user: "{{ zmf_user | trim }}"
-    password: "{{ zmf_password | trim }}"
-    force_basic_auth: true
+    user: "{{ zmf_user | trim if zmf_user is defined else omit }}"
+    password: "{{ zmf_password | trim if zmf_password is defined else omit }}"
+    force_basic_auth: "{{ true if zmf_user is defined else omit }}"
+    client_cert: "{{ zmf_client_cert | default(omit) }}"
+    client_key: "{{ zmf_client_key | default(omit) }}"
     headers:
       Host: "{{ zmf_host }}"
       Origin: "https://{{ zmf_host }}"

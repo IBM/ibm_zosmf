@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2025
+# Copyright (c) IBM Corporation 2025, 2026
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
 ---
@@ -15,7 +15,7 @@
 ###########################################
 - name: Retrieve the most recent Software Update process for the Software Instance
   ansible.builtin.include_role:
-    name: zmf_swupdate_retrieve
+    name: ibm.ibm_zosmf.zmf_swupdate_retrieve
   when: software_update_holds is not defined or software_update_holds | length == 0
 
 # Save the HOLDs array from the Software Update Retrieve response to a local variable.
@@ -43,27 +43,22 @@
     holds_with_specified_reason: []
     filter_param_value: "holdreason='{{ hold_reason }}'"
 
+- name: Override the filter to include date range when hold_start_date and hold_end_date are specified
+  ansible.builtin.set_fact:
+    holds_with_specified_reason: []
+    filter_param_value: "holdreason='{{ hold_reason }}' & (INSTALLDATE >= '{{ hold_start_date }}') & (INSTALLDATE <= '{{ hold_end_date }}')"
+  when: hold_start_date is defined and hold_end_date is defined
+
 # Save only the HOLDs for the specified REASON ID
 - name: Getting the HOLDs for reason ID <{{ hold_reason }}>
   ansible.builtin.set_fact:
     holds_with_specified_reason: "{{ holds_with_specified_reason + software_update_holds | selectattr('holdReason', 'equalto', hold_reason) | list }}"
 
-# Assume there were no HOLDs found for the specified HOLD REASON
-- name: Default HOLDs found for the specified HOLD REASON to false
-  ansible.builtin.set_fact:
-    holds_found_for_reason: false
-
-# Ensure there is at least one HOLD for the specified HOLD REASON.
-- name: Check if there are any HOLDs found for the specified HOLD REASON
-  ansible.builtin.set_fact:
-    holds_found_for_reason: true
-  when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 0
-
 #################################################################################################
 # Build the request and call the CSI Query role when at least one HOLD is found for the REASON. #
 #################################################################################################
 - name: Build the CSI Query request and call the CSI Query role
-  when: holds_found_for_reason
+  when: holds_with_specified_reason is defined and holds_with_specified_reason | length > 0
   block:
     # Add the singular PTF to the filter.
     - name: Add the PTF to the CSI Query filter
@@ -105,7 +100,7 @@
     ############################
     - name: Query a CSI data set for HOLD REASON ID <{{ hold_reason }}>
       ansible.builtin.include_role:
-        name: zmf_swmgmt_csi_query
+        name: ibm.ibm_zosmf.zmf_swmgmt_csi_query
 
     # Initialize lists to contain the HOLDDATA text.
     - name: Initialize lists

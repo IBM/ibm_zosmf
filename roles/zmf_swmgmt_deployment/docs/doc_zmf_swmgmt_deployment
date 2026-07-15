@@ -33,17 +33,45 @@ options:
         description:
             - User ID for authenticating with the z/OSMF server.
             - >
+              Required when not using client certificate authentication
+              (C(zmf_client_cert)).
+            - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
-        required: True
+        required: False
         type: str
     zmf_password:
         description:
             - Password to be used for authenticating with z/OSMF server.
             - >
+              Required when not using client certificate authentication
+              (C(zmf_client_cert)).
+            - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
-        required: True
+        required: False
+        type: str
+    zmf_client_cert:
+        description:
+            - >
+              Path to a PEM-encoded client certificate file used for authenticating
+              with the z/OSMF server.
+            - >
+              Mutually exclusive with C(zmf_user) and C(zmf_password). When specified,
+              basic authentication credentials are not sent.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    zmf_client_key:
+        description:
+            - >
+              Path to the PEM-encoded private key file corresponding to C(zmf_client_cert).
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
         type: str
     zmf_validate_certs:
         description:
