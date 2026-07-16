@@ -1,4 +1,4 @@
-# Copyright (c) IBM Corporation 2026
+# Copyright (c) IBM Corporation 2023, 2026
 
 
 DOCUMENTATION = r"""
@@ -16,7 +16,7 @@ options:
     zmf_host:
         description:
             - >
-              Socket (hostname:port) of the z/OSMF server, specified in the inventory file
+              Hostname of the z/OSMF server, specified in the inventory file
               or as an argument on the playbook command.
         required: True
         type: str

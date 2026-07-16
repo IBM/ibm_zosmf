@@ -4,4 +4,4 @@ The collection [ibm_zosmf](../../README.md) provides an [Ansible role](https://d
 For guides and reference, see [Docs Site](https://ibm.github.io/z_ansible_collections_doc/ibm_zosmf/docs/source/roles/zmf_swupdate_start.html).
 
 ## Copyright
-© Copyright IBM Corporation 2026
+© Copyright IBM Corporation 2025
