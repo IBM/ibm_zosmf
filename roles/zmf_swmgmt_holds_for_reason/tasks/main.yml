@@ -43,11 +43,15 @@
     holds_with_specified_reason: []
     filter_param_value: "holdreason='{{ hold_reason }}'"
 
-- name: Override the filter to include date range when hold_start_date and hold_end_date are specified
+- name: Filter HOLDs installed after the specified start date
   ansible.builtin.set_fact:
-    holds_with_specified_reason: []
-    filter_param_value: "holdreason='{{ hold_reason }}' & (INSTALLDATE >= '{{ hold_start_date }}') & (INSTALLDATE <= '{{ hold_end_date }}')"
-  when: hold_start_date is defined and hold_end_date is defined
+    filter_param_value: "{{ filter_param_value }} & (INSTALLDATE >= '{{ hold_start_date }}')"
+  when: hold_start_date is defined
+
+- name: Filter HOLDs installed before the specified end date
+  ansible.builtin.set_fact:
+    filter_param_value: "{{ filter_param_value }} & (INSTALLDATE <= '{{ hold_end_date }}')"
+  when: hold_end_date is defined
 
 # Save only the HOLDs for the specified REASON ID
 - name: Getting the HOLDs for reason ID <{{ hold_reason }}>
