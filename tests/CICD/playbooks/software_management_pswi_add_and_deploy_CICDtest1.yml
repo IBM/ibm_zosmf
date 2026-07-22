@@ -5,29 +5,43 @@
 # Deployment V2 REST APIs.
 
 #######################################################################################
-# PLAY #1: Add a portable software instance.                                          #
+# THIS IS A SAMPLE PLAYBOOK INTENDED FOR BOTH ADDING AND DEPLOYING A PORTABLE         #
+# SOFTWARE INSTANCE. THE FULL CONTEXT FOR THIS PLAYBOOK MUST BE UNDERSTOOD BEFORE     #
+# USING IT AS IS. THIS PLAYBOOK SHOULD BE MODIFIED TO PROPERLY ORCHESTRATE ANSIBLE TO #
+# ACHIEVE THE DESIRED RESULT FOR EACH UNIQUE SCENARIO. PLEASE REFERENCE EACH ROLE'S   #
+# DOCUMENTATION FOR PARAMETERS & SYNTAX.                                              #
+#                                                                                     #
+# NOTE: FOR THE POLARIS PREVIEW, ONLY LOCAL DEPLOYMENTS FOR LOCAL PORTABLE SOFTWARE   #
+#       INSTANCES ARE SUPPORTED!                                                      #
+#######################################################################################
+
+#######################################################################################
+# PLAY #1: Add a portable software instance. If the portable software instance to be  #
+# deployed is already added to z/OSMF, then this play should be removed.              #
 #######################################################################################
 - name: Add a portable software instance
   hosts: swmgmt
   gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
   tasks:
     - name: Start the portable software instance add
       ansible.builtin.include_role:
-        name: zmf_swmgmt_add_pswi
+        name: ibm.ibm_zosmf.zmf_swmgmt_add_pswi
 
 #######################################################################################
-# PLAY #2: Start a deployment on the portable software instance.                      #
+# PLAY #2: Start a deployment on the portable software instance. If the portable      #
+# software instance is not intended to be deployed, then this play should be removed. #
 #######################################################################################
 - name: Deploy the portable software instance
   hosts: swmgmt
   gather_facts: false
-  collections:
-    - ibm.ibm_zosmf
   tasks:
-    # For the Polaris Preview Deployment, only local portable software instances are
-    # supported. Deploy the portable software instance added above in the 1st play.
+    # Below is an example of how to specify some of the deployment parameters using
+    # a set_fact statement. deployment_source_name and deployment_source_system are set
+    # to those of the portable software instance added above in the first play. Then,
+    # deployment_target_name is set the the source's name with 'AnsibleTgtSwi' appended
+    # at the end of the target software instance name. There are many more
+    # specifications supported for deployments. See the zmf_swmgmt_deployment role's
+    # documentation for details.
     - name: Setting the deployment parameters
       ansible.builtin.set_fact:
         deployment_source_name: "{{ pswi_name }}"
@@ -35,4 +49,4 @@
         deployment_target_name: "{{ pswi_name }}AnsibleTgtSWI"
     - name: Start the deployment
       ansible.builtin.include_role:
-        name: zmf_swmgmt_deployment
+        name: ibm.ibm_zosmf.zmf_swmgmt_deployment
