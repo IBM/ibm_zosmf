@@ -39,9 +39,11 @@
     # a set_fact statement. deployment_source_name and deployment_source_system are set
     # to those of the portable software instance added above in the first play. Then,
     # deployment_target_name is set the the source's name with 'AnsibleTgtSwi' appended
-    # at the end of the target software instance name. There are many more
-    # specifications supported for deployments. See the zmf_swmgmt_deployment role's
-    # documentation for details.
+    # at the end of the target software instance name.
+       # Additional options are required for the deployment, such as the target data sets'
+       # HLQ, volume, or storage class.  These and many more options may be specified in an
+       # inventory or variable file, on a set_fact statement, or as arguments on the playbook
+       # command.  See the zmf_swmgmt_deployment role's documentation for details.
     - name: Setting the deployment parameters
       ansible.builtin.set_fact:
         deployment_source_name: "{{ pswi_name }}"
