@@ -10,23 +10,45 @@
     msg: "deployment_name: Specify a deployment name and retry the role."
   when: deployment_name is not defined or deployment_name == ''
 
-# Do not attempt to execute the play without a deployment source name.
-- name: Verifying the source portable software instance name is provided
+# Do not attempt to execute the play without a deployment source type.
+- name: Verifying the source software type is provided
   ansible.builtin.fail:
-    msg: "deployment_source_name: Specify a deployment source software instance name and retry the role."
-  when: deployment_source_name is not defined or deployment_source_name == ''
+    msg: "deployment_source_type: Specify a deployment source software type and retry the role."
+  when: deployment_source_type is not defined or deployment_source_type == ''
 
-# Do not attempt to execute the play without a deployment source system.
-- name: Verifying the system nickname for the source portable software instance is provided
+# Do not attempt to execute the play without either a deployment source uuid or both a source name
+# and system. A uuid may be specified in place of the name and system to identify the source.
+- name: Verifying the source software name and system, or a software instance uuid, is provided
   ansible.builtin.fail:
-    msg: "deployment_source_system: Specify a deployment source system nickname and retry the role."
-  when: deployment_source_system is not defined or deployment_source_system == ''
+    msg: >-
+      Specify either deployment_source_uuid, or both deployment_source_name and
+      deployment_source_system, to identify the source software and retry the role.
+  when: >
+    (deployment_source_uuid is not defined or deployment_source_uuid == '') and
+    ((deployment_source_name is not defined or deployment_source_name == '') or
+     (deployment_source_system is not defined or deployment_source_system == ''))
 
 # Do not attempt to execute the play without a deployment target name.
 - name: Verifying a target software instance name is provided
   ansible.builtin.fail:
     msg: "deployment_target_name: Specify a deployment target software instance name and retry the role."
   when: deployment_target_name is not defined or deployment_target_name == ''
+
+# Do not attempt to execute the play without a deployment target system.
+- name: Verifying a target software instance system is provided
+  ansible.builtin.fail:
+    msg: "deployment_target_system: Specify a deployment target software instance system and retry the role."
+  when: >
+    (deployment_source_system is not defined or deployment_source_system == '') and
+    (deployment_target_system is not defined or deployment_target_system == '')
+
+# Set the deployment target software instance system when none was specified.
+- name: Setting the target software instance system when not specified
+  ansible.builtin.set_fact:
+    deployment_target_system: "{{ deployment_source_system }}"
+  when: >
+    deployment_source_system is defined and deployment_source_system != '' and
+    deployment_target_system is not defined or deployment_target_system == ''
 
 # Do not attempt to execute the play without a deployment configuration or both a deployment
 # high level qualifier (HLQ) and either a deployment storage class or volume.
@@ -82,7 +104,7 @@
       {{
         [
           {
-            'system': deployment_source_system,
+            'system': deployment_target_system,
             'jcldataset': deployment_jcldataset
           }
           | combine(
@@ -129,14 +151,19 @@
       {{
         {
           'name': deployment_name,
-          'source': {
-            'type': 'PSWI',
-            'name': deployment_source_name,
-            'system': deployment_source_system
-          },
+          'source': {'type': deployment_source_type}
+          | combine(
+              (deployment_source_uuid is defined and deployment_source_uuid != '')
+              | ternary({'uuid': deployment_source_uuid},
+                        {'name': deployment_source_name, 'system': deployment_source_system})
+            )
+          | combine(
+              (deployment_source_unixdatasets is defined and deployment_source_unixdatasets | length > 0)
+              | ternary({'unixdatasets': deployment_source_unixdatasets}, {})
+            ),
           'targetswi': {
             'name': deployment_target_name,
-            'system': deployment_source_system
+            'system': deployment_target_system
           },
           'systemsettings': deployment_systemsettings
         }

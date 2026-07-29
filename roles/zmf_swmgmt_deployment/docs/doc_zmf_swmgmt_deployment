@@ -3,12 +3,12 @@
 
 DOCUMENTATION = r"""
 role: zmf_swmgmt_deployment
-short_description: Deploy a portable software instance
+short_description: Deploy a software instance or a portable software instance
 description:
     - >
       The B(IBM z/OSMF collection) provides an Ansible role, referred to as
-      B(zmf_swmgmt_deployment), to deploy a portable software instance
-      to the host system using z/OSMF Software Management.
+      B(zmf_swmgmt_deployment), to deploy a software instance or a portable
+      software instance to the host system using z/OSMF Software Management.
 author:
     - Taylor Digilio (Taylor.Digilio@ibm.com)
 options:
@@ -114,28 +114,93 @@ options:
         required: False
         type: bool
         default: true
-    deployment_source_name:
+    deployment_source_type:
         description:
-            - The name of the portable software instance to deploy.
+            - >
+              The type of source object for the deployment: software instance ("swi") or
+              portable software instance ("pswi").
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
         required: True
+        type: str
+    deployment_source_name:
+        description:
+            - The name of the source software instance or portable software instance.
+            - >
+              Required when C(deployment_source_uuid) is not specified.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
         type: str
     deployment_source_system:
         description:
             - >
-              Nickname of the z/OSMF host system where the source portable software
-              instance resides. Use the nickname for the system definition in the z/OSMF
-              Systems task.
+              Nickname of the z/OSMF host system where the source software instance or
+              portable software instance resides. Use the nickname for the system
+              definition in the z/OSMF Systems task.
+            - >
+              Required when C(deployment_source_uuid) is not specified.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    deployment_source_uuid:
+        description:
+            - >
+              The uuid for the source software instance. A uuid may be specified in place
+              of C(deployment_source_name) and C(deployment_source_system) to identify the
+              source software instance. When C(deployment_source_uuid) is provided,
+              C(deployment_source_name) and C(deployment_source_system) are ignored.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: str
+    deployment_source_unixdatasets:
+        description:
+            - >
+              List of UNIX file system data sets in the source software instance that are
+              currently not mounted, and therefore, cannot be identified by z/OSMF by
+              referencing the UNIX directories defined in the SMP/E target zone DDDEF
+              entries.
+            - >
+              This property is optional and is only applicable when the source is a
+              software instance (C(deployment_source_type) is C("swi")), describes SMP/E
+              managed software, and if any of the UNIX file system data sets containing
+              that software are currently not mounted or are unknown to z/OSMF.
+            - >
+              Each entry in the list contains the following sub-properties:
+            - >
+              B(dsname) - Name of a UNIX file system data set. The data set name must
+              comply with z/OS data set naming conventions.
+            - >
+              B(mountpoint) - Mount point for the UNIX file system data set if the data
+              set were mounted. The mount point corresponds to the directory prefix
+              specified on the PATH in SMP/E DDDEF entries. Must be an absolute pathname
+              (starting with slash), must not end with a slash unless it is the only
+              character, and can be up to 1023 characters long.
+            - >
+              This variable can be specified in the inventory file or as an argument on
+              the playbook command.
+        required: False
+        type: list
+    deployment_target_name:
+        description:
+            - The name for the software instance to be created by the deployment operation.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
         required: True
         type: str
-    deployment_target_name:
+    deployment_target_system:
         description:
-            - The name for the software instance to be created by the deployment operation.
+            - >
+              The nickname of the z/OSMF host system where the target software instance
+              data sets will reside. Use the nickname for the system definition in the
+              z/OSMF Systems task.
             - >
               This variable can be specified in the inventory file or as an argument on
               the playbook command.
